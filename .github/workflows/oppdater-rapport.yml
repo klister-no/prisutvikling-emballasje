@@ -1,0 +1,41 @@
+name: Oppdater Emballasjerapport
+
+on:
+  # Kjør automatisk første mandag hver måned kl. 07:00
+  schedule:
+    - cron: '0 7 1-7 * 1'
+  
+  # Tillat manuell kjøring fra GitHub-grensesnittet
+  workflow_dispatch:
+
+jobs:
+  oppdater-rapport:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Hent repoet
+        uses: actions/checkout@v4
+
+      - name: Sett opp Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installer avhengigheter
+        run: pip install anthropic
+
+      - name: Kjør rapportoppdatering
+        env:
+          EMBALLASJE_RAPPORT_CLOUDE_KEY: ${{ secrets.EMBALLASJE_RAPPORT_CLOUDE_KEY }}
+        run: python update_report.py
+
+      - name: Lagre oppdatert rapport til GitHub
+        run: |
+          git config --global user.name "Rapport-bot"
+          git config --global user.email "rapport-bot@github.com"
+          git add index.html
+          git diff --staged --quiet || git commit -m "Automatisk rapportoppdatering $(date +'%Y-%m-%d')"
+          git push
