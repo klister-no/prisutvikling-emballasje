@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Europisk Emballasjemarked — Prisrapport</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1117;
+    --paper: #f5f1eb;
+    --accent: #c8401a;
+    --accent2: #1a5fc8;
+    --accent3: #1a8c4a;
+    --muted: #7a7570;
+    --border: #d8d2c8;
+    --card: #ffffff;
+    --up: #1a8c4a;
+    --down: #c8401a;
+    --flat: #8a6e2a;
+    --tag-plastic: #1a5fc8;
+    --tag-fiber: #1a7a3a;
+    --tag-corrugated: #8a4a1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .report-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 48px 48px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid rgba(245,241,235,0.12);
+  }
+  .report-header::after {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 1px solid rgba(245,241,235,0.08);
+  }
+  .report-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,241,235,0.5);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .report-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    max-width: 640px;
+  }
+  .report-subtitle {
+    color: rgba(245,241,235,0.65);
+    font-size: 15px;
+    max-width: 560px;
+  }
+  .report-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(245,241,235,0.4);
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(245,241,235,0.12);
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    background: var(--ink);
+    padding: 0 48px;
+    display: flex;
+    gap: 0;
+    border-top: 1px solid rgba(245,241,235,0.1);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(245,241,235,0.45);
+    padding: 14px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-tab:hover { color: rgba(245,241,235,0.8); }
+  .nav-tab.active {
+    color: var(--paper);
+    border-bottom-color: var(--accent);
+  }
+
+  /* MAIN LAYOUT */
+  .main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 48px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+  }
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* SUMMARY CARDS ROW */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .summary-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .summary-card-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .summary-card-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .trend-up { color: var(--up); }
+  .trend-down { color: var(--down); }
+  .trend-flat { color: var(--flat); }
+
+  /* PRICE TABLE */
+  .price-table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .price-table-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .price-table-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    background: #f8f5f0;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #f0ece4;
+    font-size: 13px;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #faf7f2; }
+
+  .mat-name { font-weight: 500; }
+  .mat-sub { font-size: 11px; color: var(--muted); }
+
+  .badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .badge-plastic { background: #dbeafe; color: #1a5fc8; }
+  .badge-fiber { background: #d1fae5; color: #1a7a3a; }
+  .badge-corrugated { background: #fde8d0; color: #8a4a1a; }
+
+  .trend-cell {
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .arrow { font-size: 12px; }
+
+  .signal-bar {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .signal-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .signal-dot.filled.up { background: var(--up); }
+  .signal-dot.filled.down { background: var(--down); }
+  .signal-dot.filled.flat { background: var(--flat); }
+
+  /* DRIVERS GRID */
+  .drivers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .driver-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .driver-card-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .driver-card-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .driver-card-body {
+    font-size: 13px;
+    color: #3a3530;
+    line-height: 1.65;
+  }
+
+  /* OUTLOOK */
+  .outlook-table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  /* SOURCES */
+  .sources-list {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+  }
+  .source-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0ece4;
+    font-size: 13px;
+  }
+  .source-item:last-child { border-bottom: none; }
+  .source-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 24px;
+    padding-top: 1px;
+  }
+  .source-name { font-weight: 500; margin-bottom: 2px; }
+  .source-desc { color: var(--muted); font-size: 12px; }
+  .source-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #f0ece4;
+    color: var(--muted);
+    display: inline-block;
+    margin-top: 3px;
+  }
+
+  /* REGULATION TIMELINE */
+  .timeline {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+  }
+  .timeline-item {
+    display: flex;
+    gap: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0ece4;
+  }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-year {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--accent);
+    min-width: 60px;
+    line-height: 1.2;
+  }
+  .timeline-content { flex: 1; }
+  .timeline-rule { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .timeline-desc { font-size: 12px; color: var(--muted); }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+
+  /* FOOTER */
+  .report-footer {
+    background: var(--ink);
+    color: rgba(245,241,235,0.4);
+    padding: 20px 48px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* CAPACITY SECTION */
+  .capacity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .capacity-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .capacity-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .capacity-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .capacity-bar-wrap {
+    margin: 10px 0;
+  }
+  .capacity-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .capacity-bar-bg {
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .capacity-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent2);
+    transition: width 1s;
+  }
+  .capacity-bar-fill.amber { background: var(--flat); }
+  .capacity-bar-fill.green { background: var(--up); }
+  .capacity-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 768px) {
+    .report-header, .main-content, .nav-tabs, .report-footer { padding-left: 20px; padding-right: 20px; }
+    .report-title { font-size: 28px; }
+    thead th, tbody td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="report-header">
+  <div class="report-meta">
+    <span>🇪🇺 Europeisk marked</span>
+    <span>FMCG Emballasje</span>
+    <span>Prisovervåkning</span>
+  </div>
+  <h1 class="report-title">Prisrapport<br>Emballasjematerialer</h1>
+  <p class="report-subtitle">Prisutvikling og markedsdrivere for plast- og fibermaterialer i det europeiske FMCG-markedet. Kapasitetsstatus og 6-måneders utsikt.</p>
+  <div class="report-date">
+    Sist oppdatert: Februar 2026 &nbsp;|&nbsp; Data pr. Q1 2026 &nbsp;|&nbsp; Kilder: ICIS, Fastmarkets, EUWID, Packaging Europe, PlasticPortal
+  </div>
+</header>
+
+<nav class="nav-tabs">
+  <div class="nav-tab active" onclick="showSection('overview')">Oversikt</div>
+  <div class="nav-tab" onclick="showSection('plast')">Plastmaterialer</div>
+  <div class="nav-tab" onclick="showSection('fiber')">Solid Board / Fiber</div>
+  <div class="nav-tab" onclick="showSection('corrugated')">Bølgepapp</div>
+  <div class="nav-tab" onclick="showSection('kapasitet')">Kapasitet</div>
+  <div class="nav-tab" onclick="showSection('drivere')">Markedsdrivere</div>
+  <div class="nav-tab" onclick="showSection('regulering')">Regulering</div>
+  <div class="nav-tab" onclick="showSection('kilder')">Kilder &amp; Metode</div>
+</nav>
+
+<main class="main-content">
+
+  <!-- ======================== OVERVIEW ======================== -->
+  <section class="section active" id="overview">
+    <div class="section-header">
+      <h2 class="section-title">Markedsoversikt Q1 2026</h2>
+      <span class="section-tag">Alle materialer</span>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-card">
+        <div class="summary-card-label">Virgin PET</div>
+        <div class="summary-card-value trend-flat">~€900</div>
+        <div class="summary-card-desc">Per tonn. Stabilt etter fall H2 2025.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">rPET premium</div>
+        <div class="summary-card-value trend-down">+€750–800</div>
+        <div class="summary-card-desc">Merkostnad over virgin. Press fra billige import.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">PP / HDPE</div>
+        <div class="summary-card-value trend-flat">~€980–1100</div>
+        <div class="summary-card-desc">Per tonn. Flat trend, overskuddskapasitet i marked.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">Kraftliner (brun)</div>
+        <div class="summary-card-value trend-down">Fallende</div>
+        <div class="summary-card-desc">Jan 2026: nedgang i tyske forhandlinger.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">Testliner</div>
+        <div class="summary-card-value trend-flat">Blandet</div>
+        <div class="summary-card-desc">Spania/Italia +€80/t YoY; Nord-Europa svakt.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">Solid Board (FBB)</div>
+        <div class="summary-card-value trend-flat">Stabilt</div>
+        <div class="summary-card-desc">Sterk etterspørsel pga. plastsubstitusjon.</div>
+      </div>
+    </div>
+
+    <div class="price-table-wrap">
+      <div class="price-table-header">
+        <span class="price-table-title">Prisindikator alle materialer — Q4 2024 vs. Q1 2026</span>
+        <span style="font-size:11px;color:var(--muted)">Kilde: ICIS, Fastmarkets, EUWID, PlasticPortal</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Materiale</th>
+            <th>Segment</th>
+            <th>Prisnivå Q1 2026</th>
+            <th>Trend 12 mnd</th>
+            <th>Trend 6 mnd</th>
+            <th>6 mnd utsikt</th>
+            <th>Signal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="mat-name">PET Virgin</div><div class="mat-sub">Jomfruelig PET harpiks</div></td>
+            <td><span class="badge badge-plastic">Plast</span></td>
+            <td>~€850–920/t</td>
+            <td><span class="trend-cell trend-down"><span class="arrow">↓</span> –8%</span></td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Flat</span></td>
+            <td><span class="trend-cell trend-flat">Stabil/svak</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot filled flat"></div><div class="signal-dot"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">rPET food-grade</div><div class="mat-sub">Resirkulert PET, matgodkjent</div></td>
+            <td><span class="badge badge-plastic">Plast</span></td>
+            <td>€1.600–1.720/t</td>
+            <td><span class="trend-cell trend-down"><span class="arrow">↓</span> Press</span></td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Flat</span></td>
+            <td><span class="trend-cell trend-up">Økning (PPWR)</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot filled up"></div><div class="signal-dot filled up"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">PP (polypropylen)</div><div class="mat-sub">Injeksjon og film-grade</div></td>
+            <td><span class="badge badge-plastic">Plast</span></td>
+            <td>~€980–1.050/t</td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Flat</span></td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Flat</span></td>
+            <td><span class="trend-cell trend-flat">Stabil</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot"></div><div class="signal-dot"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">HDPE</div><div class="mat-sub">Blåse- og injeksjonsgrade</div></td>
+            <td><span class="badge badge-plastic">Plast</span></td>
+            <td>~€980–1.100/t</td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Flat/svak</span></td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Flat</span></td>
+            <td><span class="trend-cell trend-flat">Stabil</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot"></div><div class="signal-dot"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">LDPE / PE film</div><div class="mat-sub">Fleksibel emballasje</div></td>
+            <td><span class="badge badge-plastic">Plast</span></td>
+            <td>~€920–1.020/t</td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Flat</span></td>
+            <td><span class="trend-cell trend-down"><span class="arrow">↓</span> Svak</span></td>
+            <td><span class="trend-cell trend-flat">Stabil</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot"></div><div class="signal-dot"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">FBB (Folded Boxboard)</div><div class="mat-sub">Virgin solid board</div></td>
+            <td><span class="badge badge-fiber">Fiber</span></td>
+            <td>€900–1.100/t</td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Stabil</span></td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Stabil</span></td>
+            <td><span class="trend-cell trend-up">Mild vekst</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot filled up"></div><div class="signal-dot"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">WLC (White-Lined Chipboard)</div><div class="mat-sub">Resirkulert solid board</div></td>
+            <td><span class="badge badge-fiber">Fiber</span></td>
+            <td>€650–850/t</td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Stabil</span></td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Stabil</span></td>
+            <td><span class="trend-cell trend-up">Positiv</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot filled up"></div><div class="signal-dot"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">Kraftliner (brun/hvit)</div><div class="mat-sub">Virginfiberliner til bølgepapp</div></td>
+            <td><span class="badge badge-corrugated">Bølgepapp</span></td>
+            <td>€650–760/t</td>
+            <td><span class="trend-cell trend-up"><span class="arrow">↑</span> +€45–60/t (mid-2025)</span></td>
+            <td><span class="trend-cell trend-down"><span class="arrow">↓</span> Jan 2026 fall</span></td>
+            <td><span class="trend-cell trend-flat">Usikkert</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot filled flat"></div><div class="signal-dot"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">Testliner (resirkulert liner)</div><div class="mat-sub">Resirkulert liner</div></td>
+            <td><span class="badge badge-corrugated">Bølgepapp</span></td>
+            <td>€480–620/t</td>
+            <td><span class="trend-cell trend-up"><span class="arrow">↑</span> +€27–80/t YoY</span></td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Blandet</span></td>
+            <td><span class="trend-cell trend-flat">Blandet</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot filled flat"></div><div class="signal-dot"></div></div></td>
+          </tr>
+          <tr>
+            <td><div class="mat-name">Fluting / Bølgekjerne</div><div class="mat-sub">Semi-chemical og resirkulert</div></td>
+            <td><span class="badge badge-corrugated">Bølgepapp</span></td>
+            <td>€380–520/t</td>
+            <td><span class="trend-cell trend-flat"><span class="arrow">→</span> Stabil/svak</span></td>
+            <td><span class="trend-cell trend-down"><span class="arrow">↓</span> –€20/t</span></td>
+            <td><span class="trend-cell trend-flat">Stabil</span></td>
+            <td><div class="signal-bar"><div class="signal-dot filled flat"></div><div class="signal-dot"></div><div class="signal-dot"></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background: #fff8f0; border: 1px solid #f0d0b0; border-radius:6px; padding: 16px 20px; font-size: 13px;">
+      <strong>⚠️ Viktig merknad:</strong> Prisene i denne rapporten er indikative nivåer basert på publisert markedsintelligens fra ICIS, Fastmarkets, EUWID og bransjekilder. For kontraktsforhandlinger anbefales direkte abonnement på spesialiserte prisindekser (se <em>Kilder &amp; Metode</em>-fanen).
+    </div>
+  </section>
+
+  <!-- ======================== PLAST ======================== -->
+  <section class="section" id="plast">
+    <div class="section-header">
+      <h2 class="section-title">Plastmaterialer</h2>
+      <span class="section-tag">PET · rPET · PP · PE · HDPE</span>
+    </div>
+
+    <div class="price-table-wrap">
+      <div class="price-table-header">
+        <span class="price-table-title">Prishistorikk og utsikt — plastmaterialer Europa</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Materiale</th>
+            <th>Q2 2024</th>
+            <th>Q3 2024</th>
+            <th>Q4 2024</th>
+            <th>Q1 2025</th>
+            <th>Q2 2025</th>
+            <th>H2 2025</th>
+            <th>Q1 2026 (est.)</th>
+            <th>Utsikt H1 2026</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>PET Virgin</strong></td>
+            <td>~€1.050</td>
+            <td>~€980</td>
+            <td>~€940</td>
+            <td>~€900</td>
+            <td>~€870</td>
+            <td>~€850–890</td>
+            <td>~€850–920</td>
+            <td><span class="trend-cell trend-flat">→ Flat til svak vekst</span></td>
+          </tr>
+          <tr>
+            <td><strong>rPET food-grade</strong></td>
+            <td>~€1.750</td>
+            <td>~€1.700</td>
+            <td>~€1.680</td>
+            <td>~€1.640</td>
+            <td>~€1.620</td>
+            <td>~€1.600–1.650</td>
+            <td>~€1.600–1.720</td>
+            <td><span class="trend-cell trend-up">↑ Støttet av PPWR</span></td>
+          </tr>
+          <tr>
+            <td><strong>PP Homo</strong></td>
+            <td>~€1.100</td>
+            <td>~€1.050</td>
+            <td>~€1.020</td>
+            <td>~€990</td>
+            <td>~€980</td>
+            <td>~€970–1.010</td>
+            <td>~€980–1.050</td>
+            <td><span class="trend-cell trend-flat">→ Stabil</span></td>
+          </tr>
+          <tr>
+            <td><strong>HDPE (blåsing)</strong></td>
+            <td>~€1.150</td>
+            <td>~€1.100</td>
+            <td>~€1.060</td>
+            <td>~€1.010</td>
+            <td>~€990</td>
+            <td>~€980–1.020</td>
+            <td>~€980–1.100</td>
+            <td><span class="trend-cell trend-flat">→ Stabil</span></td>
+          </tr>
+          <tr>
+            <td><strong>LDPE film</strong></td>
+            <td>~€1.050</td>
+            <td>~€1.010</td>
+            <td>~€980</td>
+            <td>~€950</td>
+            <td>~€930</td>
+            <td>~€920–950</td>
+            <td>~€920–1.020</td>
+            <td><span class="trend-cell trend-flat">→ Stabil</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="drivers-grid">
+      <div class="driver-card">
+        <div class="driver-card-icon">📉</div>
+        <div class="driver-card-title">PET Virgin: Press fra billig import</div>
+        <div class="driver-card-body">Kinesisk og asiatisk PET dumpes i det europeiske markedet til priser under europeisk produksjonskostnad. Svak intern etterspørsel i industrien kombinert med tilgjengelig kapasitet i Asia holder prisene nede. Euroen styrkes ikke nok til å gi europeiske produsenter konkurranse­fordel.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">♻️</div>
+        <div class="driver-card-title">rPET: Høy premie, usikker etterspørsel</div>
+        <div class="driver-card-body">EU har kun 12 anlegg godkjent for matvaregodkjent rPET i 2024, med total kapasitet på 650.000 tonn — langt under behovet. Premium på €750–800/t over virgin skaper friksjon mot adopsjon. PPWR vil drive opp etterspørsel fra 2026/2030, men kapasitetsgapet er kritisk.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">⚡</div>
+        <div class="driver-card-title">PP / HDPE: Energipriser og overkapasitet</div>
+        <div class="driver-card-body">Energikostnadene i Europa forblir høyere enn USA og Asia, noe som presser produksjonskostnadene. Ny kapasitet i Midtøsten og Asia har økt global tilgang. Prisnivåene er stabile fordi import også holdes i sjakk av transportkostnader og tariffer.</div>
+      </div>
+    </div>
+
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px;">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">rPET vs. Virgin PET — Kostnadsforholdet</h3>
+      <p style="font-size:13px;color:#3a3530;line-height:1.7;">rPET food-grade koster i dag ca. <strong>€750–800 mer per tonn</strong> enn virgin PET i Europa. Dette er et strukturelt problem som bremser PPWR-overgangen. Carbios åpnet verdens første kommersielle enzymatiske PET-resirkleringsanlegg i Clermont-Ferrand i 2024 — avansert resirkulering forventes gradvis å redusere premien mot 2030, men foreløpig er gapet stort. Merkevareiere som tvinges til å øke rPET-innholdet fra 2030 (PPWR Art. 7) må budsjettere for denne merkostnaden.</p>
+    </div>
+  </section>
+
+  <!-- ======================== FIBER ======================== -->
+  <section class="section" id="fiber">
+    <div class="section-header">
+      <h2 class="section-title">Solid Board / Kartong</h2>
+      <span class="section-tag">FBB · WLC · GC · GD-board</span>
+    </div>
+
+    <div class="price-table-wrap">
+      <div class="price-table-header">
+        <span class="price-table-title">Prishistorikk — solid board Europa (€/tonn indikativt)</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Materiale</th>
+            <th>Type</th>
+            <th>Q1 2024</th>
+            <th>Q3 2024</th>
+            <th>Q1 2025</th>
+            <th>Q3 2025</th>
+            <th>Q1 2026 est.</th>
+            <th>Utsikt H1 2026</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>FBB – Folded Boxboard</strong></td>
+            <td>Virgin fiber</td>
+            <td>~€1.050</td>
+            <td>~€1.000</td>
+            <td>~€970</td>
+            <td>~€960</td>
+            <td>€900–1.100</td>
+            <td><span class="trend-cell trend-flat">→ Stabil til mild vekst</span></td>
+          </tr>
+          <tr>
+            <td><strong>SBS – Solid Bleached Sulphate</strong></td>
+            <td>Virgin, premium</td>
+            <td>~€1.150</td>
+            <td>~€1.100</td>
+            <td>~€1.060</td>
+            <td>~€1.040</td>
+            <td>€1.000–1.100</td>
+            <td><span class="trend-cell trend-flat">→ Stabil</span></td>
+          </tr>
+          <tr>
+            <td><strong>WLC – White-Lined Chipboard</strong></td>
+            <td>Resirkulert fiber</td>
+            <td>~€780</td>
+            <td>~€740</td>
+            <td>~€710</td>
+            <td>~€700</td>
+            <td>€650–850</td>
+            <td><span class="trend-cell trend-up">↑ Positiv, plastsubstitusjon</span></td>
+          </tr>
+          <tr>
+            <td><strong>GC1/GC2 – Coated Board</strong></td>
+            <td>Virgin, coated</td>
+            <td>~€1.000</td>
+            <td>~€960</td>
+            <td>~€940</td>
+            <td>~€920</td>
+            <td>€880–980</td>
+            <td><span class="trend-cell trend-flat">→ Stabil</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="drivers-grid">
+      <div class="driver-card">
+        <div class="driver-card-icon">🌿</div>
+        <div class="driver-card-title">Plastsubstitusjon driver FBB-vekst</div>
+        <div class="driver-card-body">FMCG-merkevarer som Nestlé og Unilever erstatter plastemballasje med fiberkartong. Graphic Packaging eliminerte 450 millioner plastpakker i 2023 alene. FBB og SBS-etterspørselen er robust, spesielt i segmentene mat, personlig pleie og farmasøytisk sektor. Etterspørselsveksten er strukturell og forventes å vedvare mot 2030.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">🏭</div>
+        <div class="driver-card-title">WLC: Resirkulert fiber med sterk posisjon</div>
+        <div class="driver-card-body">Kartonggjenvinningsraten i Europa er 86% (2023), den høyeste blant alle emballasjematerialer. WLC oppfyller allerede PPWRs recyclability-mål for 2030 (70%) og 2038 (80%). Prisgap mot virgin-fiber er synkende relativt. Stora Enso investerer €1 mrd. i Oulu for å heve kvaliteten på resirkulert board.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">📋</div>
+        <div class="driver-card-title">PPWR: Fiber kommer sterkt ut</div>
+        <div class="driver-card-body">Fiberkartong er allerede i stor grad PPWR-kompatibelt. Ingen krav om recycled content (bare plast). Fiber-basert emballasje unngår de strengeste kravene og posisjonerer seg godt overfor merkevarer som vil vise frem "grønn" emballasje. Etterspørselen drevet av regulatorisk medvind forventes å holde prisene stabile til svakt stigende.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== CORRUGATED ======================== -->
+  <section class="section" id="corrugated">
+    <div class="section-header">
+      <h2 class="section-title">Bølgepapp: Liner og Fluting</h2>
+      <span class="section-tag">Kraftliner · Testliner · Fluting · OCC</span>
+    </div>
+
+    <div class="price-table-wrap">
+      <div class="price-table-header">
+        <span class="price-table-title">Prishistorikk — bølgepappråmaterialer Europa (€/tonn indikativt)</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Materiale</th>
+            <th>Type fiber</th>
+            <th>Q1 2024</th>
+            <th>Q3 2024</th>
+            <th>Q4 2024</th>
+            <th>Q1 2025</th>
+            <th>Q3 2025</th>
+            <th>Jan 2026</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Kraftliner (brun)</strong></td>
+            <td>Virgin</td>
+            <td>~€680</td>
+            <td>~€680</td>
+            <td>~€660</td>
+            <td>~€700</td>
+            <td>~€740</td>
+            <td>↓ Fallende</td>
+            <td><span class="trend-cell trend-down">↓ Nedgang jan. 2026</span></td>
+          </tr>
+          <tr>
+            <td><strong>White-top Kraftliner</strong></td>
+            <td>Virgin, hvit</td>
+            <td>~€760</td>
+            <td>~€760</td>
+            <td>~€750</td>
+            <td>~€780</td>
+            <td>~€800</td>
+            <td>↓ Stabil/svak</td>
+            <td><span class="trend-cell trend-flat">→ Blandet</span></td>
+          </tr>
+          <tr>
+            <td><strong>Testliner (resirkulert)</strong></td>
+            <td>Resirkulert</td>
+            <td>~€480</td>
+            <td>~€500</td>
+            <td>~€520</td>
+            <td>~€560</td>
+            <td>~€580–620</td>
+            <td>↑ Stabil</td>
+            <td><span class="trend-cell trend-flat">→ Stabil (blandet regionalt)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Fluting (semi-chem.)</strong></td>
+            <td>Virgin/semi</td>
+            <td>~€490</td>
+            <td>~€480</td>
+            <td>~€470</td>
+            <td>~€490</td>
+            <td>~€500</td>
+            <td>↓ –€20/t</td>
+            <td><span class="trend-cell trend-down">↓ Svak</span></td>
+          </tr>
+          <tr>
+            <td><strong>Recycled Fluting (RCCM)</strong></td>
+            <td>Resirkulert</td>
+            <td>~€380</td>
+            <td>~€380</td>
+            <td>~€390</td>
+            <td>~€410</td>
+            <td>~€400–430</td>
+            <td>↑ Svak</td>
+            <td><span class="trend-cell trend-flat">→ Stabil</span></td>
+          </tr>
+          <tr>
+            <td><strong>OCC (returpapp)</strong></td>
+            <td>Innsamlet papir</td>
+            <td>~€120</td>
+            <td>~€130</td>
+            <td>~€140</td>
+            <td>~€150</td>
+            <td>~€145–160</td>
+            <td>↑ Høy</td>
+            <td><span class="trend-cell trend-up">↑ Forhøyet nivå</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; margin-bottom: 20px;">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Nøkkeltendenser januar 2026</h3>
+      <p style="font-size:13px;color:#3a3530;line-height:1.75;margin-bottom:10px;">
+        <strong>Kraftliner faller:</strong> Tyske brune kraftliner-priser er under press i januar 2026, med innrømmelser fra produsenter i intense markedsforhandlinger. Presset kommer fra strukturell overkapasitet i trykkpapir og grafisk papir som konverteres til emballasjepapir (eks. Domtar vurderer konvertering av Gatineau-fabrikk).
+      </p>
+      <p style="font-size:13px;color:#3a3530;line-height:1.75;margin-bottom:10px;">
+        <strong>Testliner: Regionalt todelt bilde:</strong> Spania og Italia ser testliner-priser €27–80/t over nivåene fra mai 2024, drevet av Saica's €60/t prisøkning fra april 2025. Nord-Europa (Tyskland, Frankrike) er mer dempet. Hamburger Containerboard annonserte prisøkninger på resirkulert board fra 1. februar 2026.
+      </p>
+      <p style="font-size:13px;color:#3a3530;line-height:1.75;">
+        <strong>OCC (råvareinnkjøp):</strong> Kostnader for gammelt korrugert papir forblir forhøyet, noe som er en strukturell kostnadsfaktor for testliner-produsenter. Høy OCC-pris er delvis ansvarlig for prisøkningsforsøkene fra produsentene.
+      </p>
+    </div>
+
+    <div class="drivers-grid">
+      <div class="driver-card">
+        <div class="driver-card-icon">📦</div>
+        <div class="driver-card-title">E-handel driver etterspørsel</div>
+        <div class="driver-card-body">Online dagligvarehandel i EU nådde €56 mrd. i 2024, firdoblet siden 2020. Bølgepapp er den primære transportemballasjematerialet for e-handel. Etterspørselen er strukturelt voksende og forventes å støtte prisene fremover, spesielt for testliner og kraftliner i høyere kvalitetsklasser.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">🏗️</div>
+        <div class="driver-card-title">Ny kapasitet presser markedet</div>
+        <div class="driver-card-body">1,4 millioner tonn netto ny resirkulert containerboard-kapasitet kom online fra april 2025 i Europa/globalt, med ytterligere 1,03 millioner tonn forventet i 2026. Dette skaper et kortsiktig overkapasitetsproblem som demper prismakten til produsentene. Analytikere forventer at stengte fabrikker gradvis balanserer markedet.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">🔄</div>
+        <div class="driver-card-title">Konvertering fra grafisk papir</div>
+        <div class="driver-card-body">Strukturell nedgang i grafisk papir og aviser tvinger fabrikker til å konvertere kapasitet til emballasjepapir. Dette øker konkurransen i containerboard-segmentet, men bidrar også til konsolidering av bransjen. I 2026 forventes videre konsolidering i Europa.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== KAPASITET ======================== -->
+  <section class="section" id="kapasitet">
+    <div class="section-header">
+      <h2 class="section-title">Kapasitetsstatus — papirfabrikker</h2>
+      <span class="section-tag">Driftsrate · Ny kapasitet · Stenginger</span>
+    </div>
+
+    <div class="capacity-grid">
+      <div class="capacity-card">
+        <div class="capacity-title">Kraftliner — Europa</div>
+        <div class="capacity-subtitle">Virgin fiber liner</div>
+        <div class="capacity-bar-wrap">
+          <div class="capacity-bar-label"><span>Kapasitetsutnyttelse</span><span>~82–86%</span></div>
+          <div class="capacity-bar-bg"><div class="capacity-bar-fill green" style="width:84%"></div></div>
+        </div>
+        <div class="capacity-note">
+          Europa har relativt lite kraftliner-kapasitet sammenlignet med Nord-Amerika. Produsenter som SCA gjennomførte €60/t prisøkninger mai 2025. Ny kapasitet er begrenset siden det krever skogstilgang (virgin fiber). Konverteringsmuligheter fra kraftliner i Nord-Amerika kan øke import til Europa.
+        </div>
+      </div>
+      <div class="capacity-card">
+        <div class="capacity-title">Testliner / RCCM — Europa</div>
+        <div class="capacity-subtitle">Resirkulert containerboard</div>
+        <div class="capacity-bar-wrap">
+          <div class="capacity-bar-label"><span>Kapasitetsutnyttelse</span><span>~75–82%</span></div>
+          <div class="capacity-bar-bg"><div class="capacity-bar-fill amber" style="width:78%"></div></div>
+        </div>
+        <div class="capacity-note">
+          Ny kapasitet fra konvergering av trykkpapirfabrikker skaper press. Lave driftsrater, spesielt i Sør-Europa. Hamburger Containerboard, Saica og Smurfit Westrock er store aktører. IP tok over DS Smith i 2024. Markedet er i omstrukturering.
+        </div>
+      </div>
+      <div class="capacity-card">
+        <div class="capacity-title">rPET food-grade — Europa</div>
+        <div class="capacity-subtitle">Matgodkjent resirkulert PET</div>
+        <div class="capacity-bar-wrap">
+          <div class="capacity-bar-label"><span>Kapasitetsutnyttelse</span><span>Nær full</span></div>
+          <div class="capacity-bar-bg"><div class="capacity-bar-fill" style="width:96%;background:var(--down)"></div></div>
+        </div>
+        <div class="capacity-note">
+          Kun 12 EU-anlegg godkjent for food-grade rPET i 2024 med maks. 650.000 t/år kapasitet. Dette er dramatisk utilstrekkelig for PPWR-krav fra 2030. Enzymatisk resirkulering (Carbios, 2024) er lovende men kapasiteten er liten. Kritisk kapasitetsgap.
+        </div>
+      </div>
+      <div class="capacity-card">
+        <div class="capacity-title">FBB / Solid Board — Europa</div>
+        <div class="capacity-subtitle">Folded boxboard, virgin og resirkulert</div>
+        <div class="capacity-bar-wrap">
+          <div class="capacity-bar-label"><span>Kapasitetsutnyttelse</span><span>~84–88%</span></div>
+          <div class="capacity-bar-bg"><div class="capacity-bar-fill green" style="width:86%"></div></div>
+        </div>
+        <div class="capacity-note">
+          Solid board-segmentet er godt balansert. Stora Enso investerer €1 mrd. i Oulu-fabrikken for å øke resirkulert board-kapasitet. MM Group (Frohnleiten) har 570.000 t/år WLC-kapasitet. Billerud rapporterte SEK 11.100 mrd. i Q1 2025-omsetning. Kapasiteten er adekvat men investeringer skjer aktivt.
+        </div>
+      </div>
+      <div class="capacity-card">
+        <div class="capacity-title">PP / HDPE produkter — Europa</div>
+        <div class="capacity-subtitle">Emballasjeplast harpikser</div>
+        <div class="capacity-bar-wrap">
+          <div class="capacity-bar-label"><span>Kapasitetsutnyttelse</span><span>~78–84%</span></div>
+          <div class="capacity-bar-bg"><div class="capacity-bar-fill amber" style="width:81%"></div></div>
+        </div>
+        <div class="capacity-note">
+          Europeisk produksjon er konkurranseutsatt fra Midtøsten og Asia. Høye energipriser gir kostnadsulempe. Ledende konvertere som ALPLA og Greiner Packaging er store i Europa. HDPE-innsamling til resirkulering er under 2025-EU-målene — kapasitetsutbygging pågår.
+        </div>
+      </div>
+      <div class="capacity-card">
+        <div class="capacity-title">6-mnd utsikt: Kapasitetsjusteringer</div>
+        <div class="capacity-subtitle">Forventede hendelser H1 2026</div>
+        <div class="capacity-bar-wrap">
+          <div class="capacity-bar-label"><span>Markedsbalanse</span><span>Overforsynt→Balansert</span></div>
+          <div class="capacity-bar-bg"><div class="capacity-bar-fill amber" style="width:55%"></div></div>
+        </div>
+        <div class="capacity-note">
+          Videre fabrikkstenginger i grafisk papir forventes å redusere tilgjengeligheten i markedet. IP/DS Smith-integrasjonen sluttføres. Smurfit Westrock-synergier realiseres. PPWR-compliance-forberedelser øker investeringsnivå i resirkulert kapasitet for rPET, rPP og rHDPE.
+        </div>
+      </div>
+    </div>
+
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; margin-bottom: 20px;">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Stor M&A-aktivitet i papir/packaging — konsolidering pågår</h3>
+      <table>
+        <thead>
+          <tr><th>Transaksjon</th><th>Status</th><th>Effekt</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Smurfit Kappa kjøper WestRock</td><td>Fullført 2024</td><td>Ny #1 i Europa, #2 globalt (containerboard)</td></tr>
+          <tr><td>International Paper kjøper DS Smith</td><td>Fullført 2024</td><td>Styrker IP i Europa, #2 der</td></tr>
+          <tr><td>IP splitter seg i to selskaper</td><td>Annonsert 2026</td><td>Økt fokus, potensielt økt agilitet</td></tr>
+          <tr><td>Georgia-Pacific stenger Cedar Springs GA</td><td>August 2025</td><td>–1 mill. tonn NA, indirekte EU-effekt via eksport</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ======================== DRIVERE ======================== -->
+  <section class="section" id="drivere">
+    <div class="section-header">
+      <h2 class="section-title">Markedsdrivere</h2>
+      <span class="section-tag">Etterspørsel · Kapasitet · Regulering · Kostnader</span>
+    </div>
+
+    <div class="drivers-grid">
+      <div class="driver-card">
+        <div class="driver-card-icon">🛒</div>
+        <div class="driver-card-title">Etterspørsel: E-handel vokser strukturelt</div>
+        <div class="driver-card-body">EU online-dagligvare: €56 mrd. (2024), 4x siden 2020. Bølgepapp og solid board er de primære vinnerne. E-handel krever mer emballasje per solgt enhet enn fysisk handel. Etterspørselsveksten er robust og anslått til 3–5% CAGR for packaging-grade papir til 2030.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">🏭</div>
+        <div class="driver-card-title">Kapasitet: Nybygg presser ned priser</div>
+        <div class="driver-card-body">1,4 mill. tonn ny recycled containerboard-kapasitet ble tilsatt markedet i 2025. Ytterligere 1 mill. tonn forventes i 2026. Konvertering fra grafisk papir er den viktigste driveren. Strukturell overkapasitet demper kortsiktig prisvekst, men stenginger bidrar til rebalansering.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">📜</div>
+        <div class="driver-card-title">Regulering: PPWR endrer spillereglene</div>
+        <div class="driver-card-body">PPWR (EU 2025/40) trådte i kraft februar 2025, gjelder fra august 2026. Mandatory recycled content for plast, recyclability-krav, EPR-kostnader. Fiberbasert emballasje posisjonert gunstig. Plastprodusenter og -konvertere må investere i design-for-recycling og rPET/rPP-kapasitet.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">⚡</div>
+        <div class="driver-card-title">Energipriser: Europeisk ulempe</div>
+        <div class="driver-card-body">Europeisk energikostnad forblir høyere enn USA og Asia. Testliner-produksjon er svært naturgass-intensiv. Energipriskrise 2022–23 presset marginene hardt; situasjonen er bedret men ikke normalisert. EUDR (EU Deforestation Regulation) vil øke compliance-kostnader fra 2026.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">🌍</div>
+        <div class="driver-card-title">Import: Billig asiatisk plast presser ned</div>
+        <div class="driver-card-body">Kinesisk PET, PP og HDPE importeres til europeisk marked under produksjonskostnad. Europeisk plastikindustri er "vital for EU-økonomien" (Draghi-rapporten) men er under press. Anti-dumping-tiltak drøftes men er foreløpig begrenset. Import-presset holder prisene nede for virgin plast.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">♻️</div>
+        <div class="driver-card-title">OCC: Høye råvarekostnader for recycled board</div>
+        <div class="driver-card-body">Innsamlet korrugert papp (OCC) er hovedException råvaren for testliner og recycled board. OCC-prisen er forhøyet på grunn av høy etterspørsel fra fabrikker globalt, spesielt i Asia. Europeiske produsenter som Saica brukte dette som begrunnelse for €60/t prisøkning i 2025.</div>
+      </div>
+    </div>
+
+    <div class="price-table-wrap">
+      <div class="price-table-header">
+        <span class="price-table-title">Drivermatrise — innvirkning per materiale</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Driver</th>
+            <th>PET/rPET</th>
+            <th>PP/HDPE</th>
+            <th>Solid Board</th>
+            <th>Kraftliner</th>
+            <th>Testliner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>E-handel vekst</td>
+            <td>Nøytral</td>
+            <td>Nøytral</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv</td>
+          </tr>
+          <tr>
+            <td>PPWR regulering</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv (rPET)</td>
+            <td>Nøytral/blandet</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv</td>
+          </tr>
+          <tr>
+            <td>Ny kapasitet</td>
+            <td>Nøytral</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Negativt</td>
+            <td>Nøytral</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Negativt</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Negativt</td>
+          </tr>
+          <tr>
+            <td>Billig import (Asia)</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Negativt</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Negativt</td>
+            <td>Begrenset</td>
+            <td>Begrenset</td>
+            <td>Begrenset</td>
+          </tr>
+          <tr>
+            <td>Energipriser</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Kostnadsdrivende</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Kostnadsdrivende</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Kostnadsdrivende</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Kostnadsdrivende</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Sterk negativ</td>
+          </tr>
+          <tr>
+            <td>Plastsubstitusjon</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Negativt for PET</td>
+            <td class="trend-cell trend-down" style="font-weight:400">↓ Negativt</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Sterkt positiv</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv</td>
+            <td class="trend-cell trend-up" style="font-weight:400">↑ Positiv</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ======================== REGULERING ======================== -->
+  <section class="section" id="regulering">
+    <div class="section-header">
+      <h2 class="section-title">Regulatorisk rammeverk</h2>
+      <span class="section-tag">PPWR · EPR · EUDR · Green Claims</span>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">Des.<br>2024</div>
+        <div class="timeline-content">
+          <div class="timeline-rule">PPWR vedtatt — Regulation (EU) 2025/40</div>
+          <div class="timeline-desc">EU-parlamentet og Rådet vedtar PPWR som erstatter direktiv 94/62/EF. Direkte anvendelig i alle EU-land.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">Feb.<br>2025</div>
+        <div class="timeline-content">
+          <div class="timeline-rule">PPWR trer i kraft</div>
+          <div class="timeline-desc">Publikasjon i Official Journal. 18-måneders overgangsperiode begynner.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">Aug.<br>2026</div>
+        <div class="timeline-content">
+          <div class="timeline-rule">PPWR: Generell anvendelsesdato</div>
+          <div class="timeline-desc">Kjerneforpliktelser: design-krav, registrering, rapportering. PFAS-forbud i emballasje. Krav om å tilby kunder å ta med egne beholdere hos take-away.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2027</div>
+        <div class="timeline-content">
+          <div class="timeline-rule">Digital merking + DPP-krav</div>
+          <div class="timeline-desc">Digital Product Passport og digital merking av emballasje begynner å gjelde.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2029</div>
+        <div class="timeline-content">
+          <div class="timeline-rule">Depositum-systemer (DRS) innfases</div>
+          <div class="timeline-desc">Alle EU-land må ha operative deposit return systems for PET-flasker og metalldåser.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2030</div>
+        <div class="timeline-content">
+          <div class="timeline-rule">Store milestone: Recyclability + Recycled Content</div>
+          <div class="timeline-desc">All emballasje på EU-markedet designet for resirkulering (grade A, B eller C). Plastpaknings recycled content minimumskrav innfases. 40% av transportemballasje må gjenbrukes. 65% av all emballasje skal resirkuleres.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2035</div>
+        <div class="timeline-content">
+          <div class="timeline-rule">Recycled at scale-krav</div>
+          <div class="timeline-desc">Emballasje må ikke bare være designet for resirkulering, men faktisk resirkuleres i eksisterende infrastruktur.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2040</div>
+        <div class="timeline-content">
+          <div class="timeline-rule">Økte recycled content targets</div>
+          <div class="timeline-desc">Høyere minimumsprosenter for resirkulert innhold i plastpakninger. Endelige mål for klimanøytral emballasje.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="price-table-wrap">
+      <div class="price-table-header">
+        <span class="price-table-title">PPWR recycled content krav for plast (Art. 7, Annex I)</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Plasttype</th><th>Krav 2030</th><th>Krav 2040</th><th>Kommentar</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PET-flasker (kontakt-sensitive)</td><td>25% rPET</td><td>50% rPET</td><td>Raskeste vekst i etterspørsel etter rPET</td></tr>
+          <tr><td>Andre plastflasker</td><td>25%</td><td>50%</td><td>Inkl. HDPE, PP-flasker</td></tr>
+          <tr><td>Plastfilm og fleksibel</td><td>20%</td><td>35%</td><td>Teknisk krevende for barrierefilm</td></tr>
+          <tr><td>Helsesegmentet</td><td>Unntak</td><td>Vurderes</td><td>Sikkerhets- og hygienehensyn</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="drivers-grid">
+      <div class="driver-card">
+        <div class="driver-card-icon">🌲</div>
+        <div class="driver-card-title">EUDR: EU Deforestation Regulation</div>
+        <div class="driver-card-body">EUDR krever dokumentasjon på at skogsbaserte produkter ikke bidrar til avskoging. Trer i kraft for emballasjepapir fra 2026. Øker compliance-kostnadene og kan påvirke forsyningskjeder for kraftliner og virgin board fra visse regioner. Fastmarkets peker på dette som en "volatilitetsfaktor" for 2026.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">💰</div>
+        <div class="driver-card-title">EPR: Extended Producer Responsibility</div>
+        <div class="driver-card-body">EPR-gebyr eco-moduleres basert på resirkulerbarhet og recycled content. Emballasje som er lettere å resirkulere betaler lavere gebyr. Dette skaper direkte kostnadsincitament for å velge resirkulerbare materialer og øke recycled content, uavhengig av PPWR-krav.</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-card-icon">🎯</div>
+        <div class="driver-card-title">Green Claims Directive</div>
+        <div class="driver-card-body">Fra 2026 er grønne markedsføringspåstander om emballasje ("eco-friendly", "sustainable") underlagt dokumentasjons- og verifiseringskrav. Vag greenwashing er ulovlig. Dette presser merkevarer til faktisk å ha dokumenterte, verifiserte bærekraftdata for emballasjematerialene sine.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== KILDER ======================== -->
+  <section class="section" id="kilder">
+    <div class="section-header">
+      <h2 class="section-title">Kilder og metode</h2>
+      <span class="section-tag">Datagrunnlag · Abonnementer · Oppdateringsfrekvens</span>
+    </div>
+
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; margin-bottom: 20px; font-size: 13px; line-height: 1.7;">
+      <p><strong>Metode:</strong> Prisene i denne rapporten er indikative referansepunkter basert på offentlig tilgjengelig markedsintelligens og bransjekilder. For presise kontraktspriser og ukentlige oppdateringer anbefales direkte abonnement på spesialiserte prisagenturer. Denne rapporten gir kontekstuell forståelse og markedsretning — ikke erstatning for profesjonelle prisindekser.</p>
+    </div>
+
+    <div class="sources-list">
+      <div class="source-item">
+        <div class="source-num">01</div>
+        <div>
+          <div class="source-name">ICIS (Independent Chemical Information Service)</div>
+          <div class="source-desc">Ledende europeisk prisintelligens for polymer-harpikser: PET, rPET, PP, PE, HDPE. Ukentlige prisoppdateringer, markedsanalyser og outlook. Inkl. EMEA Plastics Mid-Year Outlook.</div>
+          <span class="source-type">Betalt abonnement</span>
+          <a href="https://www.icis.com" target="_blank" style="font-size:11px;color:var(--accent2);margin-left:8px;">icis.com</a>
+        </div>
+      </div>
+      <div class="source-item">
+        <div class="source-num">02</div>
+        <div>
+          <div class="source-name">Fastmarkets (tidl. RISI / Foex)</div>
+          <div class="source-desc">Prisindekser for papir og board: kraftliner, testliner, fluting, solid board. PIX-indeksene (Pulp & Paper Week) er markedsstandarder i Europa. Publiserer løpende markedsanalyser, inkl. containerboard outlook.</div>
+          <span class="source-type">Betalt abonnement</span>
+          <a href="https://www.fastmarkets.com" target="_blank" style="font-size:11px;color:var(--accent2);margin-left:8px;">fastmarkets.com</a>
+        </div>
+      </div>
+      <div class="source-item">
+        <div class="source-num">03</div>
+        <div>
+          <div class="source-name">EUWID Pulp & Paper</div>
+          <div class="source-desc">Europeisk spesialpublikasjon for papir- og kartongmarkedet. Sporer priser og markedstrender i alle større europeiske markeder: Germany, UK, France, Spain, Italy, Benelux. Corrugated Case Material (kraftliner, testliner, fluting) og folding boxboard.</div>
+          <span class="source-type">Betalt abonnement</span>
+          <a href="https://www.euwid-paper.com" target="_blank" style="font-size:11px;color:var(--accent2);margin-left:8px;">euwid-paper.com</a>
+        </div>
+      </div>
+      <div class="source-item">
+        <div class="source-num">04</div>
+        <div>
+          <div class="source-name">PlasticPortal / myCEPPI</div>
+          <div class="source-desc">Ukentlige prisrapporter for PE-LD, PE-HD, PP og PS i Sentral- og Øst-Europa. Gratis prisindikator med 4 ukers forsinkelse. myCEPPI er den underliggende dataleverandøren med månedlige intervjuer med konvertere og tradere.</div>
+          <span class="source-type">Delvis gratis</span>
+          <a href="https://plasticker.de" target="_blank" style="font-size:11px;color:var(--accent2);margin-left:8px;">plasticker.de/plasticportal</a>
+        </div>
+      </div>
+      <div class="source-item">
+        <div class="source-num">05</div>
+        <div>
+          <div class="source-name">Packaging Europe</div>
+          <div class="source-desc">Ledende bransjemedium for europeisk emballasjebransje. Dekker PET, rPET, regulering (PPWR), bærekraft og markedstrender. Rapporterte bl.a. den detaljerte Petcore-konferanseanalysen om rPET-markedet i Europa (feb. 2025).</div>
+          <span class="source-type">Gratis / Betalt</span>
+          <a href="https://packagingeurope.com" target="_blank" style="font-size:11px;color:var(--accent2);margin-left:8px;">packagingeurope.com</a>
+        </div>
+      </div>
+      <div class="source-item">
+        <div class="source-num">06</div>
+        <div>
+          <div class="source-name">EMGE Price Monitor</div>
+          <div class="source-desc">Spesialisert rådgiver for papirbransjen med månedlig Price Monitor som dekker containerboard, cartonboard og grafisk papir for Europa. Publiserer bransje-outlook inkl. 2026-prognoser.</div>
+          <span class="source-type">Betalt abonnement</span>
+          <a href="https://www.emge.com" target="_blank" style="font-size:11px;color:var(--accent2);margin-left:8px;">emge.com</a>
+        </div>
+      </div>
+      <div class="source-item">
+        <div class="source-num">07</div>
+        <div>
+          <div class="source-name">Plasticsrecyclers.eu (PRE)</div>
+          <div class="source-desc">European Plastics Recyclers' Association — publiserer markedsdata, innsamlingsrater og kapasitetsdata for PET, HDPE og PP i Europa. Grunndata for recycled content-analyser.</div>
+          <span class="source-type">Gratis</span>
+          <a href="https://www.plasticsrecyclers.eu" target="_blank" style="font-size:11px;color:var(--accent2);margin-left:8px;">plasticsrecyclers.eu</a>
+        </div>
+      </div>
+      <div class="source-item">
+        <div class="source-num">08</div>
+        <div>
+          <div class="source-name">EU-kommisjonen / EUR-Lex</div>
+          <div class="source-desc">Offisielle tekster for PPWR (Regulation EU 2025/40), EUDR og annen relevant EU-lovgivning. Primærkilde for regulatorisk analyse.</div>
+          <span class="source-type">Gratis</span>
+          <a href="https://environment.ec.europa.eu" target="_blank" style="font-size:11px;color:var(--accent2);margin-left:8px;">ec.europa.eu</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #f0f5ff; border: 1px solid #c0d0ff; border-radius: 6px; padding: 16px 20px; margin-top: 20px; font-size: 13px;">
+      <strong>💡 Tips for løpende oppfølging:</strong> For et systematisk prisovervåkingssystem anbefales kombinasjonen av:
+      <ul style="margin: 10px 0 0 16px; line-height: 2;">
+        <li>ICIS Weekly Polymer Report (plast)</li>
+        <li>Fastmarkets PIX månedlig (papir/board)</li>
+        <li>EUWID ukentlig (europeiske papirmarkeder)</li>
+        <li>PlasticPortal gratis indikator (CEE-marked)</li>
+        <li>Packaging Europe nyhetsbrev (bransjenyheter)</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="report-footer">
+  <span>EMBALLASJEPRISRAPPORT — EUROPA &nbsp;|&nbsp; FMCG-FOKUS</span>
+  <span>Oppdatert: Februar 2026 &nbsp;|&nbsp; Neste oppdatering: Kvartalvis</span>
+  <span>Indikative priser — ikke erstatning for profesjonelle prisindekser</span>
+</footer>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+</body>
+</html>
