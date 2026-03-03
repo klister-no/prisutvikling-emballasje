@@ -1,9 +1,9 @@
 name: Oppdater Emballasjerapport
 
 on:
-  # Kjør automatisk første mandag hver måned kl. 07:00
+  # Kjør automatisk søndag natt kl. 03:00 (rolig tid på API)
   schedule:
-    - cron: '0 7 1-7 * 1'
+    - cron: '0 3 * * 0'
   
   # Tillat manuell kjøring fra GitHub-grensesnittet
   workflow_dispatch:
