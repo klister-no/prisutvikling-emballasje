@@ -4,671 +4,388 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Europeiske Emballasjematerialpriser – Q1 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #0f1117; --paper: #f5f1eb; --accent: #c8401a;
+  --up: #1a8c4a; --down: #c8401a; --flat: #8a6e2a;
+  --border: #d8d2c8; --card: #ffffff; --muted: #7a7570;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--paper); color: var(--ink); font-size: 14px; line-height: 1.6; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #f5f1eb;
-    color: #1a1a1a;
-    min-height: 100vh;
-  }
+.report-header { background: var(--ink); color: var(--paper); padding: 40px 48px 28px; }
+.report-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,241,235,0.5); margin-bottom: 12px; }
+.report-title { font-family: 'DM Serif Display', serif; font-size: 38px; line-height: 1.1; color: var(--paper); }
+.report-title span { color: var(--accent); }
+.report-sub { color: rgba(245,241,235,0.6); font-size: 14px; margin-top: 8px; }
+.report-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(245,241,235,0.35); margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(245,241,235,0.1); }
+.report-badge { display: inline-block; background: var(--accent); color: white; font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 3px; float: right; margin-top: -2px; }
 
-  /* HEADER */
-  .site-header {
-    background: #0f1117;
-    color: #fff;
-    padding: 0;
-  }
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 28px 40px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .header-brand {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .header-flag {
-    font-size: 2.2rem;
-    line-height: 1;
-  }
-  .header-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.75rem;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-  }
-  .header-title span {
-    color: #c8401a;
-  }
-  .header-meta {
-    text-align: right;
-  }
-  .header-meta .badge-quarter {
-    display: inline-block;
-    background: #c8401a;
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 3px;
-    margin-bottom: 6px;
-  }
-  .header-meta .update-date {
-    display: block;
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.5);
-    font-weight: 400;
-  }
+.nav-tabs { background: var(--ink); padding: 0 48px; display: flex; overflow-x: auto; border-top: 1px solid rgba(255,255,255,0.08); }
+.nav-tab { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(245,241,235,0.4); padding: 14px 18px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.15s; user-select: none; }
+.nav-tab:hover { color: rgba(245,241,235,0.75); }
+.nav-tab.active { color: var(--paper); border-bottom-color: var(--accent); }
 
-  /* WARNING BANNER */
-  .warning-banner {
-    background: #2a1f0a;
-    border-left: 4px solid #d4920a;
-    padding: 12px 40px;
-    font-size: 0.78rem;
-    color: #e8c570;
-    line-height: 1.6;
-  }
-  .warning-banner strong {
-    color: #f0d080;
-  }
+.main { max-width: 1280px; margin: 0 auto; padding: 36px 48px; }
+.section { display: none; }
 
-  /* NAV */
-  .nav-bar {
-    background: #0f1117;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    padding: 0 40px;
-    display: flex;
-    gap: 2px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .nav-bar::-webkit-scrollbar { display: none; }
+.sec-header { margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.sec-title { font-family: 'DM Serif Display', serif; font-size: 26px; }
+.sec-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; background: var(--ink); color: var(--paper); margin-left: 12px; vertical-align: middle; }
 
-  .nav-tab {
-    color: rgba(255,255,255,0.55);
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 14px 18px;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    white-space: nowrap;
-    transition: color 0.2s, border-color 0.2s;
-    user-select: none;
-  }
-  .nav-tab:hover {
-    color: rgba(255,255,255,0.85);
-  }
-  .nav-tab.active {
-    color: #fff;
-    border-bottom-color: #c8401a;
-  }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.kpi { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 18px; }
+.kpi-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.kpi-value { font-family: 'DM Serif Display', serif; font-size: 26px; line-height: 1; margin-bottom: 4px; }
+.kpi-trend { font-size: 12px; font-weight: 600; }
 
-  /* MAIN */
-  .main-wrap {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 22px; }
+.card-head { padding: 13px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-title { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.card-note { font-size: 11px; color: var(--muted); }
 
-  /* SECTION TITLES */
-  .section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
-    font-weight: 400;
-    color: #0f1117;
-    margin-bottom: 6px;
-    letter-spacing: -0.02em;
-  }
-  .section-subtitle {
-    font-size: 0.9rem;
-    color: #6b6b6b;
-    margin-bottom: 32px;
-    font-weight: 400;
-    line-height: 1.5;
-  }
+table { width: 100%; border-collapse: collapse; }
+thead th { background: #f8f5f0; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+tbody td { padding: 10px 14px; border-bottom: 1px solid #f0ece4; font-size: 13px; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #faf7f2; }
+.mat-name { font-weight: 500; }
+.mat-sub { font-size: 11px; color: var(--muted); }
 
-  /* CARDS GRID */
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 36px;
-  }
-  .card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 22px 20px;
-    border: 1px solid #e8e2d9;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  }
-  .card-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #888;
-    margin-bottom: 8px;
-  }
-  .card-value {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.7rem;
-    color: #0f1117;
-    line-height: 1.1;
-    margin-bottom: 4px;
-  }
-  .card-unit {
-    font-size: 0.75rem;
-    color: #999;
-    font-weight: 400;
-  }
-  .card-trend {
-    margin-top: 10px;
-    font-size: 0.78rem;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 4px;
-    display: inline-block;
-  }
-  .trend-up { color: #1a8c4a; background: #eaf6ef; }
-  .trend-down { color: #c8401a; background: #fdf0ed; }
-  .trend-flat { color: #8a6e2a; background: #fdf7ed; }
+.up { color: var(--up); font-weight: 600; }
+.down { color: var(--down); font-weight: 600; }
+.flat { color: var(--flat); font-weight: 600; }
 
-  /* TABLES */
-  .table-wrap {
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #e8e2d9;
-    overflow: hidden;
-    margin-bottom: 28px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
-  }
-  .table-header-bar {
-    background: #0f1117;
-    color: #fff;
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .table-header-bar h3 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.05rem;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-  }
-  .table-header-bar .table-badge {
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  thead th {
-    background: #f5f1eb;
-    color: #555;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 11px 24px;
-    text-align: left;
-    border-bottom: 1px solid #e8e2d9;
-  }
-  tbody tr {
-    border-bottom: 1px solid #f0ebe3;
-    transition: background 0.15s;
-  }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #faf8f4; }
-  tbody td {
-    padding: 13px 24px;
-    font-size: 0.88rem;
-    vertical-align: middle;
-  }
-  .mat-name {
-    font-weight: 600;
-    color: #0f1117;
-  }
-  .mat-sub {
-    font-size: 0.74rem;
-    color: #999;
-    font-weight: 400;
-    margin-top: 2px;
-  }
-  .price-range {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.05rem;
-    color: #0f1117;
-  }
-  .trend-cell {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 5px;
-  }
-  .trend-cell.up { color: #1a8c4a; background: #eaf6ef; }
-  .trend-cell.down { color: #c8401a; background: #fdf0ed; }
-  .trend-cell.flat { color: #8a6e2a; background: #fdf7ed; }
+.badge { display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 3px; }
+.bp { background: #dbeafe; color: #1a5fc8; }
+.bf { background: #d1fae5; color: #1a7a3a; }
+.bc { background: #fde8d0; color: #8a4a1a; }
 
-  /* INFO BOXES */
-  .info-box {
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid #e8e2d9;
-    padding: 22px 24px;
-    margin-bottom: 20px;
-  }
-  .info-box h4 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.05rem;
-    font-weight: 400;
-    color: #0f1117;
-    margin-bottom: 10px;
-  }
-  .info-box p, .info-box li {
-    font-size: 0.86rem;
-    color: #444;
-    line-height: 1.7;
-  }
-  .info-box ul {
-    padding-left: 18px;
-  }
-  .info-box li { margin-bottom: 6px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 16px; margin-bottom: 22px; }
+.dcard { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 18px; }
+.dcard-icon { font-size: 20px; margin-bottom: 8px; }
+.dcard-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.dcard-body { font-size: 13px; color: #3a3530; line-height: 1.65; }
 
-  .info-box.accent-left {
-    border-left: 4px solid #c8401a;
-  }
-  .info-box.accent-green {
-    border-left: 4px solid #1a8c4a;
-  }
-  .info-box.accent-gold {
-    border-left: 4px solid #8a6e2a;
-  }
+.tl { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; margin-bottom: 22px; }
+.tl-item { display: flex; gap: 18px; padding: 12px 0; border-bottom: 1px solid #f0ece4; }
+.tl-item:last-child { border-bottom: none; }
+.tl-year { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--accent); min-width: 52px; line-height: 1.2; }
+.tl-rule { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+.tl-desc { font-size: 12px; color: var(--muted); }
 
-  /* NEWS ITEMS */
-  .news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 18px;
-    margin-bottom: 28px;
-  }
-  .news-card {
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid #e8e2d9;
-    padding: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  }
-  .news-card .news-num {
-    display: inline-block;
-    background: #c8401a;
-    color: #fff;
-    font-size: 0.68rem;
-    font-weight: 700;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 22px;
-    margin-bottom: 10px;
-  }
-  .news-card h4 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 0.98rem;
-    font-weight: 400;
-    color: #0f1117;
-    margin-bottom: 8px;
-    line-height: 1.3;
-  }
-  .news-card p {
-    font-size: 0.82rem;
-    color: #555;
-    line-height: 1.65;
-  }
+.alert { background: #fff8f0; border: 1px solid #f0d0b0; border-radius: 6px; padding: 13px 18px; font-size: 13px; margin-bottom: 20px; line-height: 1.65; }
+.info { background: #f0f5ff; border: 1px solid #c0d0ee; border-radius: 6px; padding: 13px 18px; font-size: 13px; margin-top: 18px; line-height: 1.65; }
 
-  /* CAPACITY TABLE */
-  .cap-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .cap-card {
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid #e8e2d9;
-    padding: 20px;
-  }
-  .cap-card .cap-sector {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #c8401a;
-    margin-bottom: 8px;
-  }
-  .cap-card h4 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1rem;
-    font-weight: 400;
-    color: #0f1117;
-    margin-bottom: 8px;
-  }
-  .cap-card p {
-    font-size: 0.82rem;
-    color: #555;
-    line-height: 1.65;
-  }
-  .cap-card .cap-status {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 4px;
-  }
-  .status-closing { background: #fdf0ed; color: #c8401a; }
-  .status-stable { background: #eaf6ef; color: #1a8c4a; }
-  .status-expanding { background: #edf4ff; color: #1a5cc8; }
+.cap-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 18px; }
+.cap-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.cap-sub { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.06em; }
+.bar-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+.bar-bg { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+.bar-fill { height: 100%; border-radius: 4px; }
+.bar-g { background: var(--up); }
+.bar-a { background: var(--flat); }
+.bar-r { background: var(--down); }
+.cap-note { font-size: 12px; color: var(--muted); line-height: 1.55; }
 
-  /* REGULATION */
-  .reg-timeline {
-    position: relative;
-    padding-left: 32px;
-    margin-bottom: 28px;
-  }
-  .reg-timeline::before {
-    content: '';
-    position: absolute;
-    left: 10px;
-    top: 4px;
-    bottom: 4px;
-    width: 2px;
-    background: #e8e2d9;
-  }
-  .reg-item {
-    position: relative;
-    margin-bottom: 22px;
-  }
-  .reg-item::before {
-    content: '';
-    position: absolute;
-    left: -26px;
-    top: 5px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #c8401a;
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 2px #c8401a;
-  }
-  .reg-item .reg-date {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #c8401a;
-    margin-bottom: 4px;
-  }
-  .reg-item h4 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 0.98rem;
-    font-weight: 400;
-    color: #0f1117;
-    margin-bottom: 6px;
-  }
-  .reg-item p {
-    font-size: 0.83rem;
-    color: #555;
-    line-height: 1.65;
-  }
+.src-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0ece4; font-size: 13px; }
+.src-item:last-child { border-bottom: none; }
+.src-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); min-width: 22px; }
+.src-name { font-weight: 500; margin-bottom: 2px; }
+.src-desc { color: var(--muted); font-size: 12px; }
+.src-type { font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 6px; border-radius: 3px; background: #f0ece4; color: var(--muted); display: inline-block; margin-top: 3px; }
 
-  /* SOURCES */
-  .sources-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 14px;
-    margin-bottom: 28px;
-  }
-  .source-card {
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid #e8e2d9;
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .source-card .src-type {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #888;
-  }
-  .source-card h4 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #0f1117;
-  }
-  .source-card p {
-    font-size: 0.8rem;
-    color: #666;
-    line-height: 1.55;
-  }
-  .source-card .src-access {
-    font-size: 0.73rem;
-    font-weight: 500;
-    color: #c8401a;
-    margin-top: 4px;
-  }
+.trend-row { display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+.trend-box { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; flex: 1; min-width: 200px; }
+.trend-num { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--accent); }
+.trend-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
-  /* DRIVER BARS */
-  .driver-item {
-    background: #fff;
-    border-radius: 10px;
-    border: 1px solid #e8e2d9;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-    display: flex;
-    gap: 18px;
-    align-items: flex-start;
-  }
-  .driver-icon {
-    font-size: 1.6rem;
-    flex-shrink: 0;
-    line-height: 1;
-    margin-top: 2px;
-  }
-  .driver-content h4 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 0.98rem;
-    font-weight: 400;
-    color: #0f1117;
-    margin-bottom: 5px;
-  }
-  .driver-content p {
-    font-size: 0.82rem;
-    color: #555;
-    line-height: 1.65;
-  }
-  .driver-impact {
-    margin-top: 8px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 4px;
-    display: inline-block;
-  }
-  .impact-bearish { background: #fdf0ed; color: #c8401a; }
-  .impact-bullish { background: #eaf6ef; color: #1a8c4a; }
-  .impact-mixed { background: #fdf7ed; color: #8a6e2a; }
+footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48px; font-family: 'DM Mono', monospace; font-size: 10px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
 
-  /* FOOTER */
-  .page-footer {
-    background: #0f1117;
-    color: rgba(255,255,255,0.4);
-    text-align: center;
-    padding: 20px 24px;
-    font-size: 0.75rem;
-    line-height: 1.6;
-  }
-  .page-footer strong { color: rgba(255,255,255,0.7); }
-
-  /* DIVIDER */
-  .divider {
-    height: 1px;
-    background: #e8e2d9;
-    margin: 28px 0;
-  }
-
-  /* UTIL */
-  .text-muted { color: #888; font-size: 0.8rem; }
-  .mt-4 { margin-top: 28px; }
-  .mb-2 { margin-bottom: 14px; }
-  .flex-row { display: flex; gap: 16px; flex-wrap: wrap; }
-  .flex-1 { flex: 1; min-width: 280px; }
-
-  @media (max-width: 640px) {
-    .header-top { padding: 20px 16px 16px; }
-    .warning-banner { padding: 10px 16px; }
-    .nav-bar { padding: 0 8px; }
-    .nav-tab { padding: 12px 12px; font-size: 0.72rem; }
-    .main-wrap { padding: 24px 12px 60px; }
-    .section-title { font-size: 1.5rem; }
-    thead th, tbody td { padding: 10px 14px; }
-  }
+@media (max-width: 768px) {
+  .report-header, .main, .nav-tabs, footer { padding-left: 20px; padding-right: 20px; }
+  .report-title { font-size: 28px; }
+  thead th, tbody td { padding: 8px 10px; }
+}
 </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="header-top">
-    <div class="header-brand">
-      <div class="header-flag">🇪🇺</div>
-      <div>
-        <div class="header-title">Europeiske <span>Emballasjematerialpriser</span></div>
-        <div style="font-size:0.78rem;color:rgba(255,255,255,0.45);margin-top:4px;">Markedsrapport · Plastmaterialer · Kartonger · Bølgepapp</div>
-      </div>
-    </div>
-    <div class="header-meta">
-      <div class="badge-quarter">Q1 2026</div>
-      <span class="update-date">Oppdatert 08. mars 2026</span>
-    </div>
-  </div>
-
-  <div class="warning-banner">
-    <strong>⚠ Merknad om datakvalitet:</strong> Detaljerte abonnementsbaserte prisdata (EUWID, FOEX, ICIS, Fastmarkets) er bak betalingsmur. Prisintervallene er basert på nyeste offentlige kilder kombinert med kjente markedstrender inn i Q1 2026. Verifiser mot ICIS, FOEX PIX eller EUWID for nøyaktige kontrakts-/spotpriser.
-  </div>
-
-  <nav class="nav-bar">
-    <div class="nav-tab" onclick="showSection('overview')">Oversikt</div>
-    <div class="nav-tab" onclick="showSection('plast')">Plastmaterialer</div>
-    <div class="nav-tab" onclick="showSection('fiber')">Solid Board</div>
-    <div class="nav-tab" onclick="showSection('corrugated')">Bolgeapp</div>
-    <div class="nav-tab" onclick="showSection('kapasitet')">Kapasitet</div>
-    <div class="nav-tab" onclick="showSection('drivere')">Markedsdrivere</div>
-    <div class="nav-tab" onclick="showSection('regulering')">Regulering</div>
-    <div class="nav-tab" onclick="showSection('kilder')">Kilder</div>
-  </nav>
+<header class="report-header">
+  <div class="report-eyebrow">🇪🇺 Europeisk marked · FMCG Emballasje · Prisovervåkning</div>
+  <h1 class="report-title">Europeiske <span>Emballasjematerialpriser</span>
+    <span class="report-badge">Q1 2026</span>
+  </h1>
+  <p class="report-sub">Markedsrapport · Plastmaterialer · Kartonger · Bølgepapp</p>
+  <div class="report-meta">Oppdatert 08. mars 2026 · Kilde: FOEX/PIX, ICIS, EUWID, ChemOrbis, PlasticPortal · Alle priser i EUR/tonn · Spotpriser kan avvike</div>
 </header>
 
-<main class="main-wrap">
+<nav class="nav-tabs">
+  <div class="nav-tab" onclick="showSection('overview')">Oversikt</div>
+  <div class="nav-tab" onclick="showSection('plast')">Plastmaterialer</div>
+  <div class="nav-tab" onclick="showSection('fiber')">Solid Board</div>
+  <div class="nav-tab" onclick="showSection('corrugated')">Bølgepapp</div>
+  <div class="nav-tab" onclick="showSection('kapasitet')">Kapasitet</div>
+  <div class="nav-tab" onclick="showSection('drivere')">Markedsdrivere</div>
+  <div class="nav-tab" onclick="showSection('regulering')">Regulering</div>
+  <div class="nav-tab" onclick="showSection('kilder')">Kilder</div>
+</nav>
 
-  <!-- ============================================================ -->
-  <!-- OVERSIKT -->
-  <!-- ============================================================ -->
-  <section class="section" id="overview">
-    <div class="section-title">Markedsoversikt</div>
-    <div class="section-subtitle">Samlet prisindeks for europeiske emballasjematerialer · Q1 2026 · Alle priser i €/tonn</div>
+<main class="main">
 
-    <div class="cards-grid">
-      <div class="card">
-        <div class="card-label">PET Virgin</div>
-        <div class="card-value">950–1 100</div>
-        <div class="card-unit">€/tonn</div>
-        <div class="card-trend trend-flat">➡ Flat/svakt ned</div>
-      </div>
-      <div class="card">
-        <div class="card-label">rPET Klar food-grade</div>
-        <div class="card-value">1 300–1 600</div>
-        <div class="card-unit">€/tonn</div>
-        <div class="card-trend trend-down">⬇ Ned</div>
-      </div>
-      <div class="card">
-        <div class="card-label">PP Homopolymer</div>
-        <div class="card-value">850–1 000</div>
-        <div class="card-unit">€/tonn</div>
-        <div class="card-trend trend-down">⬇ Ned/flat</div>
-      </div>
-      <div class="card">
-        <div class="card-label">Kraftliner (brun)</div>
-        <div class="card-value">540–650</div>
-        <div class="card-unit">€/tonn</div>
-        <div class="card-trend trend-up">⬆ Svakt opp</div>
-      </div>
-      <div class="card">
-        <div class="card-label">FBB Folding Boxboard</div>
-        <div class="card-value">850–1 050</div>
-        <div class="card-unit">€/tonn</div>
-        <div class="card-trend trend-flat">➡ Flat/svakt opp</div>
-      </div>
-      <div class="card">
-        <div class="card-label">OCC Resirkulert</div>
-        <div class="card-value">70–130</div>
-        <div class="card-unit">€/tonn</div>
-        <div class="card-trend trend-flat">➡ Flat/svakt ned</div>
-      </div>
+<!-- OVERSIKT -->
+<section class="section" id="overview">
+  <div class="sec-header"><h2 class="sec-title">Markedsoversikt<span class="sec-tag">Q1 2026</span></h2></div>
+
+  <div class="alert">⚠ <strong>Merknad om datakvalitet:</strong> Detaljerte abonnementsbaserte prisdata (EUWID, FOEX, ICIS, Fastmarkets) er bak betalingsmur. Prisintervallene er basert på nyeste offentlige kilder kombinert med kjente markedstrender inn i Q1 2026. Verifiser mot ICIS, FOEX PIX eller EUWID for nøyaktige kontrakts-/spotpriser.</div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">PET Virgin</div><div class="kpi-value down">800–950</div><div class="kpi-trend down">↘ Flat/svak ned</div></div>
+    <div class="kpi"><div class="kpi-label">rPET food-grade</div><div class="kpi-value down">1 200–1 700</div><div class="kpi-trend flat">↔ Flat/svak</div></div>
+    <div class="kpi"><div class="kpi-label">PP Homopolymer</div><div class="kpi-value flat">850–1 000</div><div class="kpi-trend down">↘ Ned/flat</div></div>
+    <div class="kpi"><div class="kpi-label">Kraftliner (brun)</div><div class="kpi-value up">540–650</div><div class="kpi-trend up">↗ Svakt opp</div></div>
+    <div class="kpi"><div class="kpi-label">FBB Folding Boxboard</div><div class="kpi-value flat">850–1 050</div><div class="kpi-trend flat">↔ Flat/svakt opp</div></div>
+    <div class="kpi"><div class="kpi-label">OCC Resirkulert</div><div class="kpi-value flat">70–130</div><div class="kpi-trend flat">↔ Flat/svakt ned</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">Komplett prismatrise — alle materialer</span>
+      <span class="card-note">€/tonn · Q1 2026</span>
     </div>
+    <table>
+      <thead>
+        <tr><th>Materiale</th><th>Kategori</th><th>Prisintervall (€/t)</th><th>Referansepris</th><th>Trend Q4→Q1</th><th>Merknad</th></tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="6" style="background:#f8f5f0;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);padding:8px 14px;">🧴 PLASTMATERIALER</td></tr>
+        <tr><td><div class="mat-name">PET virgin</div><div class="mat-sub">Flaskegrad, NWE</div></td><td><span class="badge bp">Plast</span></td><td>~800 – 950</td><td>~850</td><td><span class="down">↘ Ned</span></td><td>Anti-dumping mot Vietnam innledet</td></tr>
+        <tr><td><div class="mat-name">rPET food-grade</div><div class="mat-sub">Klare flak/pellets</div></td><td><span class="badge bp">Plast</span></td><td>~1 200 – 1 700</td><td>~1 500</td><td><span class="flat">↔ Flat/svak</span></td><td>Food-grade granuler €1 400–1 700</td></tr>
+        <tr><td><div class="mat-name">PP homopolymer</div><div class="mat-sub">FCA Antwerpen</div></td><td><span class="badge bp">Plast</span></td><td>~900 – 1 000</td><td>~920</td><td><span class="down">↘ Flat/svak ned</span></td><td>Kinesisk overkapasitet presser</td></tr>
+        <tr><td><div class="mat-name">PP kopolymer</div><div class="mat-sub">FCA Antwerpen</div></td><td><span class="badge bp">Plast</span></td><td>~980 – 1 010</td><td>~995</td><td><span class="down">↘ Flat/svak ned</span></td><td>Svak bil- og byggeetterspørsel</td></tr>
+        <tr><td><div class="mat-name">HDPE</div><div class="mat-sub">NWE / Sentral-Europa</div></td><td><span class="badge bp">Plast</span></td><td>~880 – 1 050</td><td>~950</td><td><span class="down">↘ Ned</span></td><td>Structurelt prispress</td></tr>
+        <tr><td><div class="mat-name">LDPE film</div><div class="mat-sub">NWE filmgrad</div></td><td><span class="badge bp">Plast</span></td><td>~950 – 1 150</td><td>~1 050</td><td><span class="down">↘ Ned</span></td><td>Fleksibel emballasje</td></tr>
+        <tr><td colspan="6" style="background:#f8f5f0;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);padding:8px 14px;">📋 KARTONG — SOLID BOARD</td></tr>
+        <tr><td><div class="mat-name">FBB (Folding Boxboard)</div><div class="mat-sub">Primærfiber, Europa</div></td><td><span class="badge bf">Fiber</span></td><td>~900 – 1 100</td><td>~1 000</td><td><span class="flat">↔ Flat/svakt opp</span></td><td>Ny Stora Enso-kapasitet (Oulu)</td></tr>
+        <tr><td><div class="mat-name">WLC (White-Lined Chipboard)</div><div class="mat-sub">Resirkulert fiber</div></td><td><span class="badge bf">Fiber</span></td><td>~700 – 900</td><td>~800</td><td><span class="flat">↔ Flat</span></td><td>86% resirkuleringsrate Europa</td></tr>
+        <tr><td colspan="6" style="background:#f8f5f0;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);padding:8px 14px;">📦 BØLGEPAPP OG RETURPAPIR</td></tr>
+        <tr><td><div class="mat-name">Kraftliner (brun)</div><div class="mat-sub">PIX referanse</div></td><td><span class="badge bc">Bølgepapp</span></td><td>~570 – 640</td><td>~592</td><td><span class="up">↗ Svak opp</span></td><td>PIX ref. ~€592/t. Konsesjoner i jan.</td></tr>
+        <tr><td><div class="mat-name">Testliner 2</div><div class="mat-sub">PIX referanse</div></td><td><span class="badge bc">Bølgepapp</span></td><td>~420 – 470</td><td>~444</td><td><span class="up">↗ Svak opp</span></td><td>Hamburger CB prisøkning feb 2026</td></tr>
+        <tr><td><div class="mat-name">Testliner 3</div><div class="mat-sub">PIX referanse</div></td><td><span class="badge bc">Bølgepapp</span></td><td>~415 – 440</td><td>~421</td><td><span class="flat">↔ Flat</span></td><td>PIX ref. ~€421/t</td></tr>
+        <tr><td><div class="mat-name">Fluting RB</div><div class="mat-sub">PIX referanse</div></td><td><span class="badge bc">Bølgepapp</span></td><td>~390 – 430</td><td>~406</td><td><span class="flat">↔ Flat</span></td><td>PIX ref. ~€406/t</td></tr>
+        <tr><td><div class="mat-name">OCC (returpapp)</div><div class="mat-sub">Innsamlet korrugert</div></td><td><span class="badge bc">Bølgepapp</span></td><td>~80 – 130</td><td>~100</td><td><span class="flat">↔ Flat/svakt opp</span></td><td>Eksport til Asia øker</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-    <div class="table-wrap">
-      <div class="table-header-bar">
-        <h3>Komplett prismatrise – alle materialer</h3>
-        <span class="table-badge">€/tonn · Q1 2026</span>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Materiale</th>
-            <th>Kategori</th>
-            <th>Prisintervall (€/t)</th>
-            <th>Midtpunkt</th>
-            <th>Trend Q4 2025 → Q1 2026</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><div class="mat-name">PET Virgin</div><div class="mat-sub">Jomfruelig polyetylentereftalat</div></td>
-            <td>Plast</td>
-            <td><span class="price-range">950 – 1 100</span></td>
-            <td>1 025</td>
-            <td><span class="trend-cell flat">➡ Flat/svakt ned</span></td>
-          </tr>
-          <tr>
-            <td><div class="mat-name">rPET Klar, food-grade</div><div class="mat-sub">Resirkulert PET, matvarekvalitet</div></td>
-            <td>Plast</td>
-            <td><span class="price-range">1 300 – 1 600</span></td>
-            <td>1 450</td>
-            <td><span class="trend-
+  <div class="trend-row">
+    <div class="trend-box"><div class="trend-num">11</div><div class="trend-label">Materialekategorier sporet</div></div>
+    <div class="trend-box"><div class="trend-num down">6</div><div class="trend-label">Materialer med ned/flat trend</div></div>
+    <div class="trend-box"><div class="trend-num up">3</div><div class="trend-label">Materialer med opp-trend</div></div>
+    <div class="trend-box"><div class="trend-num" style="color:var(--flat)">Aug<br>2026</div><div class="trend-label">PPWR generell anvendelsesdato</div></div>
+  </div>
+</section>
+
+<!-- PLAST -->
+<section class="section" id="plast">
+  <div class="sec-header"><h2 class="sec-title">Plastmaterialer<span class="sec-tag">PET · rPET · PP · HDPE · PE</span></h2></div>
+
+  <div class="card">
+    <div class="card-head"><span class="card-title">Prishistorikk plast Europa (€/tonn indikativt)</span></div>
+    <table>
+      <thead><tr><th>Materiale</th><th>Q1 2024</th><th>Q2 2024</th><th>Q3 2024</th><th>Q4 2024</th><th>Q1 2025</th><th>Q2 2025</th><th>Q3 2025</th><th>Q1 2026 est.</th><th>Utsikt H1</th></tr></thead>
+      <tbody>
+        <tr><td><strong>PET Virgin</strong></td><td>~1 050</td><td>~1 020</td><td>~980</td><td>~940</td><td>~910</td><td>~880</td><td>~860</td><td>800–950</td><td><span class="down">↘ Svak</span></td></tr>
+        <tr><td><strong>rPET food-grade</strong></td><td>~1 750</td><td>~1 700</td><td>~1 650</td><td>~1 600</td><td>~1 550</td><td>~1 480</td><td>~1 400</td><td>1 200–1 700</td><td><span class="up">↑ PPWR-støttet</span></td></tr>
+        <tr><td><strong>PP Homo</strong></td><td>~1 220</td><td>~1 180</td><td>~1 120</td><td>~1 060</td><td>~1 010</td><td>~970</td><td>~940</td><td>900–1 000</td><td><span class="flat">↔ Stabil</span></td></tr>
+        <tr><td><strong>HDPE blåsing</strong></td><td>~1 200</td><td>~1 160</td><td>~1 100</td><td>~1 050</td><td>~1 010</td><td>~980</td><td>~950</td><td>880–1 050</td><td><span class="flat">↔ Stabil</span></td></tr>
+        <tr><td><strong>LDPE film</strong></td><td>~1 300</td><td>~1 260</td><td>~1 210</td><td>~1 160</td><td>~1 120</td><td>~1 080</td><td>~1 050</td><td>950–1 150</td><td><span class="flat">↔ Stabil</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid">
+    <div class="dcard"><div class="dcard-icon">📉</div><div class="dcard-title">PET: Anti-dumping mot Vietnam</div><div class="dcard-body">EU-kommisjonen har innledet anti-dumping-etterforskning mot vietnamesisk PET. Kinesisk og asiatisk PET importeres under europeisk produksjonskostnad. Svak etterspørsel fra drikkevaresektor holder prisene nede inn i 2026. Markedet kan ha bunnet ut.</div></div>
+    <div class="dcard"><div class="dcard-icon">♻️</div><div class="dcard-title">rPET: Paradoksal situasjon</div><div class="dcard-body">rPET hadde sitt minst volatile år siden pre-COVID. Premie over virgin er fortsatt €350–750/t. Konkurranse fra lavprisimport og virgin PET utfordrer resirkulerere. PPWR-krav om 25% rPET i flasker fra 2030 vil drive etterspørselen strukturelt opp.</div></div>
+    <div class="dcard"><div class="dcard-icon">⚡</div><div class="dcard-title">PP/HDPE: Kronisk overforsyning</div><div class="dcard-body">Kronisk overforsyning, svak sluttbrukeretterspørsel og økt global konkurranse har presset PP og PE til flerårige lavpunkter. Høye energi- og karbonkostnader (CBAM +€0,05–0,08/kg) forverrer situasjonen for europeiske produsenter vs. Asia og Midtøsten.</div></div>
+  </div>
+</section>
+
+<!-- FIBER -->
+<section class="section" id="fiber">
+  <div class="sec-header"><h2 class="sec-title">Solid Board / Kartong<span class="sec-tag">FBB · WLC · SBS</span></h2></div>
+
+  <div class="card">
+    <div class="card-head"><span class="card-title">Prishistorikk solid board Europa (€/tonn indikativt)</span></div>
+    <table>
+      <thead><tr><th>Materiale</th><th>Type</th><th>Q1 2024</th><th>Q3 2024</th><th>Q1 2025</th><th>Q3 2025</th><th>Q1 2026 est.</th><th>Utsikt H1</th></tr></thead>
+      <tbody>
+        <tr><td><strong>FBB – Folding Boxboard</strong></td><td>Virgin fiber</td><td>~1 150</td><td>~1 100</td><td>~1 060</td><td>~1 020</td><td>900–1 100</td><td><span class="flat">↔ Flat/svakt opp</span></td></tr>
+        <tr><td><strong>SBS – Solid Bleached Sulphate</strong></td><td>Virgin, premium</td><td>~1 250</td><td>~1 200</td><td>~1 150</td><td>~1 100</td><td>950–1 100</td><td><span class="flat">↔ Stabil</span></td></tr>
+        <tr><td><strong>WLC – White-Lined Chipboard</strong></td><td>Resirkulert</td><td>~850</td><td>~820</td><td>~800</td><td>~790</td><td>700–900</td><td><span class="flat">↔ Flat</span></td></tr>
+        <tr><td><strong>GC1/GC2 – Coated Board</strong></td><td>Virgin, coated</td><td>~1 100</td><td>~1 060</td><td>~1 020</td><td>~980</td><td>880–1 050</td><td><span class="flat">↔ Stabil</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid">
+    <div class="dcard"><div class="dcard-icon">🏭</div><div class="dcard-title">FBB: Massiv ny kapasitet</div><div class="dcard-body">Stora Ensos Oulu-linje (750.000 tpa, €1 mrd.) rammer opp gjennom 2026. Metsä Board Husum utvidet med +200.000 tpa. Kapasitetsveksten presser prisene kortsiktig, men plastsubstitusjon driver strukturell etterspørselsvekst.</div></div>
+    <div class="dcard"><div class="dcard-icon">🌿</div><div class="dcard-title">WLC: Sirkulær medaljevinner</div><div class="dcard-body">Europeisk kartonggjenvinningsrate: 86% (2023) — høyest blant alle emballasjematerialer. WLC oppfyller allerede PPWRs recyclability-mål for 2030. MM Group investerer i modernisering av Neuss, Frohnleiten og Kolicevo-fabrikker.</div></div>
+    <div class="dcard"><div class="dcard-icon">📋</div><div class="dcard-title">PPWR: Fiber godt posisjonert</div><div class="dcard-body">Fiberkartong er allerede PPWR-kompatibelt — ingen krav om recycled content (bare plast). Merkevarer velger fiber for å dokumentere bærekraft. Strukturell etterspørselsvekst fra plastsubstitusjon forventes å vedvare mot 2030.</div></div>
+  </div>
+</section>
+
+<!-- BØLGEPAPP -->
+<section class="section" id="corrugated">
+  <div class="sec-header"><h2 class="sec-title">Bølgepapp<span class="sec-tag">Kraftliner · Testliner · Fluting · OCC</span></h2></div>
+
+  <div class="card">
+    <div class="card-head"><span class="card-title">Prishistorikk bølgepappråmaterialer Europa (€/tonn)</span></div>
+    <table>
+      <thead><tr><th>Materiale</th><th>Fiber</th><th>Q1 2024</th><th>Q3 2024</th><th>Q1 2025</th><th>Q2 2025</th><th>Q3 2025</th><th>Q1 2026</th><th>Trend</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Kraftliner brun</strong></td><td>Virgin</td><td>~620</td><td>~640</td><td>~660</td><td>~700</td><td>~680</td><td>~570–640</td><td><span class="up">↗ PIX ~€592/t</span></td></tr>
+        <tr><td><strong>White-top Kraftliner</strong></td><td>Virgin</td><td>~750</td><td>~760</td><td>~780</td><td>~800</td><td>~790</td><td>~730–800</td><td><span class="flat">↔ Stabil/svak</span></td></tr>
+        <tr><td><strong>Testliner 2</strong></td><td>Resirkulert</td><td>~400</td><td>~430</td><td>~450</td><td>~460</td><td>~450</td><td>~420–470</td><td><span class="up">↗ PIX ~€444/t</span></td></tr>
+        <tr><td><strong>Testliner 3</strong></td><td>Resirkulert</td><td>~380</td><td>~400</td><td>~420</td><td>~430</td><td>~425</td><td>~415–440</td><td><span class="flat">↔ PIX ~€421/t</span></td></tr>
+        <tr><td><strong>Fluting RB</strong></td><td>Resirkulert</td><td>~370</td><td>~385</td><td>~400</td><td>~410</td><td>~405</td><td>~390–430</td><td><span class="flat">↔ PIX ~€406/t</span></td></tr>
+        <tr><td><strong>OCC (returpapp)</strong></td><td>Innsamlet</td><td>~90</td><td>~110</td><td>~120</td><td>~125</td><td>~120</td><td>~80–130</td><td><span class="up">↗ Asia-eksport opp</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:20px 24px;margin-bottom:20px;">
+    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Nøkkeltendenser Q1 2026</h3>
+    <p style="font-size:13px;color:#3a3530;line-height:1.75;margin-bottom:10px;"><strong>Containerboard viser bedringssignaler:</strong> Kraftliner PIX-indeks ~€592/t, testliner 2 ~€444/t. Hamburger Containerboard annonserte prisøkninger fra 1. februar 2026. Saica og andre store aktører forsøker prisøkninger støttet av høye OCC-kostnader.</p>
+    <p style="font-size:13px;color:#3a3530;line-height:1.75;margin-bottom:10px;"><strong>IP/DS Smith-integrasjon:</strong> International Paper fullførte oppkjøp av DS Smith i 2024. IP annonserte splitting i to separate børsnoterte selskaper i 2026. Smurfit Westrock er nå #1 i Europa.</p>
+    <p style="font-size:13px;color:#3a3530;line-height:1.75;"><strong>OCC eksport til Asia:</strong> OCC-eksportpriser til Fjernøsten har økt gjennom tidlig 2026, drevet av god etterspørsel fra kinesiske og sørøstasiatiske papirfabrikker.</p>
+  </div>
+</section>
+
+<!-- KAPASITET -->
+<section class="section" id="kapasitet">
+  <div class="sec-header"><h2 class="sec-title">Kapasitetsstatus<span class="sec-tag">Driftsrate · Ny kapasitet · M&A</span></h2></div>
+
+  <div class="grid">
+    <div class="cap-card"><div class="cap-title">Kraftliner — Europa</div><div class="cap-sub">Virgin fiber liner</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>~82–86%</span></div><div class="bar-bg"><div class="bar-fill bar-g" style="width:84%"></div></div><div class="cap-note">Begrenset europeisk kapasitet. SCA gjennomførte €60/t prisøkning mai 2025. NA-konverteringer kan øke europeisk kraftliner-import.</div></div>
+    <div class="cap-card"><div class="cap-title">Testliner / RCCM — Europa</div><div class="cap-sub">Resirkulert containerboard</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>~75–80%</span></div><div class="bar-bg"><div class="bar-fill bar-a" style="width:77%"></div></div><div class="cap-note">Ny kapasitet fra grafisk papir-konvertering presser. Hamburger CB, Saica og Smurfit Westrock dominerer. IP/DS Smith-integrasjon sluttføres.</div></div>
+    <div class="cap-card"><div class="cap-title">rPET food-grade — Europa</div><div class="cap-sub">Matgodkjent resirkulert PET</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>Nær full</span></div><div class="bar-bg"><div class="bar-fill bar-r" style="width:94%"></div></div><div class="cap-note">Kun 12 EU-anlegg godkjent for food-grade rPET. Veolia stengte tysk anlegg. Carbios enzymatisk resirkulering lovende. Kritisk kapasitetsgap mot PPWR-krav.</div></div>
+    <div class="cap-card"><div class="cap-title">FBB Solid Board — Europa</div><div class="cap-sub">Folded boxboard, virgin</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>~78–84%</span></div><div class="bar-bg"><div class="bar-fill bar-a" style="width:81%"></div></div><div class="cap-note">Stora Enso Oulu (750.000 tpa) og Metsä Board Husum (+200.000 tpa) øker press. Selektiv nedetid hos produsenter.</div></div>
+    <div class="cap-card"><div class="cap-title">PP / HDPE — Europa</div><div class="cap-sub">Emballasjeplast harpikser</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>~78–84%</span></div><div class="bar-bg"><div class="bar-fill bar-a" style="width:81%"></div></div><div class="cap-note">Konkurranseutsatt fra Midtøsten og Asia. CBAM gir noe beskyttelse. Svak etterspørsel fra bil og bygg. HDPE-innsamling under EU 2025-mål.</div></div>
+    <div class="cap-card"><div class="cap-title">Store M&A-transaksjoner</div><div class="cap-sub">Konsolidering pågår</div><div class="bar-row"><span>Markedsbalanse</span><span>Omstrukturering</span></div><div class="bar-bg"><div class="bar-fill bar-a" style="width:55%"></div></div><div class="cap-note">Smurfit Kappa + WestRock = #1 Europa. IP + DS Smith = #2 Europa. IP splitter i to selskaper (2026). Videre konsolidering forventes.</div></div>
+  </div>
+</section>
+
+<!-- DRIVERE -->
+<section class="section" id="drivere">
+  <div class="sec-header"><h2 class="sec-title">Markedsdrivere<span class="sec-tag">Etterspørsel · Kapasitet · Regulering</span></h2></div>
+
+  <div class="grid">
+    <div class="dcard"><div class="dcard-icon">🛒</div><div class="dcard-title">E-handel driver etterspørsel</div><div class="dcard-body">EU online-dagligvare: €56 mrd. (2024), 4x siden 2020. Bølgepapp og solid board er primære vinnerne. Strukturell vekst anslått 3–5% CAGR for packaging-grade papir mot 2030.</div></div>
+    <div class="dcard"><div class="dcard-icon">🏗️</div><div class="dcard-title">Ny kapasitet presser priser</div><div class="dcard-body">1,4 mill. tonn ny recycled containerboard-kapasitet tilsatt markedet i 2025. Konvertering fra grafisk papir er hoveddriveren. Strukturell overkapasitet demper kortsiktig prisvekst.</div></div>
+    <div class="dcard"><div class="dcard-icon">📜</div><div class="dcard-title">PPWR: Endrer spillereglene</div><div class="dcard-body">PPWR gjelder fra august 2026. Mandatory recycled content for plast, recyclability-krav og EPR-kostnader. Fiberbasert emballasje posisjonert gunstig. Plastprodusenter må investere i rPET/rPP-kapasitet.</div></div>
+    <div class="dcard"><div class="dcard-icon">⚡</div><div class="dcard-title">Energipriser: Europeisk ulempe</div><div class="dcard-body">Europeisk energikostnad forblir høyere enn USA og Asia. Testliner svært naturgass-intensiv. EUDR og CBAM øker compliance-kostnader fra 2026.</div></div>
+    <div class="dcard"><div class="dcard-icon">🌍</div><div class="dcard-title">Import: Asiatisk press</div><div class="dcard-body">Kinesisk PET, PP og HDPE importeres under europeisk produksjonskostnad. Anti-dumping-etterforskning mot vietnamesisk PET innledet av EU. Import-presset holder virgin plastpriser nede.</div></div>
+    <div class="dcard"><div class="dcard-icon">🌿</div><div class="dcard-title">Plastsubstitusjon</div><div class="dcard-body">Merkevarer som Nestlé og Unilever erstatter plastemballasje med fiberkartong. Graphic Packaging eliminerte 450 mill. plastpakker i 2023. Strukturell medvind for fiber mot 2030.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="card-title">Drivermatrise — innvirkning per materiale</span></div>
+    <table>
+      <thead><tr><th>Driver</th><th>PET/rPET</th><th>PP/HDPE</th><th>Solid Board</th><th>Kraftliner</th><th>Testliner</th></tr></thead>
+      <tbody>
+        <tr><td>E-handel vekst</td><td>Nøytral</td><td>Nøytral</td><td><span class="up">↑ Positiv</span></td><td><span class="up">↑ Positiv</span></td><td><span class="up">↑ Positiv</span></td></tr>
+        <tr><td>PPWR regulering</td><td><span class="up">↑ rPET positiv</span></td><td>Nøytral</td><td><span class="up">↑ Positiv</span></td><td><span class="up">↑ Positiv</span></td><td><span class="up">↑ Positiv</span></td></tr>
+        <tr><td>Ny kapasitet</td><td>Nøytral</td><td><span class="down">↓ Negativt</span></td><td><span class="down">↓ FBB-press</span></td><td><span class="down">↓ Negativt</span></td><td><span class="down">↓ Negativt</span></td></tr>
+        <tr><td>Billig import Asia</td><td><span class="down">↓ Negativt</span></td><td><span class="down">↓ Negativt</span></td><td>Begrenset</td><td>Begrenset</td><td>Begrenset</td></tr>
+        <tr><td>Energipriser</td><td><span class="down">↓ Kostnad</span></td><td><span class="down">↓ Kostnad</span></td><td><span class="down">↓ Kostnad</span></td><td><span class="down">↓ Kostnad</span></td><td><span class="down">↓ Sterk neg.</span></td></tr>
+        <tr><td>Plastsubstitusjon</td><td><span class="down">↓ Negativt</span></td><td><span class="down">↓ Negativt</span></td><td><span class="up">↑ Sterkt pos.</span></td><td><span class="up">↑ Positiv</span></td><td><span class="up">↑ Positiv</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- REGULERING -->
+<section class="section" id="regulering">
+  <div class="sec-header"><h2 class="sec-title">Regulatorisk rammeverk<span class="sec-tag">PPWR · EPR · EUDR · CBAM</span></h2></div>
+
+  <div class="tl">
+    <div class="tl-item"><div class="tl-year">Des.<br>2024</div><div><div class="tl-rule">PPWR vedtatt — Regulation (EU) 2025/40</div><div class="tl-desc">Erstatter direktiv 94/62/EF. Direkte anvendelig i alle EU-land.</div></div></div>
+    <div class="tl-item"><div class="tl-year">Feb.<br>2025</div><div><div class="tl-rule">PPWR trer i kraft</div><div class="tl-desc">18-måneders overgangsperiode begynner.</div></div></div>
+    <div class="tl-item"><div class="tl-year">Aug.<br>2026</div><div><div class="tl-rule">PPWR: Generell anvendelsesdato</div><div class="tl-desc">Design-krav, registrering, rapportering. PFAS-forbud i emballasje. Recycled content-krav for plast aktiveres.</div></div></div>
+    <div class="tl-item"><div class="tl-year">2027</div><div><div class="tl-rule">Digital merking + DPP-krav</div><div class="tl-desc">Digital Product Passport og digital merking av emballasje begynner.</div></div></div>
+    <div class="tl-item"><div class="tl-year">2029</div><div><div class="tl-rule">Depositum-systemer (DRS)</div><div class="tl-desc">Alle EU-land må ha operative DRS for PET-flasker og metalldåser.</div></div></div>
+    <div class="tl-item"><div class="tl-year">2030</div><div><div class="tl-rule">Recyclability + Recycled Content milestone</div><div class="tl-desc">All emballasje designet for resirkulering (A/B/C). Plastpaknings recycled content krav. 40% transportemballasje gjenbrukes.</div></div></div>
+    <div class="tl-item"><div class="tl-year">2035</div><div><div class="tl-rule">Recycled at scale</div><div class="tl-desc">Emballasje må faktisk resirkuleres i eksisterende infrastruktur.</div></div></div>
+    <div class="tl-item"><div class="tl-year">2040</div><div><div class="tl-rule">Endelige recycled content targets</div><div class="tl-desc">Høyere minimumsprosenter for resirkulert innhold. Klimanøytralitetsmål.</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="card-title">PPWR recycled content krav for plast (Art. 7)</span></div>
+    <table>
+      <thead><tr><th>Plasttype</th><th>Krav 2030</th><th>Krav 2040</th><th>Kommentar</th></tr></thead>
+      <tbody>
+        <tr><td>PET-flasker (kontakt-sensitive)</td><td>25% rPET</td><td>50% rPET</td><td>Raskest vekst i rPET-etterspørsel</td></tr>
+        <tr><td>Andre plastflasker (HDPE, PP)</td><td>25%</td><td>50%</td><td>Inkl. HDPE og PP-flasker</td></tr>
+        <tr><td>Plastfilm og fleksibel</td><td>20%</td><td>35%</td><td>Teknisk krevende for barrierefilm</td></tr>
+        <tr><td>Helsesegmentet</td><td>Unntak</td><td>Vurderes</td><td>Sikkerhets- og hygienehensyn</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- KILDER -->
+<section class="section" id="kilder">
+  <div class="sec-header"><h2 class="sec-title">Kilder og metode<span class="sec-tag">Datagrunnlag</span></h2></div>
+
+  <div class="alert">Prisene er indikative referansepunkter. For presise kontraktspriser anbefales direkte abonnement på spesialiserte prisagenturer.</div>
+
+  <div class="card" style="padding:0">
+    <div style="padding:20px 24px">
+      <div class="src-item"><div class="src-num">01</div><div><div class="src-name">ICIS</div><div class="src-desc">Ledende prisdata for polymer-harpikser: PET, rPET, PP, PE, HDPE. Ukentlige oppdateringer og EMEA outlook.</div><span class="src-type">Betalt</span></div></div>
+      <div class="src-item"><div class="src-num">02</div><div><div class="src-name">Fastmarkets / FOEX PIX</div><div class="src-desc">Prisindekser for papir og board: kraftliner, testliner, fluting, solid board. PIX-indeksene er markedsstandard i Europa.</div><span class="src-type">Betalt</span></div></div>
+      <div class="src-item"><div class="src-num">03</div><div><div class="src-name">EUWID Pulp & Paper</div><div class="src-desc">Ukentlig europeisk markedsintelligens for alle papirgrader i DE, UK, FR, ES, IT, Benelux.</div><span class="src-type">Betalt</span></div></div>
+      <div class="src-item"><div class="src-num">04</div><div><div class="src-name">ChemOrbis</div><div class="src-desc">Daglige plastpriser og markedsanalyser for Europa, Midtøsten og Asia. Polymer spot- og kontraktspriser.</div><span class="src-type">Betalt/Gratis</span></div></div>
+      <div class="src-item"><div class="src-num">05</div><div><div class="src-name">PlasticPortal / myCEPPI</div><div class="src-desc">Ukentlige prisrapporter for PE/PP/PET i Sentral- og Øst-Europa. 4 ukers forsinkelse gratis.</div><span class="src-type">Delvis gratis</span></div></div>
+      <div class="src-item"><div class="src-num">06</div><div><div class="src-name">Packaging Europe</div><div class="src-desc">Bransjemedium for europeisk emballasjeindustri. Dekker PET, rPET, regulering og markedstrender.</div><span class="src-type">Gratis/Betalt</span></div></div>
+      <div class="src-item"><div class="src-num">07</div><div><div class="src-name">Berlin Packaging Industry Update</div><div class="src-desc">Kvartalsvis oppsummering av emballasjeråmaterialpriser. Gratis tilgjengelig.</div><span class="src-type">Gratis</span></div></div>
+      <div class="src-item"><div class="src-num">08</div><div><div class="src-name">EU-kommisjonen / EUR-Lex</div><div class="src-desc">Offisielle tekster for PPWR (EU 2025/40), EUDR og annen EU-lovgivning.</div><span class="src-type">Gratis</span></div></div>
+    </div>
+  </div>
+
+  <div class="info"><strong>💡 Tips for løpende overvåking:</strong> Kombiner ICIS ukentlig (plast) + Fastmarkets PIX månedlig (papir) + EUWID ukentlig (europeiske papirmarkeder) + PlasticPortal gratis indikator + Packaging Europe nyhetsbrev for best dekning uten full kostnad.</div>
+</section>
+
+</main>
+
+<footer>
+  <span>EMBALLASJEPRISRAPPORT — EUROPA · FMCG</span>
+  <span>Oppdatert: 08. mars 2026 · Q1 2026</span>
+  <span>Indikative priser — ikke erstatning for profesjonelle prisindekser</span>
+</footer>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(function(s) {
+    s.style.display = 'none';
+  });
+  document.querySelectorAll('.nav-tab').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  document.getElementById(id).style.display = 'block';
+  event.currentTarget.classList.add('active');
+}
+
+window.onload = function() {
+  document.querySelectorAll('.section').forEach(function(s) {
+    s.style.display = 'none';
+  });
+  var first = document.querySelector('.section');
+  if (first) first.style.display = 'block';
+  var firstTab = document.querySelector('.nav-tab');
+  if (firstTab) firstTab.classList.add('active');
+};
+</script>
+</body>
+</html>
