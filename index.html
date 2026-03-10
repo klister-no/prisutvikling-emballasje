@@ -178,7 +178,7 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
 
 /* ── MINTEC INTEGRATION ──────────────────────────────── */
 .mintec-live { font-family: 'DM Mono', monospace; font-size: 11px; color: #1a5a2a; font-weight: 600; }
-.mintec-badge { display: inline-block; background: #e8f5e8; color: #1a5a2a; font-family: 'DM Mono', monospace; font-size: 9px; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
+.mintec-badge { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; background: #1a8c4a; color: white; font-family: 'DM Mono', monospace; font-size: 8px; font-weight: 700; margin-left: 5px; vertical-align: middle; cursor: default; flex-shrink: 0; }
 .kpi-mintec-val { font-family: 'DM Mono', monospace; font-size: 11px; margin-top: 4px; }
 #ai-run-btn:not(:disabled) { opacity: 1 !important; }
 #ai-run-btn:not(:disabled):hover { background: #b89030 !important; }
@@ -643,7 +643,7 @@ function updateKPIs() {
       if (!el.textContent.toLowerCase().includes(m.label.toLowerCase())) return;
       const kpi = el.closest('.kpi');
       const valEl = kpi.querySelector('.kpi-value');
-      if (valEl) valEl.innerHTML = `€${last.toFixed(0)} <span class="mintec-badge">Mintec</span>`;
+      if (valEl) valEl.innerHTML = `€${last.toFixed(0)} <span class="mintec-badge" title="Verifisert kilde: Mintec">M</span>`;
       let sub = kpi.querySelector('.kpi-mintec-val');
       if (!sub) { sub = document.createElement('div'); sub.className = 'kpi-mintec-val'; kpi.appendChild(sub); }
       sub.innerHTML = `<span style="color:${col}">${arr} ${chg != null ? (chg>0?'+':'')+chg.toFixed(1)+'% MoM' : '—'}</span>`;
@@ -693,7 +693,7 @@ function updateTable() {
         if (!m.matches.some(match => text.includes(match))) return;
         const tds = tr.querySelectorAll('td');
         if (tds.length > priceCol && priceCol >= 0) {
-          tds[priceCol].innerHTML = `<span class="mintec-live">€${last.toFixed(0)}</span><span class="mintec-badge">Mintec</span>`;
+          tds[priceCol].innerHTML = `<span class="mintec-live">€${last.toFixed(0)}</span><span class="mintec-badge" title="Verifisert kilde: Mintec">M</span>`;
         }
         if (tds.length > trendCol && trendCol >= 0 && chg != null) {
           tds[trendCol].innerHTML = `<span class="${cls}">${arr}${chgStr}</span>`;
