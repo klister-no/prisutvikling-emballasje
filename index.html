@@ -226,20 +226,27 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
 <section class="section" id="overview">
   <div class="sec-header"><h2 class="sec-title">Markedsoversikt<span class="sec-tag">Q1 2026</span></h2></div>
 
-  <!-- ── MINTEC DATA SOURCE BAR ─────────────────────────── -->
-  <div id="data-source-bar" style="background:#f8f5f0;border:1px solid var(--border);border-radius:6px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-    <div style="position:relative;flex-shrink:0">
-      <label id="upload-btn" style="display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:var(--paper);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:4px;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity=.8" onmouseout="this.style.opacity=1">
-        <span id="upload-icon">📂</span> <span id="upload-lbl">Last opp Mintec CSV</span>
-        <input type="file" id="mintec-file" accept=".csv" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="mintecLoad(this.files[0])">
+  <!-- ── DATA SOURCE BAR ─────────────────────────────────── -->
+  <div id="data-source-bar" style="background:#f8f5f0;border:1px solid var(--border);border-radius:6px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+
+    <!-- Status / auto-load indicator -->
+    <div id="source-status" style="flex:1;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);display:flex;align-items:center;gap:8px">
+      <span id="src-dot" style="width:6px;height:6px;border-radius:50%;background:#ccc;flex-shrink:0"></span>
+      <span id="src-text">Henter Mintec-data fra GitHub…</span>
+    </div>
+
+    <!-- Manual override (hidden until needed) -->
+    <div id="manual-upload" style="display:flex;align-items:center;gap:8px">
+      <label id="upload-btn" title="Last opp ny CSV manuelt" style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:5px 11px;border-radius:4px;cursor:pointer" onmouseover="this.style.borderColor='#888'" onmouseout="this.style.borderColor=''">
+        <span id="upload-icon">📂</span> <span id="upload-lbl">Oppdater CSV</span>
+        <input type="file" id="mintec-file" accept=".csv" style="display:none" onchange="mintecLoad(this.files[0])">
       </label>
     </div>
-    <div id="source-status" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);flex:1">
-      Ingen prisdata lastet · Viser estimerte intervaller basert på offentlige kilder (FOEX PIX, Packaging Europe)
-    </div>
-    <div id="api-row" style="display:flex;align-items:center;gap:8px">
-      <input type="password" id="api-key-input" placeholder="API-nøkkel (sk-ant-…)" style="font-family:'DM Mono',monospace;font-size:10px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;background:white;color:var(--ink);width:220px;outline:none">
-      <button id="ai-run-btn" onclick="mintecRunAI()" disabled style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:6px 14px;border-radius:4px;border:none;background:#c8a84b;color:white;cursor:pointer;opacity:.45;transition:opacity .2s">✦ Analyser</button>
+
+    <!-- API key + analyse button -->
+    <div style="display:flex;align-items:center;gap:8px">
+      <input type="password" id="api-key-input" placeholder="API-nøkkel (sk-ant-…)" style="font-family:'DM Mono',monospace;font-size:10px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;background:white;color:var(--ink);width:210px;outline:none">
+      <button id="ai-run-btn" onclick="mintecRunAI()" disabled style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:5px 14px;border-radius:4px;border:none;background:#c8a84b;color:white;cursor:pointer;opacity:.45;transition:opacity .2s">✦ Analyser</button>
     </div>
   </div>
   <!-- ── END DATA SOURCE BAR ── -->
@@ -513,19 +520,45 @@ const MC = { kraftliner:'#c8401a', testliner:'#c8a84b', fluting:'#3b82f6', gd2:'
 let m_charts = {};
 
 // ── DRAG & DROP on source bar ──────────────────────────
+// ── AUTO-FETCH FROM GITHUB REPO ──────────────────────
+const MINTEC_URL = 'data/Prisrapport_mintec.csv';
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Drag-and-drop on entire bar as manual override
   const bar = document.getElementById('data-source-bar');
-  if (!bar) return;
-  bar.addEventListener('dragover',  e => { e.preventDefault(); bar.style.outline = '2px dashed #c8401a'; });
-  bar.addEventListener('dragleave', () => bar.style.outline = '');
-  bar.addEventListener('drop',      e => { e.preventDefault(); bar.style.outline = ''; mintecLoad(e.dataTransfer.files[0]); });
+  if (bar) {
+    bar.addEventListener('dragover',  e => { e.preventDefault(); bar.style.outline = '2px dashed #c8401a'; });
+    bar.addEventListener('dragleave', () => bar.style.outline = '');
+    bar.addEventListener('drop',      e => { e.preventDefault(); bar.style.outline = ''; mintecLoad(e.dataTransfer.files[0]); });
+  }
+  // Auto-load from repo
+  mintecFetch();
 });
 
-// ── FILE LOAD & PARSE ─────────────────────────────────
+function srcStatus(dot, text, dotColor) {
+  const d = document.getElementById('src-dot');
+  const t = document.getElementById('src-text');
+  if (d) d.style.background = dotColor;
+  if (t) t.innerHTML = text;
+}
+
+async function mintecFetch() {
+  srcStatus('', 'Henter Mintec-data fra GitHub…', '#c8a84b');
+  try {
+    const res = await fetch(MINTEC_URL + '?t=' + Date.now()); // cache-bust
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    mintecParse(text, 'Prisrapport_mintec.csv (GitHub)');
+  } catch(e) {
+    srcStatus('', `Fant ikke <code>data/Prisrapport_mintec.csv</code> i repoet — last opp manuelt`, '#e8a030');
+  }
+}
+
+// ── MANUAL FILE OVERRIDE ──────────────────────────────
 function mintecLoad(file) {
   if (!file) return;
   const r = new FileReader();
-  r.onload = e => mintecParse(e.target.result, file.name);
+  r.onload = e => mintecParse(e.target.result, file.name + ' (manuelt opplastet)');
   r.readAsText(file, 'utf-8');
 }
 
@@ -566,13 +599,18 @@ function mintecParse(raw, name) {
   M.series = cols.map(c => c.name);
 
   // Update UI
-  document.getElementById('upload-icon').textContent = '✓';
-  document.getElementById('upload-lbl').textContent  = name;
-  document.getElementById('upload-btn').style.background = '#1a6a3a';
-  document.getElementById('source-status').innerHTML =
-    `<strong style="color:#1a5a2a">Mintec data lastet</strong> · ` +
-    `${M.data[0].date.slice(0,7)} – ${M.data[M.data.length-1].date.slice(0,7)} · ` +
-    `${M.data.length} måneder · ${M.series.length} serier`;
+  // Update source bar
+  const isAuto = name.includes('GitHub');
+  const dot = document.getElementById('src-dot');
+  if (dot) dot.style.background = '#1a8c4a';
+  const txt = document.getElementById('src-text');
+  if (txt) txt.innerHTML =
+    `<strong style="color:#1a5a2a">${isAuto ? '● Mintec' : '● Mintec (manuell)'}</strong> &nbsp;` +
+    `${M.data[0].date.slice(0,7)} – ${M.data[M.data.length-1].date.slice(0,7)} &nbsp;·&nbsp; ` +
+    `${M.data.length} måneder &nbsp;·&nbsp; ${M.series.length} serier` +
+    (isAuto ? '' : ` &nbsp;<span style="color:#8a6e2a;font-size:9px">(lokalt – ikke i GitHub ennå)</span>`);
+  const upLbl = document.getElementById('upload-lbl');
+  if (upLbl) upLbl.textContent = isAuto ? 'Oppdater CSV' : '✓ ' + name.replace(' (manuelt opplastet)','');
   document.getElementById('ai-run-btn').disabled = false;
 
   updateKPIs();
