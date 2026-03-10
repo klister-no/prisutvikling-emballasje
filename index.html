@@ -516,7 +516,7 @@ window.onload = function() {
 
 // ── STATE ─────────────────────────────────────────────
 let M = { data: [], series: [] };
-const MC = { kraftliner:'#c8401a', testliner:'#c8a84b', fluting:'#3b82f6', gd2:'#2ecc71', nbsk:'#9b59b6' };
+const MC = { kraftliner:'#c8401a', testliner:'#c8a84b', fluting:'#3b82f6', gd2:'#2ecc71', nbsk:'#9b59b6', fbb:'#e8601a', gc2:'#16a085' };
 let m_charts = {};
 
 // ── DRAG & DROP on source bar ──────────────────────────
@@ -621,10 +621,12 @@ function mintecParse(raw, name) {
 // ── UPDATE KPI BOXES ──────────────────────────────────
 function updateKPIs() {
   const map = [
-    { keys: ['kraftliner'],          label: 'Kraftliner' },
-    { keys: ['testliner'],           label: 'Testliner 2' },
-    { keys: ['fluting'],             label: 'Fluting' },
-    { keys: ['gd2', 'cartonboard'],  label: 'FBB' },
+    { keys: ['kraftliner'],                    label: 'Kraftliner' },
+    { keys: ['testliner'],                     label: 'Testliner 2' },
+    { keys: ['fluting'],                       label: 'Fluting' },
+    { keys: ['fbb'],                           label: 'FBB' },
+    { keys: ['gc2', 'gc 2'],                   label: 'FBB' },
+    { keys: ['gd2'],                           label: 'FBB' },
   ];
   M.series.forEach(s => {
     const sl = s.toLowerCase();
@@ -656,7 +658,9 @@ function updateTable() {
     { keys: ['testliner 2'],         row: 'Testliner 2' },
     { keys: ['testliner 3'],         row: 'Testliner 3' },
     { keys: ['fluting'],             row: 'Fluting RB' },
-    { keys: ['gd2', 'cartonboard'],  row: 'WLC' },
+    { keys: ['fbb'],                 row: 'FBB' },
+    { keys: ['gc2', 'gc 2'],         row: 'WLC' },
+    { keys: ['gd2'],                 row: 'WLC' },
   ];
   M.series.forEach(s => {
     const sl = s.toLowerCase();
