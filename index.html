@@ -653,17 +653,17 @@ function updateKPIs() {
 
 // ── UPDATE PRICE TABLE ────────────────────────────────
 function updateTable() {
+  // Maps Mintec series keywords → fragments of mat-name / row text to match
   const map = [
-    { keys: ['kraftliner'],          row: 'Kraftliner (brun)' },
-    { keys: ['testliner 2'],         row: 'Testliner 2' },
-    { keys: ['testliner 3'],         row: 'Testliner 3' },
-    { keys: ['fluting'],             row: 'Fluting RB' },
-    { keys: ['fbb'],                 row: 'FBB (Folding Boxboard)' },
-    { keys: ['fbb'],                 row: 'FBB – Folding Boxboard' },
-    { keys: ['gc2', 'gc 2'],         row: 'WLC (White-Lined Chipboard)' },
-    { keys: ['gc2', 'gc 2'],         row: 'WLC – White-Lined Chipboard' },
-    { keys: ['gd2'],                 row: 'WLC (White-Lined Chipboard)' },
+    { keys: ['kraftliner'],     matches: ['kraftliner'] },
+    { keys: ['testliner 2'],    matches: ['testliner 2'] },
+    { keys: ['testliner 3'],    matches: ['testliner 3'] },
+    { keys: ['fluting'],        matches: ['fluting'] },
+    { keys: ['fbb'],            matches: ['fbb'] },
+    { keys: ['gc2', 'gc 2'],    matches: ['gc1/gc2', 'gc2', 'wlc'] },
+    { keys: ['gd2'],            matches: ['gd2', 'wlc'] },
   ];
+
   M.series.forEach(s => {
     const sl = s.toLowerCase();
     const m  = map.find(x => x.keys.some(k => sl.includes(k)));
@@ -671,17 +671,34 @@ function updateTable() {
     const rows = M.data.filter(r => r[s] != null);
     if (!rows.length) return;
     const last = rows[rows.length-1][s];
-    const prev = rows.length > 1  ? rows[rows.length-2][s]  : null;
+    const prev = rows.length > 1 ? rows[rows.length-2][s] : null;
     const chg  = prev ? (last-prev)/prev*100 : null;
-    document.querySelectorAll('tbody tr').forEach(tr => {
-      if (!tr.textContent.toLowerCase().includes(m.row.toLowerCase())) return;
-      const tds = tr.querySelectorAll('td');
-      if (tds.length >= 4) tds[3].innerHTML = `<span class="mintec-live">€${last.toFixed(0)}</span><span class="mintec-badge">Mintec</span>`;
-      if (tds.length >= 5 && chg != null) {
-        const cls = chg > 0.3 ? 'up' : chg < -0.3 ? 'down' : 'flat';
-        const arr = chg > 0.3 ? '↗' : chg < -0.3 ? '↘' : '↔';
-        tds[4].innerHTML = `<span class="${cls}">${arr} ${(chg>0?'+':'')+chg.toFixed(1)}% MoM</span>`;
+    const cls  = chg > 0.3 ? 'up' : chg < -0.3 ? 'down' : 'flat';
+    const arr  = chg > 0.3 ? '↗' : chg < -0.3 ? '↘' : '↔';
+    const chgStr = chg != null ? ` ${(chg>0?'+':'')+chg.toFixed(1)}% MoM` : '';
+
+    document.querySelectorAll('table').forEach(table => {
+      // Find which column index is "referansepris" or last price column
+      const headers = [...table.querySelectorAll('thead th')].map(th => th.textContent.toLowerCase());
+      // Priority: "referansepris" col, else last price-like col before trend/utsikt
+      let priceCol = headers.findIndex(h => h.includes('referanse'));
+      let trendCol = headers.findIndex(h => h.includes('trend') || h.includes('utsikt'));
+      if (priceCol === -1) {
+        // Solid Board table: last col before "utsikt" is Q1 2026 est — use second-to-last
+        priceCol = trendCol > 0 ? trendCol - 1 : headers.length - 2;
       }
+
+      table.querySelectorAll('tbody tr').forEach(tr => {
+        const text = tr.textContent.toLowerCase();
+        if (!m.matches.some(match => text.includes(match))) return;
+        const tds = tr.querySelectorAll('td');
+        if (tds.length > priceCol && priceCol >= 0) {
+          tds[priceCol].innerHTML = `<span class="mintec-live">€${last.toFixed(0)}</span><span class="mintec-badge">Mintec</span>`;
+        }
+        if (tds.length > trendCol && trendCol >= 0 && chg != null) {
+          tds[trendCol].innerHTML = `<span class="${cls}">${arr}${chgStr}</span>`;
+        }
+      });
     });
   });
 }
