@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emballasje Prisanalyse</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0a0c0f;--s1:#111318;--s2:#181c23;--br:#1e2430;--tx:#e8eaf0;--mu:#5a6070;--ac:#c8401a;--go:#c8a84b;--up:#2ecc71;--dn:#e74c3c;--fl:#f39c12;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
+.hdr{padding:20px 36px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;}
+.logo{font-size:18px;font-weight:800;letter-spacing:-.5px;}
+.logo span{color:var(--ac);}
+.sub{font-family:'Syne Mono',monospace;font-size:10px;color:var(--mu);margin-top:3px;letter-spacing:.1em;text-transform:uppercase;}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:28px 36px;}
+.step{background:var(--s1);border:1px solid var(--br);border-radius:10px;padding:24px;}
+.step-num{font-family:'Syne Mono',monospace;font-size:10px;color:var(--ac);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.step-title{font-size:15px;font-weight:700;margin-bottom:16px;}
+.drop{border:2px dashed var(--br);border-radius:8px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.drop:hover,.drop.over{border-color:var(--ac);}
+.drop.done{border-color:var(--up);border-style:solid;}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.drop-icon{font-size:32px;margin-bottom:10px;}
+.drop-lbl{font-size:13px;font-weight:700;margin-bottom:4px;}
+.drop-hint{font-family:'Syne Mono',monospace;font-size:10px;color:var(--mu);line-height:1.7;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-family:'Syne Mono',monospace;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.inp{width:100%;background:var(--bg);border:1px solid var(--br);border-radius:5px;padding:9px 12px;color:var(--tx);font-family:'Syne Mono',monospace;font-size:11px;outline:none;}
+.inp:focus{border-color:var(--ac);}
+.inp::placeholder{color:var(--mu);}
+textarea.inp{resize:vertical;line-height:1.6;}
+.btn{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;padding:11px 22px;border-radius:5px;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;width:100%;margin-top:6px;}
+.btn-p{background:var(--ac);color:#fff;}
+.btn-p:hover:not(:disabled){background:#e8601a;}
+.btn-p:disabled{background:var(--br);color:var(--mu);cursor:not-allowed;}
+.results{padding:0 36px 48px;display:flex;flex-direction:column;gap:20px;}
+.ticker{background:var(--s1);border:1px solid var(--br);border-radius:8px;padding:14px 20px;display:flex;gap:24px;overflow-x:auto;scrollbar-width:none;}
+.ticker::-webkit-scrollbar{display:none;}
+.ti{display:flex;flex-direction:column;gap:3px;white-space:nowrap;}
+.ti-name{font-family:'Syne Mono',monospace;font-size:9px;color:var(--mu);text-transform:uppercase;}
+.ti-val{font-size:18px;font-weight:800;}
+.ti-chg{font-family:'Syne Mono',monospace;font-size:10px;font-weight:700;}
+.up{color:var(--up);}.dn{color:var(--dn);}.fl{color:var(--fl);}
+.card{background:var(--s1);border:1px solid var(--br);border-radius:10px;overflow:hidden;}
+.card-h{padding:14px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Syne Mono',monospace;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.1em;}
+.chart-body{padding:20px;height:280px;position:relative;}
+table{width:100%;border-collapse:collapse;}
+th{background:var(--s2);font-family:'Syne Mono',monospace;font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;padding:9px 14px;text-align:left;border-bottom:1px solid var(--br);}
+td{padding:9px 14px;font-family:'Syne Mono',monospace;font-size:11px;border-bottom:1px solid var(--br);}
+tr:last-child td{border:none;}
+tr:hover td{background:var(--s2);}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;}
+.b-up{background:rgba(46,204,113,.12);color:var(--up);}
+.b-dn{background:rgba(231,76,60,.12);color:var(--dn);}
+.b-fl{background:rgba(243,156,18,.12);color:var(--fl);}
+.ai-panel{background:var(--s1);border:1px solid var(--br);border-radius:10px;}
+.ai-h{padding:14px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;}
+.ai-badge{display:flex;align-items:center;gap:7px;font-family:'Syne Mono',monospace;font-size:10px;color:var(--go);text-transform:uppercase;letter-spacing:.1em;}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--go);box-shadow:0 0 6px var(--go);}
+.ai-body{padding:24px;font-size:14px;line-height:1.85;min-height:120px;}
+.ai-ph{color:var(--mu);font-family:'Syne Mono',monospace;font-size:11px;text-align:center;padding:30px 0;}
+.ai-resp h3{font-family:'Syne Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--go);margin:18px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--br);}
+.ai-resp h3:first-child{margin-top:0;}
+.ai-resp p{margin-bottom:10px;}
+.ai-resp ul{padding-left:18px;margin-bottom:10px;}
+.ai-resp li{margin-bottom:4px;}
+.ai-resp strong{color:var(--go);}
+.loading{display:flex;align-items:center;gap:10px;font-family:'Syne Mono',monospace;font-size:11px;color:var(--go);}
+.dots span{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--go);margin:0 2px;animation:blink 1.2s infinite;}
+.dots span:nth-child(2){animation-delay:.2s;}
+.dots span:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.ptabs{display:flex;gap:4px;}
+.ptab{font-family:'Syne Mono',monospace;font-size:9px;padding:4px 9px;border-radius:3px;border:1px solid var(--br);color:var(--mu);cursor:pointer;}
+.ptab.active{background:var(--s2);color:var(--tx);border-color:var(--mu);}
+.ghost-btn{font-family:'Syne Mono',monospace;font-size:10px;background:transparent;border:1px solid var(--br);color:var(--mu);padding:4px 10px;border-radius:3px;cursor:pointer;}
+.ghost-btn:hover{color:var(--tx);}
+.hidden{display:none;}
+@media(max-width:800px){.steps{grid-template-columns:1fr;}.hdr,.steps,.results{padding-left:18px;padding-right:18px;}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div>
+    <div class="logo">EMBA<span>//</span>ANALYSE</div>
+    <div class="sub">Last opp Mintec CSV → Få AI-analyse</div>
+  </div>
+  <div style="font-family:'Syne Mono',monospace;font-size:10px;color:var(--mu)" id="dataInfo"></div>
+</header>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">Steg 1</div>
+    <div class="step-title">Last opp Mintec CSV</div>
+    <div class="drop" id="dz" onclick="document.getElementById('fi').click()">
+      <input type="file" id="fi" accept=".csv" onchange="handleFile(this.files[0])">
+      <div class="drop-icon">📊</div>
+      <div class="drop-lbl" id="dzLbl">Klikk eller dra CSV-fil hit</div>
+      <div class="drop-hint">
+        Støtter Mintec semikolon-format<br>
+        Dato: DD.MM.YYYY · Desimal: komma eller punktum
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Steg 2</div>
+    <div class="step-title">Kjør AI-analyse</div>
+    <div class="field">
+      <label>Anthropic API-nøkkel</label>
+      <input class="inp" type="password" id="apiKey" placeholder="sk-ant-api03-...">
+    </div>
+    <div class="field">
+      <label>Fokus</label>
+      <select class="inp" id="focus">
+        <option value="full">Komplett markedsanalyse</option>
+        <option value="trend">Trendanalyse</option>
+        <option value="risk">Risikovurdering</option>
+        <option value="forhandling">Leverandørforhandling</option>
+        <option value="historisk">Historisk kontekst og syklus</option>
+        <option value="ppwr">PPWR-regulering og prisimpact</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Din kontekst (valgfritt)</label>
+      <textarea class="inp" id="ctx" rows="3" placeholder="F.eks: Kontrakt på kraftliner utløper juni. Vurder timing."></textarea>
+    </div>
+    <button class="btn btn-p" id="aiBtn" onclick="runAI()" disabled>✦ Kjør AI-analyse</button>
+  </div>
+</div>
+
+<div class="results hidden" id="results">
+  <div class="ticker" id="ticker"></div>
+
+  <div class="card">
+    <div class="card-h">
+      <span class="card-title">Prishistorikk</span>
+      <div class="ptabs" id="ptabs">
+        <div class="ptab" onclick="setPeriod('all',this)">Alle</div>
+        <div class="ptab" onclick="setPeriod(60,this)">5 år</div>
+        <div class="ptab active" onclick="setPeriod(36,this)">3 år</div>
+        <div class="ptab" onclick="setPeriod(12,this)">12 mnd</div>
+      </div>
+    </div>
+    <div class="chart-body"><canvas id="chart"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <span class="card-title">Siste observasjoner</span>
+      <button class="ghost-btn" onclick="exportCSV()">↓ Eksporter CSV</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table><thead><tr>
+        <th>Dato</th><th>Serie</th><th>Siste (€/t)</th>
+        <th>MoM</th><th>6 mnd</th><th>12 mnd</th><th>Fra topp</th><th>Trend</th>
+      </tr></thead><tbody id="tBody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="ai-panel">
+    <div class="ai-h">
+      <div class="ai-badge"><div class="ai-dot"></div>AI Markedsanalyse</div>
+      <div style="display:flex;gap:8px">
+        <button class="ghost-btn" onclick="copyAI()">Kopier</button>
+        <button class="ghost-btn" onclick="runAI()">↻ Ny analyse</button>
+      </div>
+    </div>
+    <div class="ai-body" id="aiBody">
+      <div class="ai-ph">Kjør AI-analyse for å få markedsvurdering basert på dataene dine</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let DATA = [];
+let SERIES = [];
+const COLORS = ['#c8401a','#c8a84b','#3b82f6','#2ecc71','#9b59b6','#e67e22','#1abc9c','#e74c3c'];
+let mainChart = null;
+let period = 36;
+let lastAI = '';
+
+// ── DRAG & DROP ──────────────────────────────────────────────
+const dz = document.getElementById('dz');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); handleFile(e.dataTransfer.files[0]); });
+
+// ── FILE PARSING ─────────────────────────────────────────────
+function handleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => parse(e.target.result, file.name);
+  reader.readAsText(file, 'utf-8');
+}
+
+function parse(raw, name) {
+  raw = raw.replace(/^\uFEFF/, ''); // strip BOM
+  const lines = raw.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) { alert('Filen ser tom ut'); return; }
+
+  const sep = lines[0].includes(';') ? ';' : ',';
+
+  // Mintec quirk: column headers may span 2 lines because of embedded newlines in quoted strings
+  // Find where actual data rows start (first line matching DD.MM.YYYY)
+  let dataStart = 1;
+  for (let i = 1; i < Math.min(6, lines.length); i++) {
+    if (/^\d{2}[.\-/]\d{2}[.\-/]\d{4}/.test(lines[i].trim())) { dataStart = i; break; }
+  }
+
+  // Join header lines and parse with quote awareness
+  const headerRaw = lines.slice(0, dataStart).join('\n');
+  const headers = splitCSV(headerRaw, sep).map(h =>
+    h.replace(/\n.*/s, '').trim() // take only first line of each quoted header
+  );
+
+  // Date column = first column (or the one named date/dato)
+  const dateIdx = Math.max(0, headers.findIndex(h => /date|dato|period/i.test(h)));
+
+  // Series columns: everything else, with cleaned names
+  const seriesCols = headers
+    .map((h, i) => ({ name: cleanHeader(h), i }))
+    .filter(({ name, i }) => i !== dateIdx && name.length > 0);
+
+  // Parse data
+  const rows = [];
+  for (let i = dataStart; i < lines.length; i++) {
+    const parts = lines[i].split(sep);
+    const dateStr = (parts[dateIdx] || '').trim();
+    if (!dateStr) continue;
+    const date = parseDate(dateStr);
+    if (!date) continue;
+    const row = { date };
+    seriesCols.forEach(({ name, i: ci }) => {
+      const v = parseFloat((parts[ci] || '').replace(',', '.'));
+      row[name] = isNaN(v) ? null : v;
+    });
+    rows.push(row);
+  }
+
+  if (!rows.length) { alert('Ingen datarader funnet. Sjekk filformatet.'); return; }
+
+  DATA = rows.sort((a, b) => a.date.localeCompare(b.date));
+  SERIES = seriesCols.map(s => s.name);
+
+  // Update UI
+  dz.classList.add('done');
+  document.getElementById('dzLbl').textContent = `✓ ${name} (${DATA.length} rader, ${SERIES.length} serier)`;
+  document.getElementById('aiBtn').disabled = false;
+  document.getElementById('dataInfo').textContent =
+    `${DATA[0].date.slice(0,7)} → ${DATA[DATA.length-1].date.slice(0,7)}`;
+  document.getElementById('results').classList.remove('hidden');
+  render();
+}
+
+function splitCSV(str, sep) {
+  // Splits a (possibly multi-line) string on sep, respecting double-quoted fields
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < str.length; i++) {
+    const c = str[i];
+    if (c === '"') { inQ = !inQ; continue; }
+    if (c === sep && !inQ) { result.push(cur); cur = ''; continue; }
+    cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+function cleanHeader(h) {
+  // "SZ173 - Kraftliner 175g del FR" → "Kraftliner 175g FR"
+  return h
+    .replace(/^[A-Z0-9]+\s*[-–]\s*/, '')  // strip leading code "SZ173 - "
+    .replace(/\b(del|ave)\b\s*/gi, '')     // strip "del " / "ave "
+    .replace(/EUR\/MT\s*/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function parseDate(s) {
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const m = s.match(/(\d{2})[.\-\/](\d{2})[.\-\/](\d{4})/);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+  return null;
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function render() {
+  renderTicker();
+  renderChart();
+  renderTable();
+}
+
+function getSlice() {
+  if (period === 'all') return DATA;
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - period);
+  return DATA.filter(r => new Date(r.date) >= cutoff);
+}
+
+function setPeriod(p, el) {
+  period = p;
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderChart();
+}
+
+function pct(a, b) {
+  if (a == null || b == null || b === 0) return null;
+  return (a - b) / b * 100;
+}
+
+function fmtPct(v) {
+  if (v == null) return '—';
+  return (v > 0 ? '+' : '') + v.toFixed(1) + '%';
+}
+
+function renderTicker() {
+  document.getElementById('ticker').innerHTML = SERIES.map((s, i) => {
+    const rows = DATA.filter(r => r[s] != null);
+    if (!rows.length) return '';
+    const last = rows[rows.length - 1][s];
+    const prev = rows.length > 1 ? rows[rows.length - 2][s] : null;
+    const chg = pct(last, prev);
+    const cls = chg > 0.3 ? 'up' : chg < -0.3 ? 'dn' : 'fl';
+    const arr = chg > 0.3 ? '↑' : chg < -0.3 ? '↓' : '→';
+    return `<div class="ti">
+      <div class="ti-name" style="color:${COLORS[i % COLORS.length]}">${s}</div>
+      <div class="ti-val ${cls}">€${last.toFixed(0)}</div>
+      <div class="ti-chg ${cls}">${arr} ${chg != null ? Math.abs(chg).toFixed(1) + '%' : '—'}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderChart() {
+  if (mainChart) mainChart.destroy();
+  const slice = getSlice();
+  const labels = slice.map(r => r.date.slice(0, 7));
+  const datasets = SERIES.map((s, i) => ({
+    label: s,
+    data: slice.map(r => r[s]),
+    borderColor: COLORS[i % COLORS.length],
+    backgroundColor: 'transparent',
+    tension: 0.3, pointRadius: 0, borderWidth: 2, spanGaps: true
+  }));
+  mainChart = new Chart(document.getElementById('chart'), {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#5a6070', font: { family: 'Syne Mono', size: 9 }, boxWidth: 10 } },
+        tooltip: {
+          backgroundColor: '#111318', borderColor: '#1e2430', borderWidth: 1,
+          titleColor: '#c8a84b', bodyColor: '#e8eaf0',
+          titleFont: { family: 'Syne Mono', size: 10 }, bodyFont: { family: 'Syne Mono', size: 10 },
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: €${ctx.parsed.y?.toFixed(0) ?? '—'}` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#2a3040', font: { family: 'Syne Mono', size: 8 }, maxTicksLimit: 10 }, grid: { color: '#1a1e28' } },
+        y: { ticks: { color: '#2a3040', font: { family: 'Syne Mono', size: 9 }, callback: v => '€' + v.toFixed(0) }, grid: { color: '#1a1e28' } }
+      }
+    }
+  });
+}
+
+function renderTable() {
+  document.getElementById('tBody').innerHTML = SERIES.map((s, i) => {
+    const rows = DATA.filter(r => r[s] != null);
+    if (!rows.length) return '';
+    const v   = rows[rows.length - 1][s];
+    const p1  = rows.length > 1  ? rows[rows.length - 2][s]  : null;
+    const p6  = rows.length > 6  ? rows[rows.length - 7][s]  : null;
+    const p12 = rows.length > 12 ? rows[rows.length - 13][s] : null;
+    const maxV = Math.max(...rows.map(r => r[s]));
+    const c1 = pct(v, p1), c6 = pct(v, p6), c12 = pct(v, p12);
+    const cls = c => c != null && c > 0.3 ? 'up' : c != null && c < -0.3 ? 'dn' : 'fl';
+    const trendTxt = c1 > 0.3 ? '↑ Opp' : c1 < -0.3 ? '↓ Ned' : '→ Flat';
+    const trendCls = c1 > 0.3 ? 'b-up' : c1 < -0.3 ? 'b-dn' : 'b-fl';
+    return `<tr>
+      <td style="color:var(--mu)">${rows[rows.length-1].date.slice(0,7)}</td>
+      <td style="color:${COLORS[i%COLORS.length]};font-weight:700">${s}</td>
+      <td style="color:var(--go);font-weight:700">€${v.toFixed(0)}</td>
+      <td class="${cls(c1)}">${fmtPct(c1)}</td>
+      <td class="${cls(c6)}">${fmtPct(c6)}</td>
+      <td class="${cls(c12)}">${fmtPct(c12)}</td>
+      <td class="dn">${fmtPct(pct(v, maxV))}</td>
+      <td><span class="badge ${trendCls}">${trendTxt}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── AI ANALYSIS ──────────────────────────────────────────────
+async function runAI() {
+  const key = document.getElementById('apiKey').value.trim();
+  if (!key) { alert('Legg inn Anthropic API-nøkkel'); return; }
+
+  const focus = document.getElementById('focus').value;
+  const ctx = document.getElementById('ctx').value.trim();
+
+  const summary = SERIES.map(s => {
+    const rows = DATA.filter(r => r[s] != null);
+    if (!rows.length) return null;
+    const v   = rows[rows.length - 1][s];
+    const p1  = rows.length > 1  ? rows[rows.length - 2][s]  : null;
+    const p6  = rows.length > 6  ? rows[rows.length - 7][s]  : null;
+    const p12 = rows.length > 12 ? rows[rows.length - 13][s] : null;
+    const allV = rows.map(r => r[s]);
+    const maxV = Math.max(...allV), minV = Math.min(...allV);
+    return `${s}: €${v.toFixed(0)}/t | MoM ${fmtPct(pct(v,p1))} | 6mnd ${fmtPct(pct(v,p6))} | 12mnd ${fmtPct(pct(v,p12))} | fra topp €${maxV.toFixed(0)}: ${fmtPct(pct(v,maxV))} | fra bunn €${minV.toFixed(0)}: ${fmtPct(pct(v,minV))} | periode ${rows[0].date.slice(0,7)}–${rows[rows.length-1].date.slice(0,7)}`;
+  }).filter(Boolean).join('\n');
+
+  const focusPrompts = {
+    full:       'Gi en komplett markedsanalyse: overordnet situasjon, per-serie vurdering, markedsdrivere og 3–6 mnd utsikt.',
+    trend:      'Analyser trender: hvilke serier er i klar bevegelse, hva driver dem, og hva kan snu retningen.',
+    risk:       'Risikovurdering: prisvolatilitet, posisjoner vs historikk, supply-risiko og budsjetteksponering.',
+    forhandling:'Leverandørforhandling: hvilke materialer er kjøpervennlige nå, timing og argumentasjon basert på data.',
+    historisk:  'Historisk kontekst: hvor er vi i prissyklus sammenlignet med historiske topp- og bunnpunkter.',
+    ppwr:       'PPWR-perspektiv: regulatory impact på materialene og prisimplikasjoner mot 2026–2030.'
+  };
+
+  document.getElementById('aiBody').innerHTML =
+    `<div class="loading"><div class="dots"><span></span><span></span><span></span></div>Analyserer ${SERIES.length} serier…</div>`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: 'Du er ekspertanalytiker for europeisk emballasjeprocurement i FMCG. Analyser prisdata og gi presise, handlingsorienterte vurderinger på norsk. Bruk ### for overskrifter og **bold** for nøkkeltall.',
+        messages: [{ role: 'user', content:
+          `${focusPrompts[focus]}\n\nPRISDATATA:\n${summary}\n\n${ctx ? `KONTEKST:\n${ctx}\n\n` : ''}Gi konkrete anbefalinger basert på dataene.`
+        }]
+      })
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+    const d = await res.json();
+    const text = d.content?.find(b => b.type === 'text')?.text || '';
+    lastAI = text;
+    const html = text
+      .replace(/###\s*(.*)/g, '<h3>$1</h3>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^[-•]\s+(.*)/gm, '<li>$1</li>')
+      .replace(/(<li>.*?<\/li>\n?)+/gs, m => `<ul>${m}</ul>`)
+      .split('\n\n').map(p => p.startsWith('<') ? p : `<p>${p}</p>`).join('');
+    document.getElementById('aiBody').innerHTML = `<div class="ai-resp">${html}</div>`;
+  } catch(e) {
+    document.getElementById('aiBody').innerHTML =
+      `<div style="color:var(--dn);font-family:'Syne Mono',monospace;font-size:11px">✗ ${e.message}</div>`;
+  }
+}
+
+function copyAI() {
+  if (lastAI) navigator.clipboard.writeText(lastAI).then(() => alert('Kopiert'));
+}
+
+function exportCSV() {
+  const header = ['date', ...SERIES].join(',');
+  const rows = DATA.map(r => [r.date, ...SERIES.map(s => r[s] ?? '')].join(','));
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent([header, ...rows].join('\n'));
+  a.download = 'emballasje_analyse.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
