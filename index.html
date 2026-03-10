@@ -624,9 +624,9 @@ function updateKPIs() {
     { keys: ['kraftliner'],                    label: 'Kraftliner' },
     { keys: ['testliner'],                     label: 'Testliner 2' },
     { keys: ['fluting'],                       label: 'Fluting' },
-    { keys: ['fbb'],                           label: 'FBB' },
-    { keys: ['gc2', 'gc 2'],                   label: 'FBB' },
-    { keys: ['gd2'],                           label: 'FBB' },
+    { keys: ['fbb'],                           label: 'FBB Folding Boxboard' },
+    { keys: ['gc2', 'gc 2'],                   label: 'FBB Folding Boxboard' },
+    { keys: ['gd2'],                           label: 'FBB Folding Boxboard' },
   ];
   M.series.forEach(s => {
     const sl = s.toLowerCase();
@@ -658,9 +658,11 @@ function updateTable() {
     { keys: ['testliner 2'],         row: 'Testliner 2' },
     { keys: ['testliner 3'],         row: 'Testliner 3' },
     { keys: ['fluting'],             row: 'Fluting RB' },
-    { keys: ['fbb'],                 row: 'FBB' },
-    { keys: ['gc2', 'gc 2'],         row: 'WLC' },
-    { keys: ['gd2'],                 row: 'WLC' },
+    { keys: ['fbb'],                 row: 'FBB (Folding Boxboard)' },
+    { keys: ['fbb'],                 row: 'FBB – Folding Boxboard' },
+    { keys: ['gc2', 'gc 2'],         row: 'WLC (White-Lined Chipboard)' },
+    { keys: ['gc2', 'gc 2'],         row: 'WLC – White-Lined Chipboard' },
+    { keys: ['gd2'],                 row: 'WLC (White-Lined Chipboard)' },
   ];
   M.series.forEach(s => {
     const sl = s.toLowerCase();
