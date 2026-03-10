@@ -175,6 +175,27 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
 .o-ai-resp li { margin-bottom: 4px; }
 .o-ai-resp strong { color: #6a4e1a; }
 @media(max-width:900px){.mintec-hero{flex-direction:column;}.mintec-grid{grid-template-columns:1fr;}}
+
+/* ── MINTEC INTEGRATION ──────────────────────────────── */
+.mintec-live { font-family: 'DM Mono', monospace; font-size: 11px; color: #1a5a2a; font-weight: 600; }
+.mintec-badge { display: inline-block; background: #e8f5e8; color: #1a5a2a; font-family: 'DM Mono', monospace; font-size: 9px; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
+.kpi-mintec-val { font-family: 'DM Mono', monospace; font-size: 11px; margin-top: 4px; }
+#ai-run-btn:not(:disabled) { opacity: 1 !important; }
+#ai-run-btn:not(:disabled):hover { background: #b89030 !important; }
+.ai-resp-overview h3 { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #8a6e2a; margin: 16px 0 6px; padding-bottom: 4px; border-bottom: 1px solid #e8e0c0; }
+.ai-resp-overview h3:first-child { margin-top: 0; }
+.ai-resp-overview p { margin-bottom: 10px; }
+.ai-resp-overview ul { padding-left: 18px; margin-bottom: 10px; }
+.ai-resp-overview li { margin-bottom: 4px; }
+.ai-resp-overview strong { color: #6a4e1a; }
+.mintec-chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+.mintec-chart-box { background: var(--card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.mintec-chart-head { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.mintec-chart-title { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.mintec-chart-meta { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; }
+.mintec-chart-body { padding: 14px; height: 180px; position: relative; }
+@media(max-width:900px){.mintec-chart-row{grid-template-columns:1fr;}}
+
 </style>
 </head>
 <body>
@@ -197,7 +218,6 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
   <div class="nav-tab" onclick="showSection('drivere')">Markedsdrivere</div>
   <div class="nav-tab" onclick="showSection('regulering')">Regulering</div>
   <div class="nav-tab" onclick="showSection('kilder')">Kilder</div>
-  <div class="nav-tab" onclick="showSection('mintec')" id="mintec-tab">✦ Mintec Data</div>
 </nav>
 
 <main class="main">
@@ -206,7 +226,23 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
 <section class="section" id="overview">
   <div class="sec-header"><h2 class="sec-title">Markedsoversikt<span class="sec-tag">Q1 2026</span></h2></div>
 
-  <div class="alert">⚠ <strong>Merknad om datakvalitet:</strong> Detaljerte abonnementsbaserte prisdata (EUWID, FOEX, ICIS, Fastmarkets) er bak betalingsmur. Prisintervallene er basert på nyeste offentlige kilder kombinert med kjente markedstrender inn i Q1 2026. Verifiser mot ICIS, FOEX PIX eller EUWID for nøyaktige kontrakts-/spotpriser.</div>
+  <!-- ── MINTEC DATA SOURCE BAR ─────────────────────────── -->
+  <div id="data-source-bar" style="background:#f8f5f0;border:1px solid var(--border);border-radius:6px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div style="position:relative;flex-shrink:0">
+      <label id="upload-btn" style="display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:var(--paper);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:4px;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity=.8" onmouseout="this.style.opacity=1">
+        <span id="upload-icon">📂</span> <span id="upload-lbl">Last opp Mintec CSV</span>
+        <input type="file" id="mintec-file" accept=".csv" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="mintecLoad(this.files[0])">
+      </label>
+    </div>
+    <div id="source-status" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);flex:1">
+      Ingen prisdata lastet · Viser estimerte intervaller basert på offentlige kilder (FOEX PIX, Packaging Europe)
+    </div>
+    <div id="api-row" style="display:flex;align-items:center;gap:8px">
+      <input type="password" id="api-key-input" placeholder="API-nøkkel (sk-ant-…)" style="font-family:'DM Mono',monospace;font-size:10px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;background:white;color:var(--ink);width:220px;outline:none">
+      <button id="ai-run-btn" onclick="mintecRunAI()" disabled style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:6px 14px;border-radius:4px;border:none;background:#c8a84b;color:white;cursor:pointer;opacity:.45;transition:opacity .2s">✦ Analyser</button>
+    </div>
+  </div>
+  <!-- ── END DATA SOURCE BAR ── -->
 
   <div class="kpi-grid">
     <div class="kpi"><div class="kpi-label">PET Virgin</div><div class="kpi-value down">800–950</div><div class="kpi-trend down">↘ Flat/svak ned</div></div>
@@ -254,7 +290,10 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
     <div class="trend-box"><div class="trend-num" style="color:var(--flat)">Aug<br>2026</div><div class="trend-label">PPWR generell anvendelsesdato</div></div>
   </div>
 
-  <!-- MINTEC-BASERT TOTALVURDERING -->
+  <!-- MINTEC LIVE CHARTS (shown after CSV upload) -->
+  <div class="mintec-chart-row" id="mintec-chart-row" style="display:none"></div>
+
+  <!-- AI TOTALVURDERING -->
   <div class="overview-ai-panel" id="overview-ai-panel">
     <div class="overview-ai-head">
       <div class="overview-ai-badge">
@@ -263,11 +302,11 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <span id="overview-ai-source" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)"></span>
-        <button onclick="mRunOverviewAI()" style="font-family:'DM Mono',monospace;font-size:10px;background:transparent;border:1px solid #d0c898;color:#8a6e2a;padding:3px 10px;border-radius:3px;cursor:pointer;">↻ Oppdater</button>
+        <button onclick="mintecRunAI()" style="font-family:'DM Mono',monospace;font-size:10px;background:transparent;border:1px solid #d0c898;color:#8a6e2a;padding:3px 10px;border-radius:3px;cursor:pointer;">↻ Oppdater</button>
       </div>
     </div>
     <div class="overview-ai-body" id="overview-ai-body">
-      <div class="o-ai-ph">Last opp Mintec CSV (fanen «✦ Mintec Data») for å aktivere AI-totalvurdering basert på faktiske prisdata.</div>
+      <div class="o-ai-ph" id="ai-placeholder">Last opp Mintec CSV og klikk <strong>✦ Analyser</strong> for å generere totalvurdering basert på faktiske prisdata.</div>
     </div>
   </div>
 </section>
@@ -443,96 +482,6 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
 </section>
 
 
-<!-- MINTEC DATA -->
-<section class="section" id="mintec">
-  <div class="sec-header">
-    <h2 class="sec-title">Mintec Prisdata<span class="sec-tag">Historiske indekser</span></h2>
-  </div>
-
-  <div class="mintec-hero">
-    <div style="flex:1">
-      <div class="mintec-drop" id="m-dz" onclick="document.getElementById('m-fi').click()">
-        <input type="file" id="m-fi" accept=".csv" onchange="mLoadFile(this.files[0])">
-        <div class="mintec-drop-icon">📊</div>
-        <div class="mintec-drop-lbl" id="m-dz-lbl">Last opp Mintec CSV</div>
-        <div class="mintec-drop-hint">
-          Dra og slipp, eller klikk for å velge<br>
-          Format: semikolon-separert · Dato DD.MM.YYYY<br>
-          Eksempel: <code style="color:#c8a84b">Prisrapport_mintec.csv</code>
-        </div>
-      </div>
-    </div>
-    <div class="mintec-cfg">
-      <div class="mintec-cfg-title">⚙ AI-analyse</div>
-      <div class="m-field">
-        <label>Anthropic API-nøkkel</label>
-        <input class="m-inp" type="password" id="m-apikey" placeholder="sk-ant-api03-...">
-      </div>
-      <div class="m-field">
-        <label>Fokus</label>
-        <select class="m-inp" id="m-focus">
-          <option value="full">Komplett markedsanalyse</option>
-          <option value="trend">Trendanalyse</option>
-          <option value="risk">Risikovurdering</option>
-          <option value="forhandling">Leverandørforhandling</option>
-          <option value="historisk">Historisk kontekst og syklus</option>
-          <option value="ppwr">PPWR-regulering og prisimpact</option>
-        </select>
-      </div>
-      <div class="m-field">
-        <label>Din kontekst (valgfritt)</label>
-        <textarea class="m-inp" id="m-ctx" rows="3" placeholder="F.eks: Kraftliner-kontrakt utløper juni." style="resize:vertical;line-height:1.5"></textarea>
-      </div>
-      <button class="m-btn m-btn-p" id="m-ai-btn" onclick="mRunAI()" disabled>✦ Kjør AI-analyse</button>
-      <div id="m-status" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;text-align:center"></div>
-    </div>
-  </div>
-
-  <!-- TICKER -->
-  <div class="mintec-ticker" id="m-ticker" style="display:none"></div>
-
-  <!-- PERIOD SELECTOR + TABLE -->
-  <div class="card" id="m-table-card" style="display:none">
-    <div class="card-head">
-      <span class="card-title">Siste observasjoner</span>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div class="ptabs-m" id="m-ptabs">
-          <div class="ptab-m" onclick="mSetPeriod('all',this)">Alle</div>
-          <div class="ptab-m" onclick="mSetPeriod(60,this)">5 år</div>
-          <div class="ptab-m active" onclick="mSetPeriod(36,this)">3 år</div>
-          <div class="ptab-m" onclick="mSetPeriod(12,this)">12 mnd</div>
-        </div>
-        <button onclick="mExportCSV()" style="font-family:'DM Mono',monospace;font-size:10px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 9px;border-radius:3px;cursor:pointer;">↓ CSV</button>
-      </div>
-    </div>
-    <div style="overflow-x:auto">
-      <table>
-        <thead><tr>
-          <th>Dato</th><th>Serie</th><th>Siste (€/t)</th>
-          <th>MoM</th><th>6 mnd</th><th>12 mnd</th><th>Fra historisk topp</th><th>Trend</th>
-        </tr></thead>
-        <tbody id="m-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- CHARTS GRID -->
-  <div class="mintec-grid" id="m-chart-grid" style="display:none;margin-top:18px"></div>
-
-  <!-- AI ANALYSIS PANEL -->
-  <div class="mintec-ai-panel" id="m-ai-panel">
-    <div class="mintec-ai-head">
-      <div class="mintec-ai-badge"><div class="mintec-ai-dot"></div>AI Markedsanalyse — Claude</div>
-      <div style="display:flex;gap:8px">
-        <button onclick="mCopyAI()" style="font-family:'DM Mono',monospace;font-size:10px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 9px;border-radius:3px;cursor:pointer;">Kopier</button>
-        <button onclick="mRunAI()" style="font-family:'DM Mono',monospace;font-size:10px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 9px;border-radius:3px;cursor:pointer;">↻ Oppdater</button>
-      </div>
-    </div>
-    <div class="mintec-ai-body" id="m-ai-body">
-      <div class="m-ai-ph">Last opp CSV og kjør AI-analyse for å få markedsvurdering</div>
-    </div>
-  </div>
-</section>
 
 </main>
 
@@ -542,8 +491,9 @@ footer { background: var(--ink); color: rgba(245,241,235,0.35); padding: 16px 48
   <span>Indikative priser — ikke erstatning for profesjonelle prisindekser</span>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
-// ── NAVIGATION ────────────────────────────────────────────────
+// ── NAVIGATION ────────────────────────────────────────
 function showSection(id) {
   document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -552,358 +502,289 @@ function showSection(id) {
 }
 window.onload = function() {
   document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-  var first = document.querySelector('.section');
+  const first = document.querySelector('.section');
   if (first) first.style.display = 'block';
-  var firstTab = document.querySelector('.nav-tab');
-  if (firstTab) firstTab.classList.add('active');
+  document.querySelector('.nav-tab')?.classList.add('active');
 };
 
-// ── MINTEC STATE ──────────────────────────────────────────────
-let M_DATA = [];
-let M_SERIES = [];
-const M_COLORS = ['#c8401a','#c8a84b','#3b82f6','#2ecc71','#9b59b6','#e67e22'];
+// ── STATE ─────────────────────────────────────────────
+let M = { data: [], series: [] };
+const MC = { kraftliner:'#c8401a', testliner:'#c8a84b', fluting:'#3b82f6', gd2:'#2ecc71', nbsk:'#9b59b6' };
 let m_charts = {};
-let m_period = 36;
-let m_lastAI = '';
 
-// ── DRAG & DROP ───────────────────────────────────────────────
-const mDz = document.getElementById('m-dz');
-mDz.addEventListener('dragover', e => { e.preventDefault(); mDz.classList.add('over'); });
-mDz.addEventListener('dragleave', () => mDz.classList.remove('over'));
-mDz.addEventListener('drop', e => { e.preventDefault(); mDz.classList.remove('over'); mLoadFile(e.dataTransfer.files[0]); });
+// ── DRAG & DROP on source bar ──────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const bar = document.getElementById('data-source-bar');
+  if (!bar) return;
+  bar.addEventListener('dragover',  e => { e.preventDefault(); bar.style.outline = '2px dashed #c8401a'; });
+  bar.addEventListener('dragleave', () => bar.style.outline = '');
+  bar.addEventListener('drop',      e => { e.preventDefault(); bar.style.outline = ''; mintecLoad(e.dataTransfer.files[0]); });
+});
 
-// ── FILE PARSING ──────────────────────────────────────────────
-function mLoadFile(file) {
+// ── FILE LOAD & PARSE ─────────────────────────────────
+function mintecLoad(file) {
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => mParse(e.target.result, file.name);
-  reader.readAsText(file, 'utf-8');
+  const r = new FileReader();
+  r.onload = e => mintecParse(e.target.result, file.name);
+  r.readAsText(file, 'utf-8');
 }
 
-function mParse(raw, name) {
+function mintecParse(raw, name) {
   raw = raw.replace(/^\uFEFF/, '');
   const lines = raw.split(/\r?\n/).filter(l => l.trim());
-  if (lines.length < 2) { alert('Filen ser tom ut'); return; }
+  if (lines.length < 2) return;
   const sep = lines[0].includes(';') ? ';' : ',';
 
-  // Find data start (first line matching date pattern)
-  let dataStart = 1;
-  for (let i = 1; i < Math.min(6, lines.length); i++) {
-    if (/^\d{2}[.\-\/]\d{2}[.\-\/]\d{4}/.test(lines[i].trim())) { dataStart = i; break; }
+  // Find first data row (date-like)
+  let ds = 1;
+  for (let i = 1; i < Math.min(8, lines.length); i++) {
+    if (/^\d{2}[.\-\/]\d{2}[.\-\/]\d{4}/.test(lines[i].trim())) { ds = i; break; }
   }
 
-  // Parse header respecting quoted fields with embedded newlines
-  const headerRaw = lines.slice(0, dataStart).join('\n');
-  const headers = mSplitCSV(headerRaw, sep).map(h => h.replace(/\n.*/s, '').trim());
-
+  // Parse headers (Mintec uses quoted multi-line headers)
+  const hRaw = lines.slice(0, ds).join('\n');
+  const headers = csvSplit(hRaw, sep).map(h => h.replace(/\n[\s\S]*/s, '').trim());
   const dateIdx = Math.max(0, headers.findIndex(h => /date|dato|period/i.test(h)));
-  const seriesCols = headers
-    .map((h, i) => ({ name: mCleanHeader(h), i }))
-    .filter(({ name, i }) => i !== dateIdx && name.length > 0);
+  const cols = headers.map((h, i) => ({ name: cleanH(h), i }))
+                      .filter(({ name, i }) => i !== dateIdx && name.length > 0);
 
   const rows = [];
-  for (let i = dataStart; i < lines.length; i++) {
+  for (let i = ds; i < lines.length; i++) {
     const parts = lines[i].split(sep);
-    const dateStr = (parts[dateIdx] || '').trim();
-    if (!dateStr) continue;
-    const date = mParseDate(dateStr);
-    if (!date) continue;
-    const row = { date };
-    seriesCols.forEach(({ name, i: ci }) => {
+    const d = parseD(parts[dateIdx]?.trim());
+    if (!d) continue;
+    const row = { date: d };
+    cols.forEach(({ name, i: ci }) => {
       const v = parseFloat((parts[ci] || '').replace(',', '.'));
       row[name] = isNaN(v) ? null : v;
     });
     rows.push(row);
   }
+  if (!rows.length) { alert('Ingen datarader funnet i filen.'); return; }
 
-  if (!rows.length) { alert('Ingen datarader funnet'); return; }
+  M.data   = rows.sort((a, b) => a.date.localeCompare(b.date));
+  M.series = cols.map(c => c.name);
 
-  M_DATA = rows.sort((a, b) => a.date.localeCompare(b.date));
-  M_SERIES = seriesCols.map(s => s.name);
+  // Update UI
+  document.getElementById('upload-icon').textContent = '✓';
+  document.getElementById('upload-lbl').textContent  = name;
+  document.getElementById('upload-btn').style.background = '#1a6a3a';
+  document.getElementById('source-status').innerHTML =
+    `<strong style="color:#1a5a2a">Mintec data lastet</strong> · ` +
+    `${M.data[0].date.slice(0,7)} – ${M.data[M.data.length-1].date.slice(0,7)} · ` +
+    `${M.data.length} måneder · ${M.series.length} serier`;
+  document.getElementById('ai-run-btn').disabled = false;
 
-  mDz.classList.add('done');
-  document.getElementById('m-dz-lbl').textContent = `✓ ${name} (${M_DATA.length} rader · ${M_SERIES.length} serier)`;
-  document.getElementById('m-status').textContent = `${M_DATA[0].date.slice(0,7)} → ${M_DATA[M_DATA.length-1].date.slice(0,7)}`;
-  document.getElementById('m-ai-btn').disabled = false;
-
-  mRender();
-  mUpdateOverviewKPIs();
+  updateKPIs();
+  updateTable();
+  renderCharts();
 }
 
-function mSplitCSV(str, sep) {
-  const result = []; let cur = '', inQ = false;
-  for (let i = 0; i < str.length; i++) {
-    const c = str[i];
-    if (c === '"') { inQ = !inQ; continue; }
-    if (c === sep && !inQ) { result.push(cur); cur = ''; continue; }
-    cur += c;
-  }
-  result.push(cur); return result;
+// ── UPDATE KPI BOXES ──────────────────────────────────
+function updateKPIs() {
+  const map = [
+    { keys: ['kraftliner'],          label: 'Kraftliner' },
+    { keys: ['testliner'],           label: 'Testliner 2' },
+    { keys: ['fluting'],             label: 'Fluting' },
+    { keys: ['gd2', 'cartonboard'],  label: 'FBB' },
+  ];
+  M.series.forEach(s => {
+    const sl = s.toLowerCase();
+    const m  = map.find(x => x.keys.some(k => sl.includes(k)));
+    if (!m) return;
+    const rows = M.data.filter(r => r[s] != null);
+    if (!rows.length) return;
+    const last = rows[rows.length-1][s];
+    const prev = rows.length > 1 ? rows[rows.length-2][s] : null;
+    const chg  = prev ? (last-prev)/prev*100 : null;
+    const col  = chg > 0.3 ? '#1a5a2a' : chg < -0.3 ? '#8a1a1a' : '#6a5a1a';
+    const arr  = chg > 0.3 ? '↑' : chg < -0.3 ? '↓' : '→';
+    document.querySelectorAll('.kpi-label').forEach(el => {
+      if (!el.textContent.toLowerCase().includes(m.label.toLowerCase())) return;
+      const kpi = el.closest('.kpi');
+      const valEl = kpi.querySelector('.kpi-value');
+      if (valEl) valEl.innerHTML = `€${last.toFixed(0)} <span class="mintec-badge">Mintec</span>`;
+      let sub = kpi.querySelector('.kpi-mintec-val');
+      if (!sub) { sub = document.createElement('div'); sub.className = 'kpi-mintec-val'; kpi.appendChild(sub); }
+      sub.innerHTML = `<span style="color:${col}">${arr} ${chg != null ? (chg>0?'+':'')+chg.toFixed(1)+'% MoM' : '—'}</span>`;
+    });
+  });
 }
 
-function mCleanHeader(h) {
-  return h.replace(/^[A-Z0-9]+\s*[-–]\s*/, '').replace(/\b(del|ave)\b\s*/gi, '').replace(/EUR\/MT\s*/gi, '').replace(/\s+/g, ' ').trim();
+// ── UPDATE PRICE TABLE ────────────────────────────────
+function updateTable() {
+  const map = [
+    { keys: ['kraftliner'],          row: 'Kraftliner (brun)' },
+    { keys: ['testliner 2'],         row: 'Testliner 2' },
+    { keys: ['testliner 3'],         row: 'Testliner 3' },
+    { keys: ['fluting'],             row: 'Fluting RB' },
+    { keys: ['gd2', 'cartonboard'],  row: 'WLC' },
+  ];
+  M.series.forEach(s => {
+    const sl = s.toLowerCase();
+    const m  = map.find(x => x.keys.some(k => sl.includes(k)));
+    if (!m) return;
+    const rows = M.data.filter(r => r[s] != null);
+    if (!rows.length) return;
+    const last = rows[rows.length-1][s];
+    const prev = rows.length > 1  ? rows[rows.length-2][s]  : null;
+    const chg  = prev ? (last-prev)/prev*100 : null;
+    document.querySelectorAll('tbody tr').forEach(tr => {
+      if (!tr.textContent.toLowerCase().includes(m.row.toLowerCase())) return;
+      const tds = tr.querySelectorAll('td');
+      if (tds.length >= 4) tds[3].innerHTML = `<span class="mintec-live">€${last.toFixed(0)}</span><span class="mintec-badge">Mintec</span>`;
+      if (tds.length >= 5 && chg != null) {
+        const cls = chg > 0.3 ? 'up' : chg < -0.3 ? 'down' : 'flat';
+        const arr = chg > 0.3 ? '↗' : chg < -0.3 ? '↘' : '↔';
+        tds[4].innerHTML = `<span class="${cls}">${arr} ${(chg>0?'+':'')+chg.toFixed(1)}% MoM</span>`;
+      }
+    });
+  });
 }
 
-function mParseDate(s) {
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
-  const m = s.match(/(\d{2})[.\-\/](\d{2})[.\-\/](\d{4})/);
-  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
-  return null;
-}
-
-// ── RENDER ────────────────────────────────────────────────────
-function mRender() {
-  mRenderTicker();
-  mRenderTable();
-  mRenderCharts();
-  document.getElementById('m-ticker').style.display = 'flex';
-  document.getElementById('m-table-card').style.display = '';
-  document.getElementById('m-chart-grid').style.display = 'grid';
-}
-
-function mGetSlice() {
-  if (m_period === 'all') return M_DATA;
-  const cutoff = new Date(); cutoff.setMonth(cutoff.getMonth() - m_period);
-  return M_DATA.filter(r => new Date(r.date) >= cutoff);
-}
-
-function mSetPeriod(p, el) {
-  m_period = p;
-  document.querySelectorAll('.ptab-m').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  mRenderCharts();
-}
-
-function mPct(a, b) { if (a==null||b==null||b===0) return null; return (a-b)/b*100; }
-function mFmtPct(v) { if(v==null)return'—'; return(v>0?'+':'')+v.toFixed(1)+'%'; }
-
-function mRenderTicker() {
-  document.getElementById('m-ticker').innerHTML = M_SERIES.map((s, i) => {
-    const rows = M_DATA.filter(r => r[s] != null);
-    if (!rows.length) return '';
-    const last = rows[rows.length-1][s], prev = rows.length>1 ? rows[rows.length-2][s] : null;
-    const chg = mPct(last, prev);
-    const cls = chg>0.3?'m-up':chg<-0.3?'m-dn':'m-fl';
-    const arr = chg>0.3?'↑':chg<-0.3?'↓':'→';
-    return `<div class="m-ti">
-      <div class="m-ti-name" style="color:${M_COLORS[i%M_COLORS.length]}">${s}</div>
-      <div class="m-ti-val ${cls}">€${last.toFixed(0)}</div>
-      <div class="m-ti-chg ${cls}">${arr} ${chg!=null?Math.abs(chg).toFixed(1)+'%':'—'}</div>
-    </div>`;
-  }).join('');
-}
-
-function mRenderTable() {
-  document.getElementById('m-tbody').innerHTML = M_SERIES.map((s, i) => {
-    const rows = M_DATA.filter(r => r[s] != null);
-    if (!rows.length) return '';
-    const v=rows[rows.length-1][s], p1=rows.length>1?rows[rows.length-2][s]:null;
-    const p6=rows.length>6?rows[rows.length-7][s]:null, p12=rows.length>12?rows[rows.length-13][s]:null;
-    const maxV=Math.max(...rows.map(r=>r[s]));
-    const c1=mPct(v,p1), c6=mPct(v,p6), c12=mPct(v,p12);
-    const cls=c=>c!=null&&c>0.3?'up':c!=null&&c<-0.3?'down':'flat';
-    const tt=c1>0.3?'↑ Opp':c1<-0.3?'↓ Ned':'→ Flat';
-    const tc=c1>0.3?'up':c1<-0.3?'down':'flat';
-    return `<tr>
-      <td style="color:var(--muted)">${rows[rows.length-1].date.slice(0,7)}</td>
-      <td style="color:${M_COLORS[i%M_COLORS.length]};font-weight:600">${s}</td>
-      <td style="font-weight:600">€${v.toFixed(0)}</td>
-      <td class="${cls(c1)}">${mFmtPct(c1)}</td>
-      <td class="${cls(c6)}">${mFmtPct(c6)}</td>
-      <td class="${cls(c12)}">${mFmtPct(c12)}</td>
-      <td class="down">${mFmtPct(mPct(v,maxV))}</td>
-      <td><span class="${tc}">${tt}</span></td>
-    </tr>`;
-  }).join('');
-}
-
-function mRenderCharts() {
+// ── RENDER MINI-CHARTS IN OVERVIEW ────────────────────
+function renderCharts() {
   Object.values(m_charts).forEach(c => c.destroy());
   m_charts = {};
-  const slice = mGetSlice();
-  const labels = slice.map(r => r.date.slice(0,7));
-  const grid = document.getElementById('m-chart-grid');
-  grid.innerHTML = M_SERIES.map((s,i) => `
-    <div class="m-chart-box">
-      <div class="m-chart-head">
-        <span class="m-chart-title" style="color:${M_COLORS[i%M_COLORS.length]}">${s}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)" id="m-latest-${i}"></span>
+  const row = document.getElementById('mintec-chart-row');
+  row.style.display = 'grid';
+
+  const cutoff = new Date(); cutoff.setMonth(cutoff.getMonth() - 36);
+  const slice  = M.data.filter(r => new Date(r.date) >= cutoff);
+  const labels = slice.map(r => r.date.slice(0, 7));
+
+  row.innerHTML = M.series.map((s, i) => {
+    const col  = Object.entries(MC).find(([k]) => s.toLowerCase().includes(k))?.[1] || '#c8401a';
+    const rws  = M.data.filter(r => r[s] != null);
+    const last = rws[rws.length-1];
+    const prev = rws.length > 1 ? rws[rws.length-2][s] : null;
+    const chg  = prev ? (last[s]-prev)/prev*100 : null;
+    const chgS = chg != null ? ` ${chg>0?'+':''}${chg.toFixed(1)}%` : '';
+    const chgC = chg > 0.3 ? '#1a8c4a' : chg < -0.3 ? '#c8401a' : '#8a6e2a';
+    return `<div class="mintec-chart-box">
+      <div class="mintec-chart-head">
+        <span class="mintec-chart-title">${s}</span>
+        <span class="mintec-chart-meta" style="color:${chgC}">€${last[s].toFixed(0)}<small>${chgS} MoM</small></span>
       </div>
-      <div class="m-chart-body"><canvas id="m-chart-${i}"></canvas></div>
-    </div>`).join('');
+      <div class="mintec-chart-body"><canvas id="mc${i}"></canvas></div>
+    </div>`;
+  }).join('');
 
-  M_SERIES.forEach((s, i) => {
-    const data = slice.map(r => r[s]);
-    const rows = M_DATA.filter(r => r[s]!=null);
-    const latest = rows[rows.length-1];
-    if (latest) document.getElementById(`m-latest-${i}`).textContent = `€${latest[s].toFixed(0)}/t`;
-
-    m_charts[s] = new Chart(document.getElementById(`m-chart-${i}`), {
+  M.series.forEach((s, i) => {
+    const col  = Object.entries(MC).find(([k]) => s.toLowerCase().includes(k))?.[1] || '#c8401a';
+    m_charts[s] = new Chart(document.getElementById(`mc${i}`), {
       type: 'line',
-      data: { labels, datasets: [{ data, borderColor: M_COLORS[i%M_COLORS.length],
-        backgroundColor: M_COLORS[i%M_COLORS.length]+'18', fill: true,
+      data: { labels, datasets: [{ data: slice.map(r => r[s]),
+        borderColor: col, backgroundColor: col+'15', fill: true,
         tension: 0.3, pointRadius: 0, borderWidth: 2, spanGaps: true }] },
       options: {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false },
-          tooltip: { backgroundColor:'#111318', borderColor:'#1e2430', borderWidth:1,
-            titleColor:'#c8a84b', bodyColor:'#e8eaf0',
-            titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:10},
-            callbacks:{label:ctx=>` €${ctx.parsed.y?.toFixed(0)??'—'}/t`} } },
+          tooltip: { backgroundColor:'#0f1117', borderColor:'#333', borderWidth:1,
+            bodyColor:'#e8eaf0', bodyFont:{family:'DM Mono',size:10},
+            callbacks: { label: c => ` €${c.parsed.y?.toFixed(0)??'—'}/t` } } },
         scales: {
-          x:{ticks:{color:'#aaa',font:{family:'DM Mono',size:8},maxTicksLimit:7},grid:{color:'#f0ece4'}},
-          y:{ticks:{color:'#aaa',font:{family:'DM Mono',size:9},callback:v=>'€'+v.toFixed(0)},grid:{color:'#f0ece4'}}
+          x: { ticks:{color:'#aaa',font:{family:'DM Mono',size:8},maxTicksLimit:6}, grid:{color:'#f0ece4'} },
+          y: { ticks:{color:'#aaa',font:{family:'DM Mono',size:9},callback:v=>'€'+v.toFixed(0)}, grid:{color:'#f0ece4'} }
         }
       }
     });
   });
 }
 
-// ── UPDATE OVERVIEW KPIs WITH MINTEC DATA ─────────────────────
-function mUpdateOverviewKPIs() {
-  // Map Mintec series to KPI labels in overview
-  // We look for partial matches between series name and known materials
-  const mappings = [
-    { key: 'kraftliner', label: 'Kraftliner' },
-    { key: 'testliner', label: 'Testliner' },
-    { key: 'fluting', label: 'Fluting' },
-    { key: 'gd2', label: 'GD2 / WLC' },
-    { key: 'nbsk', label: 'NBSK Pulp' },
-  ];
+// ── AI TOTALVURDERING ─────────────────────────────────
+async function mintecRunAI() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) { alert('Lim inn Anthropic API-nøkkel i nøkkelfeltet'); return; }
+  if (!M.data.length) { alert('Last opp Mintec CSV først'); return; }
 
-  M_SERIES.forEach((s, i) => {
-    const sl = s.toLowerCase();
-    const match = mappings.find(m => sl.includes(m.key));
-    if (!match) return;
-    const rows = M_DATA.filter(r => r[s] != null);
-    if (!rows.length) return;
-    const last = rows[rows.length-1][s];
-    const prev = rows.length>1 ? rows[rows.length-2][s] : null;
-    const chg = mPct(last, prev);
-    const color = chg>0.3?'var(--up)':chg<-0.3?'var(--down)':'var(--flat)';
-    // Inject into all KPI boxes that match
-    document.querySelectorAll('.kpi-label').forEach(el => {
-      if (el.textContent.toLowerCase().includes(match.key)) {
-        const kpi = el.closest('.kpi');
-        let ind = kpi.querySelector('.kpi-mintec');
-        if (!ind) { ind = document.createElement('div'); ind.className='kpi-mintec'; kpi.appendChild(ind); }
-        ind.innerHTML = `Mintec: <strong style="color:${color}">€${last.toFixed(0)}/t</strong> ${mFmtPct(chg)} MoM`;
-      }
-    });
-  });
-
-  // Update overview AI source label
-  document.getElementById('overview-ai-source').textContent =
-    `Mintec ${M_DATA[0].date.slice(0,7)}–${M_DATA[M_DATA.length-1].date.slice(0,7)} lastet`;
-  document.getElementById('overview-ai-body').innerHTML =
-    `<div class="o-ai-ph">Data lastet. Legg inn API-nøkkel i «✦ Mintec Data» og klikk «↻ Oppdater» for AI-totalvurdering.</div>`;
-}
-
-// ── OVERVIEW AI ───────────────────────────────────────────────
-async function mRunOverviewAI() {
-  const key = document.getElementById('m-apikey').value.trim();
-  if (!key) {
-    showSection('mintec');
-    alert('Legg inn API-nøkkel i Mintec Data-fanen');
-    return;
-  }
-  if (!M_DATA.length) {
-    showSection('mintec');
-    alert('Last opp Mintec CSV først');
-    return;
-  }
-  const summary = mBuildSummary();
-  document.getElementById('overview-ai-body').innerHTML =
-    `<div class="m-loading"><div class="m-dots"><span></span><span></span><span></span></div>Analyserer Mintec-data…</div>`;
-  const result = await mCallAPI(key, 'full', '', summary);
-  document.getElementById('overview-ai-body').innerHTML = result
-    ? `<div class="o-ai-resp">${mMarkdown(result)}</div>`
-    : `<div style="color:var(--down);font-family:'DM Mono',monospace;font-size:11px">✗ Analyse feilet</div>`;
-}
-
-// ── MINTEC AI ─────────────────────────────────────────────────
-async function mRunAI() {
-  const key = document.getElementById('m-apikey').value.trim();
-  if (!key) { alert('Legg inn API-nøkkel'); return; }
-  if (!M_DATA.length) { alert('Last opp CSV først'); return; }
-  const focus = document.getElementById('m-focus').value;
-  const ctx = document.getElementById('m-ctx').value.trim();
-  const summary = mBuildSummary();
-  document.getElementById('m-ai-body').innerHTML =
-    `<div class="m-loading"><div class="m-dots"><span></span><span></span><span></span></div>Analyserer ${M_SERIES.length} serier…</div>`;
-  const result = await mCallAPI(key, focus, ctx, summary);
-  m_lastAI = result || '';
-  document.getElementById('m-ai-body').innerHTML = result
-    ? `<div class="m-ai-resp">${mMarkdown(result)}</div>`
-    : `<div style="color:var(--down);font-family:'DM Mono',monospace;font-size:11px">✗ Analyse feilet</div>`;
-  // Also update overview panel
-  if (result) {
-    document.getElementById('overview-ai-body').innerHTML = `<div class="o-ai-resp">${mMarkdown(result)}</div>`;
-    document.getElementById('overview-ai-source').textContent =
-      `Basert på Mintec ${M_DATA[0].date.slice(0,7)}–${M_DATA[M_DATA.length-1].date.slice(0,7)}`;
-  }
-}
-
-function mBuildSummary() {
-  return M_SERIES.map(s => {
-    const rows = M_DATA.filter(r => r[s] != null);
+  const summary = M.series.map(s => {
+    const rows = M.data.filter(r => r[s] != null);
     if (!rows.length) return null;
-    const v=rows[rows.length-1][s], p1=rows.length>1?rows[rows.length-2][s]:null;
-    const p6=rows.length>6?rows[rows.length-7][s]:null, p12=rows.length>12?rows[rows.length-13][s]:null;
-    const allV=rows.map(r=>r[s]), maxV=Math.max(...allV), minV=Math.min(...allV);
-    return `${s}: €${v.toFixed(0)}/t | MoM ${mFmtPct(mPct(v,p1))} | 6mnd ${mFmtPct(mPct(v,p6))} | 12mnd ${mFmtPct(mPct(v,p12))} | fra topp €${maxV.toFixed(0)}: ${mFmtPct(mPct(v,maxV))} | fra bunn €${minV.toFixed(0)}: ${mFmtPct(mPct(v,minV))} | ${rows[0].date.slice(0,7)}–${rows[rows.length-1].date.slice(0,7)}`;
+    const v   = rows[rows.length-1][s];
+    const p1  = rows.length > 1  ? rows[rows.length-2][s]  : null;
+    const p6  = rows.length > 6  ? rows[rows.length-7][s]  : null;
+    const p12 = rows.length > 12 ? rows[rows.length-13][s] : null;
+    const all = rows.map(r => r[s]);
+    const mx  = Math.max(...all), mn = Math.min(...all);
+    const fp  = (a, b) => b ? `${((a-b)/b*100).toFixed(1).replace(/^(?!-)/, '+')}%` : '—';
+    return `${s}: €${v.toFixed(0)}/t | MoM ${fp(v,p1)} | 6mnd ${fp(v,p6)} | 12mnd ${fp(v,p12)} | fra topp €${mx.toFixed(0)} ${fp(v,mx)} | fra bunn €${mn.toFixed(0)} ${fp(v,mn)} | ${rows[0].date.slice(0,7)}–${rows[rows.length-1].date.slice(0,7)}`;
   }).filter(Boolean).join('\n');
-}
 
-async function mCallAPI(key, focus, ctx, summary) {
-  const focusMap = {
-    full:       'Gi en komplett markedsanalyse: situasjon per materiale, markedsdrivere og 3–6 mnd utsikt.',
-    trend:      'Analyser trender: hvilke serier er i klar bevegelse og hva driver dem.',
-    risk:       'Risikovurdering: prisvolatilitet, posisjoner vs historikk og budsjetteksponering.',
-    forhandling:'Leverandørforhandling: hvilke materialer er kjøpervennlige nå, timing og argumentasjon.',
-    historisk:  'Historisk kontekst: hvor er vi i prissyklus vs. historiske topp/bunnpunkter.',
-    ppwr:       'PPWR-perspektiv: regulatory impact på materialene og prisimplikasjoner mot 2026–2030.'
-  };
+  const body = document.getElementById('overview-ai-body');
+  body.innerHTML = `<div style="display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;color:#8a6e2a">
+    <span>Analyserer</span>
+    <span style="letter-spacing:2px">· · ·</span>
+  </div>`;
+
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 2000,
-        system: 'Du er ekspertanalytiker for europeisk emballasjeprocurement i FMCG. Analyser Mintec-prisdata og gi presise, handlingsorienterte vurderinger på norsk. Bruk ### for overskrifter og **bold** for nøkkeltall.',
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: 'Du er ekspertanalytiker for europeisk emballasjeprocurement i FMCG. Du bruker faktiske Mintec-prisindekser som primærkilde kombinert med din kunnskap om markedet. Svar alltid på norsk. Bruk ### for seksjonsoverskrifter og **tekst** for nøkkeltall.',
         messages: [{ role: 'user', content:
-          `${focusMap[focus]}\n\nMINTEC PRISDATA:\n${summary}\n\n${ctx?`KONTEKST:\n${ctx}\n\n`:''}Gi konkrete anbefalinger.`
+`Lag en komplett markedsvurdering for europeisk emballasjeprocurement.
+
+MINTEC PRISINDEKSER (primærkilde — faktiske tall):
+${summary}
+
+Suppler med kjent markedssituasjon for materialer ikke i Mintec-dataene (PET, rPET, PP, HDPE).
+
+Struktur:
+### Overordnet situasjon
+### Containerboard og bølgepapp (bruk Mintec-tallene direkte)
+### Solid board og kartong (bruk Mintec GD2 der tilgjengelig)
+### Pulp og råstoff
+### Plastmaterialer (PET · rPET · PP · HDPE)
+### Innkjøpsanbefalinger Q2 2026
+
+Vær konkret. Referer til faktiske €-tall fra Mintec der de finnes.`
         }]
       })
     });
-    if (!res.ok) { const e=await res.json(); throw new Error(e.error?.message||`HTTP ${res.status}`); }
-    const d = await res.json();
-    return d.content?.find(b=>b.type==='text')?.text || '';
+    if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || `HTTP ${res.status}`); }
+    const d    = await res.json();
+    const text = d.content?.find(b => b.type === 'text')?.text || '';
+    body.innerHTML = `<div class="ai-resp-overview">${md(text)}</div>`;
+    document.getElementById('overview-ai-source').textContent =
+      `Mintec ${M.data[0].date.slice(0,7)}–${M.data[M.data.length-1].date.slice(0,7)}`;
   } catch(e) {
-    return null;
+    body.innerHTML = `<div style="color:#c8401a;font-family:'DM Mono',monospace;font-size:11px">✗ ${e.message}</div>`;
   }
 }
 
-function mMarkdown(text) {
-  return text
-    .replace(/###\s*(.*)/g,'<h3>$1</h3>')
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/^[-•]\s+(.*)/gm,'<li>$1</li>')
-    .replace(/(<li>.*?<\/li>\n?)+/gs,m=>`<ul>${m}</ul>`)
-    .split('\n\n').map(p=>p.startsWith('<')?p:`<p>${p}</p>`).join('');
+// ── HELPERS ───────────────────────────────────────────
+function csvSplit(str, sep) {
+  const r = []; let c = '', q = false;
+  for (const ch of str) {
+    if (ch === '"') { q = !q; continue; }
+    if (ch === sep && !q) { r.push(c); c = ''; continue; }
+    c += ch;
+  }
+  r.push(c); return r;
 }
-
-function mCopyAI() {
-  if (m_lastAI) navigator.clipboard.writeText(m_lastAI).then(()=>alert('Kopiert'));
+function cleanH(h) {
+  return h.replace(/^[A-Z0-9]+\s*[-–]\s*/, '')
+          .replace(/\b(del|ave)\b\s*/gi, '')
+          .replace(/EUR\/MT\s*/gi, '')
+          .replace(/\s+/g, ' ').trim();
 }
-
-function mExportCSV() {
-  const header = ['date',...M_SERIES].join(',');
-  const rows = M_DATA.map(r=>[r.date,...M_SERIES.map(s=>r[s]??'')].join(','));
-  const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent([header,...rows].join('\n'));
-  a.download='mintec_export.csv'; a.click();
+function parseD(s) {
+  if (!s) return null;
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0,10);
+  const m = s.match(/(\d{2})[.\-\/](\d{2})[.\-\/](\d{4})/);
+  return m ? `${m[3]}-${m[2]}-${m[1]}` : null;
+}
+function md(t) {
+  return t
+    .replace(/###\s*(.*)/g, '<h3>$1</h3>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[-•]\s+(.*)/gm, '<li>$1</li>')
+    .replace(/(<li>.*?<\/li>\n?)+/gs, m => `<ul>${m}</ul>`)
+    .split('\n\n').map(p => p.startsWith('<') ? p : `<p>${p}</p>`).join('');
 }
 </script>
 </body>
