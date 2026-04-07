@@ -599,7 +599,7 @@ tbody tr:hover { background: #f8fcfa; }
       <input type="file" id="mintec-file" accept=".csv" onchange="mintecLoad(this.files[0])">
     </label>
     <div class="api-row">
-      <input type="password" class="api-input" id="api-key" placeholder="API-nøkkel (sk-ant-…)">
+      <input type="password" class="api-input" id="api-key" placeholder="API-nøkkel (sk-ant-…)" oninput="sessionStorage.setItem('emb_api_key',this.value)">
       <button class="api-btn" id="ai-btn" onclick="runAI()" disabled>✦ Analyser</button>
     </div>
   </div>
@@ -762,18 +762,18 @@ tbody tr:hover { background: #f8fcfa; }
   <div class="card">
     <div class="card-hd"><span class="card-title">Prishistorikk plast Europa (€/tonn)</span><span class="card-note">Kilde: ICIS, ChemOrbis</span></div>
     <table>
-      <thead><tr><th>Periode</th><th>PET Virgin</th><th>rPET Food-Grade</th><th>PP Homo (Antwerpen)</th><th>HDPE Blåsing NWE</th><th>LDPE Film NWE</th></tr></thead>
+      <thead><tr><th>Periode</th><th>PET Virgin</th><th>rPET Food-Grade</th><th>PP Homo (Antwerpen)</th><th>HDPE Blåsing NWE</th><th>LDPE Film NWE</th><th>Trend Q→Q</th></tr></thead>
       <tbody>
-        <tr><td>Q1 2024</td><td>€1 050–1 100</td><td>€1 700–1 800</td><td>€1 400–1 450</td><td>€1 100–1 200</td><td>€1 200–1 300</td></tr>
-        <tr><td>Q2 2024</td><td>€1 000–1 060</td><td>€1 680–1 750</td><td>€1 380–1 430</td><td>€1 080–1 160</td><td>€1 180–1 260</td></tr>
-        <tr><td>Q3 2024</td><td>€990–1 040</td><td>€1 650–1 720</td><td>€1 360–1 410</td><td>€1 060–1 140</td><td>€1 160–1 240</td></tr>
-        <tr><td>Q4 2024</td><td>€980–1 030</td><td>€1 620–1 700</td><td>€1 420–1 480</td><td>€1 050–1 130</td><td>€1 150–1 230</td></tr>
-        <tr><td>Q1 2025</td><td>€970–1 020</td><td>€1 600–1 680</td><td>€1 500–1 560</td><td>€1 040–1 120</td><td>€1 140–1 220</td></tr>
-        <tr><td>Q2 2025</td><td>€980–1 030</td><td>€1 580–1 660</td><td>€1 520–1 580</td><td>€1 050–1 130</td><td>€1 150–1 240</td></tr>
-        <tr><td>Q3 2025</td><td>€990–1 040</td><td>€1 570–1 650</td><td>€1 540–1 600</td><td>€1 060–1 140</td><td>€1 160–1 260</td></tr>
-        <tr><td>Q4 2025</td><td>€985–1 035</td><td>€1 560–1 640</td><td>€1 560–1 620</td><td>€1 055–1 140</td><td>€1 155–1 270</td></tr>
-        <tr><td>Q1 2026</td><td>€980–1 040</td><td>€1 560–1 680</td><td>€1 580–1 650</td><td>€1 050–1 140</td><td>€1 160–1 290</td></tr>
-        <tr style="font-weight:600;background:var(--g50)"><td>Q2 2026 (spot)</td><td>€980–1 050</td><td>€1 550–1 700</td><td>€1 680–1 710</td><td>€1 050–1 150</td><td>€1 150–1 300</td></tr>
+        <tr><td>Q1 2024</td><td>€1 050–1 100</td><td>€1 700–1 800</td><td>€1 400–1 450</td><td>€1 100–1 200</td><td>€1 200–1 300</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q2 2024</td><td>€1 000–1 060</td><td>€1 680–1 750</td><td>€1 380–1 430</td><td>€1 080–1 160</td><td>€1 180–1 260</td><td><span class="tag dn">↘ Ned</span></td></tr>
+        <tr><td>Q3 2024</td><td>€990–1 040</td><td>€1 650–1 720</td><td>€1 360–1 410</td><td>€1 060–1 140</td><td>€1 160–1 240</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q4 2024</td><td>€980–1 030</td><td>€1 620–1 700</td><td>€1 420–1 480</td><td>€1 050–1 130</td><td>€1 150–1 230</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q1 2025</td><td>€970–1 020</td><td>€1 600–1 680</td><td>€1 500–1 560</td><td>€1 040–1 120</td><td>€1 140–1 220</td><td><span class="tag dn">↘ Ned</span></td></tr>
+        <tr><td>Q2 2025</td><td>€980–1 030</td><td>€1 580–1 660</td><td>€1 520–1 580</td><td>€1 050–1 130</td><td>€1 150–1 240</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q3 2025</td><td>€990–1 040</td><td>€1 570–1 650</td><td>€1 540–1 600</td><td>€1 060–1 140</td><td>€1 160–1 260</td><td><span class="tag up">↑ Opp</span></td></tr>
+        <tr><td>Q4 2025</td><td>€985–1 035</td><td>€1 560–1 640</td><td>€1 560–1 620</td><td>€1 055–1 140</td><td>€1 155–1 270</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q1 2026</td><td>€980–1 040</td><td>€1 560–1 680</td><td>€1 580–1 650</td><td>€1 050–1 140</td><td>€1 160–1 290</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr style="font-weight:600;background:var(--g50)"><td>Q2 2026 (spot)</td><td>€980–1 050</td><td>€1 550–1 700</td><td>€1 680–1 710</td><td>€1 050–1 150</td><td>€1 150–1 300</td><td id="td-plast-trend"><span class="tag flat">↔ Blandet</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -824,18 +824,18 @@ tbody tr:hover { background: #f8fcfa; }
   <div class="card">
     <div class="card-hd"><span class="card-title">Prishistorikk bølgepapp Europa (€/tonn)</span><span class="card-note">Kilde: Mintec SZ173/SZ176/SZ178/SW90 · FOEX PIX</span></div>
     <table>
-      <thead><tr><th>Periode</th><th>Kraftliner (SZ173)</th><th>Testliner 2 (SZ176)</th><th>Fluting RB (SZ178)</th><th>GD2 (SW90)</th><th>OCC</th></tr></thead>
+      <thead><tr><th>Periode</th><th>Kraftliner (SZ173)</th><th>Testliner 2 (SZ176)</th><th>Fluting RB (SZ178)</th><th>GD2 (SW90)</th><th>OCC</th><th>Trend MoM</th></tr></thead>
       <tbody>
-        <tr><td>Q1 2024</td><td>~€600–620</td><td>~€510–530</td><td>~€470–490</td><td>~€640–670</td><td>~€165–180</td></tr>
-        <tr><td>Q2 2024</td><td>~€595–615</td><td>~€505–525</td><td>~€465–485</td><td>~€635–665</td><td>~€160–175</td></tr>
-        <tr><td>Q3 2024</td><td>~€585–605</td><td>~€498–518</td><td>~€458–478</td><td>~€625–655</td><td>~€155–170</td></tr>
-        <tr><td>Q4 2024</td><td>~€575–595</td><td>~€490–510</td><td>~€450–470</td><td>~€615–645</td><td>~€150–165</td></tr>
-        <tr><td>Q1 2025</td><td>~€570–590</td><td>~€485–505</td><td>~€445–465</td><td>~€608–638</td><td>~€145–160</td></tr>
-        <tr><td>Q2 2025</td><td>~€568–588</td><td>~€482–500</td><td>~€442–460</td><td>~€600–630</td><td>~€140–155</td></tr>
-        <tr><td>Q3 2025</td><td>~€565–585</td><td>~€478–496</td><td>~€438–456</td><td>~€592–622</td><td>~€138–152</td></tr>
-        <tr><td>Q4 2025</td><td>~€562–580</td><td>~€474–492</td><td>~€430–448</td><td>~€585–615</td><td>~€132–147</td></tr>
-        <tr><td>Q1 2026</td><td>~€558–575</td><td>~€470–488</td><td>~€428–445</td><td>~€578–608</td><td>~€128–143</td></tr>
-        <tr style="font-weight:600;background:var(--g50)"><td>Q2 2026 (Mintec)</td><td id="c-kl-now">€555</td><td id="c-tl-now">€465</td><td id="c-fl-now">€423</td><td id="c-gd2-now">~€565–590</td><td>€126</td></tr>
+        <tr><td>Q1 2024</td><td>~€600–620</td><td>~€510–530</td><td>~€470–490</td><td>~€640–670</td><td>~€165–180</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q2 2024</td><td>~€595–615</td><td>~€505–525</td><td>~€465–485</td><td>~€635–665</td><td>~€160–175</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q3 2024</td><td>~€585–605</td><td>~€498–518</td><td>~€458–478</td><td>~€625–655</td><td>~€155–170</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q4 2024</td><td>~€575–595</td><td>~€490–510</td><td>~€450–470</td><td>~€615–645</td><td>~€150–165</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q1 2025</td><td>~€570–590</td><td>~€485–505</td><td>~€445–465</td><td>~€608–638</td><td>~€145–160</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q2 2025</td><td>~€568–588</td><td>~€482–500</td><td>~€442–460</td><td>~€600–630</td><td>~€140–155</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q3 2025</td><td>~€565–585</td><td>~€478–496</td><td>~€438–456</td><td>~€592–622</td><td>~€138–152</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q4 2025</td><td>~€562–580</td><td>~€474–492</td><td>~€430–448</td><td>~€585–615</td><td>~€132–147</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q1 2026</td><td>~€558–575</td><td>~€470–488</td><td>~€428–445</td><td>~€578–608</td><td>~€128–143</td><td><span class="tag dn">↘</span></td></tr>
+        <tr style="font-weight:600;background:var(--g50)"><td>Q2 2026 (Mintec)</td><td id="c-kl-now">€555</td><td id="c-tl-now">€465</td><td id="c-fl-now">€423</td><td id="c-gd2-now">~€565–590</td><td>€126</td><td id="c-trend-now"><span class="tag dn">↘ Alle ned</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -964,6 +964,9 @@ window.onload = () => {
   document.getElementById('overview').style.display = 'block';
   document.querySelector('.nav-item').classList.add('active');
   mintecFetch();
+  // Restore API key from sessionStorage
+  const saved = sessionStorage.getItem('emb_api_key');
+  if (saved) { const el = document.getElementById('api-key'); if(el) el.value = saved; }
 };
 
 // ── STATE ─────────────────────────────────────────────
@@ -1099,6 +1102,22 @@ function updateTables() {
       if (el) el.innerHTML = `<span class="tag ${cls}">${arr}${chgStr}</span>`;
     }
   });
+  // Update combined bølgepapp trend indicator
+  const corrTrends = M.series.filter(s => {
+    const sl = s.toLowerCase();
+    return ['kraftliner','testliner','fluting','gd2'].some(k => sl.includes(k));
+  }).map(s => {
+    const rows = M.data.filter(r => r[s] != null);
+    if (rows.length < 2) return null;
+    return (rows[rows.length-1][s] - rows[rows.length-2][s]) / rows[rows.length-2][s] * 100;
+  }).filter(v => v != null);
+  if (corrTrends.length) {
+    const avg = corrTrends.reduce((a,b)=>a+b,0)/corrTrends.length;
+    const cls = avg > 0.3 ? 'up' : avg < -0.3 ? 'dn' : 'flat';
+    const arr = avg > 0.3 ? '↑' : avg < -0.3 ? '↘' : '↔';
+    const el = document.getElementById('c-trend-now');
+    if (el) el.innerHTML = `<span class="tag ${cls}">${arr} ${avg.toFixed(1)}% snitt</span>`;
+  }
 }
 
 // ── TREND CHARTS ──────────────────────────────────────
