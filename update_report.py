@@ -218,11 +218,89 @@ KLASSER å bruke: kpi-grid/kpi/kpi-label/kpi-value/kpi-trend, card/card-head/car
 Bruk tallene fra markedsdataene. Fyll inn ALLE 8 blokker.
 """
 
-    fill_response = call_api_with_retry(
+    # ── KALL 1: De fem innholdstunge seksjonene ──────────────────
+    fill_prompt_1 = fill_prompt  # inneholder allerede OVERSIKT→KAPASITET
+    fill_response_1 = call_api_with_retry(
         client, model="claude-sonnet-4-6", max_tokens=8000,
-        messages=[{"role": "user", "content": fill_prompt}]
+        messages=[{"role": "user", "content": fill_prompt_1}]
     )
-    fill_text = "".join(b.text for b in fill_response.content if hasattr(b, "text"))
+    fill_text_1 = "".join(b.text for b in fill_response_1.content if hasattr(b, "text"))
+
+    # ── KALL 2: De tre statiske/kortere seksjonene ───────────────
+    fill_prompt_2 = f"""Du skal fylle inn innhold i 3 HTML-seksjoner for en emballasjeprisrapport ({quarter}, {today}).
+
+Returner KUN 3 blokker med ren HTML. Ingen annen tekst. Bruk eksakt dette formatet:
+
+##DRIVERE_INNHOLD##
+<div class="sec-header"><h2 class="sec-title">Markedsdrivere<span class="sec-tag">Etterspørsel · Kapasitet · Regulering</span></h2></div>
+<div class="grid">
+  <div class="dcard"><div class="dcard-icon">🛒</div><div class="dcard-title">E-handel driver etterspørsel</div><div class="dcard-body">EU online-dagligvare: €56 mrd. (2024), 4x siden 2020. Bølgepapp og solid board er primære vinnerne. Strukturell vekst anslått 3–5% CAGR for packaging-grade papir mot 2030.</div></div>
+  <div class="dcard"><div class="dcard-icon">📋</div><div class="dcard-title">PPWR driver plastsubstitusjon</div><div class="dcard-body">EU Packaging and Packaging Waste Regulation (PPWR) trer i full kraft aug 2026. Krav om 25% rPET i flasker fra 2025, 30% innen 2030. Driver strukturell etterspørsel mot fiber og resirkulert plast.</div></div>
+  <div class="dcard"><div class="dcard-icon">⚡</div><div class="dcard-title">Energikostnader — varig faktor</div><div class="dcard-body">Europeiske energipriser forblir strukturelt høyere enn pre-2022. Papir og kartongproduksjon er energiintensiv — energi utgjør 25–35% av produksjonskostnadene. Dette setter et gulv under prisene selv i svake markeder.</div></div>
+  <div class="dcard"><div class="dcard-icon">🌏</div><div class="dcard-title">Asiatisk import — strukturell konkurranse</div><div class="dcard-body">Kinesisk og sørøstasiatisk PET, PP og HDPE importeres under europeisk produksjonskostnad. Anti-dumping-tiltak gir noe beskyttelse, men CBAM-implementering er ufullstendig. Strukturell prisdemper for europrodusenter.</div></div>
+  <div class="dcard"><div class="dcard-icon">🔄</div><div class="dcard-title">Resirkulert innhold — kostnadspremie</div><div class="dcard-body">rPET food-grade koster ~€600–650/t mer enn virgin PET. WLC (resirkulert kartong) er billigere enn FBB men følger OCC-prisen tett. Regulatorisk press øker etterspørselen etter resirkulert materiale uavhengig av kostnad.</div></div>
+  <div class="dcard"><div class="dcard-icon">🏭</div><div class="dcard-title">Kapasitetskonsolidering i containerboard</div><div class="dcard-body">IP/DS Smith-integrasjon fullført. Smurfit Westrock er nå #1 i Europa. Hamburger CB, Saica og Klingele presser på prisøkninger. Strukturell konsolidering gir produsenter noe mer prismakt på sikt.</div></div>
+</div>
+<div class="card" style="margin-top:20px">
+  <div class="card-head"><span class="card-title">Drivermatrise — retning per material</span></div>
+  <table>
+    <thead><tr><th>Driver</th><th>PET/rPET</th><th>PP/HDPE</th><th>FBB/WLC</th><th>Kraftliner</th><th>Testliner</th></tr></thead>
+    <tbody>
+      <tr><td>PPWR-regulering</td><td class="up">↑ Positiv</td><td class="down">↓ Negativ</td><td class="up">↑ Positiv</td><td class="flat">↔ Nøytral</td><td class="flat">↔ Nøytral</td></tr>
+      <tr><td>E-handel vekst</td><td class="flat">↔ Nøytral</td><td class="flat">↔ Nøytral</td><td class="up">↑ Positiv</td><td class="up">↑ Positiv</td><td class="up">↑ Positiv</td></tr>
+      <tr><td>Asiatisk import</td><td class="down">↓ Negativ</td><td class="down">↓ Negativ</td><td class="flat">↔ Begrenset</td><td class="flat">↔ Begrenset</td><td class="flat">↔ Begrenset</td></tr>
+      <tr><td>Energikostnader</td><td class="flat">↔ Nøytral</td><td class="flat">↔ Nøytral</td><td class="down">↓ Støtte</td><td class="down">↓ Støtte</td><td class="down">↓ Støtte</td></tr>
+      <tr><td>Plastsubstitusjon</td><td class="down">↓ Press</td><td class="down">↓ Press</td><td class="up">↑ Driver</td><td class="up">↑ Driver</td><td class="up">↑ Driver</td></tr>
+    </tbody>
+  </table>
+</div>
+
+##REGULERING_INNHOLD##
+<div class="sec-header"><h2 class="sec-title">Regulering<span class="sec-tag">PPWR · SUP · CBAM</span></h2></div>
+<div class="alert">⚠ <strong>PPWR trer i kraft august 2026:</strong> EU Packaging and Packaging Waste Regulation (2025/40) har generell anvendelsesdato 12. august 2026. Alle emballasjeprodusenter og importører til EU-markedet berøres.</div>
+<div class="tl">
+  <div class="tl-item"><div class="tl-year">2025</div><div><div class="tl-rule">PPWR vedtatt — Feb 2025</div><div class="tl-desc">Forordningen trådte i kraft. 18 måneders overgangsperiode starter.</div></div></div>
+  <div class="tl-item"><div class="tl-year">2026</div><div><div class="tl-rule">Generell anvendelse — Aug 2026</div><div class="tl-desc">PPWR gjelder fullt ut. Krav om emballasje-minimering, gjenbruk og resirkulerbarhet.</div></div></div>
+  <div class="tl-item"><div class="tl-year">2030</div><div><div class="tl-rule">Resirkulert innhold plast</div><div class="tl-desc">25% rPET i PET-flasker (kontakt mat/drikke). 30% resirkulert i all plastemballasje over 1L.</div></div></div>
+  <div class="tl-item"><div class="tl-year">2035</div><div><div class="tl-rule">Økte krav resirkulert innhold</div><div class="tl-desc">50% resirkulert innhold i plastemballasje. Strengere krav til gjenbrukssystemer.</div></div></div>
+  <div class="tl-item"><div class="tl-year">2040</div><div><div class="tl-rule">Full sirkulærøkonomi-mål</div><div class="tl-desc">65% av all emballasje skal resirkuleres (volum). Plast: 90% resirkuleringsrate.</div></div></div>
+</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">Resirkulert innhold — krav per materialtype</span></div>
+  <table>
+    <thead><tr><th>Materialtype</th><th>Krav 2030</th><th>Krav 2035</th><th>Status nå</th></tr></thead>
+    <tbody>
+      <tr><td>PET-flasker (kontakt mat)</td><td class="up">25% rPET</td><td class="up">30% rPET</td><td class="flat">~15–20% i dag</td></tr>
+      <tr><td>Plastemballasje &gt;1L</td><td class="up">30% resirkulert</td><td class="up">50% resirkulert</td><td class="down">Lavt i dag</td></tr>
+      <tr><td>Fiberkartong (FBB/WLC)</td><td class="flat">Intet krav</td><td class="flat">Intet krav</td><td class="up">Allerede PPWR-klar</td></tr>
+      <tr><td>Bølgepapp</td><td class="flat">Intet krav</td><td class="flat">Intet krav</td><td class="up">Allerede PPWR-klar</td></tr>
+    </tbody>
+  </table>
+</div>
+
+##KILDER_INNHOLD##
+<div class="sec-header"><h2 class="sec-title">Kilder og metode<span class="sec-tag">Datagrunnlag</span></h2></div>
+<div class="alert">⚠ <strong>Viktig om datakvalitet:</strong> Prisdata for emballasjematerialer er i stor grad bak betalingsmur (FOEX PIX, ICIS, EUWID, Fastmarkets). Verdiene i denne rapporten er basert på siste tilgjengelige offentlige data, bransjekommentarer og kjente markedstrender. For kontrakt- og spotpriser til bruk i forhandlinger — verifiser alltid mot ICIS, FOEX PIX eller EUWID direkte.</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">Datakilder</span></div>
+  <div style="padding:16px 18px">
+    <div class="src-item"><div class="src-num">1</div><div><div class="src-name">FOEX PIX-indekser</div><div class="src-desc">Kraftliner, Testliner 2, Fluting RB og OCC 1.04 dd — europeiske referanseindekser for bølgepappsegmentet. Oppdateres ukentlig.</div><span class="src-type">Abonnement / begrenset offentlig</span></div></div>
+    <div class="src-item"><div class="src-num">2</div><div><div class="src-name">Mintec prisindekser</div><div class="src-desc">PA15 (FBB exw Eur), SV85 (GC2 del EU lo), SZ173 (Kraftliner), SZ176 (Testliner 2), SZ178 (Fluting), SW90 (GD2) — månedlige europeiske referanseindekser.</div><span class="src-type">Abonnement — primærkilde</span></div></div>
+    <div class="src-item"><div class="src-num">3</div><div><div class="src-name">ICIS</div><div class="src-desc">Plastpriser (PET, rPET, PP, HDPE, LDPE) — europeiske spotpriser og ukentlige prisrapporter. Ledende prisinformasjon for petrokjemikalier.</div><span class="src-type">Abonnement</span></div></div>
+    <div class="src-item"><div class="src-num">4</div><div><div class="src-name">EUWID Pulp & Paper / Recycling</div><div class="src-desc">Tyske og europeiske priser for kartong, papir og returmaterialer. Ukentlig nyhetsbrev med prisovervåkning.</div><span class="src-type">Abonnement</span></div></div>
+    <div class="src-item"><div class="src-num">5</div><div><div class="src-name">Fastmarkets PPI Europe</div><div class="src-desc">FBB, WLC og SBS-priser for europeisk kartongmarked. Månedlige og kvartalsvise prisreferanser.</div><span class="src-type">Abonnement</span></div></div>
+    <div class="src-item"><div class="src-num">6</div><div><div class="src-name">ChemOrbis / PlasticPortal</div><div class="src-desc">Plastpriser spot og kontrakt. Markedskommentarer og prisanalyse for PP, PE og PET.</div><span class="src-type">Delvis offentlig</span></div></div>
+    <div class="src-item"><div class="src-num">7</div><div><div class="src-name">Packaging Europe / RISI</div><div class="src-desc">Bransjenyheter, kapasitetsoppdateringer og markedskommentarer for europeisk emballasjeindustri.</div><span class="src-type">Delvis offentlig</span></div></div>
+    <div class="src-item"><div class="src-num">8</div><div><div class="src-name">EU-kommisjonen / EUR-Lex</div><div class="src-desc">PPWR-lovgivning (2025/40), SUP-direktiv, CBAM-regelverk og anti-dumping-vedtak.</div><span class="src-type">Offentlig</span></div></div>
+  </div>
+</div>
+"""
+
+    fill_response_2 = None  # Ikke nødvendig — innhold er hardkodet
+    # Vi bruker hardkodet innhold for kall 2 — ingen API-kall nødvendig
+    fill_text_2 = fill_prompt_2  # innholdet er allerede ferdig HTML
+
+    fill_text = fill_text_1 + "\n" + fill_text_2
 
     # Erstatt plassholdere
     sections = ["OVERSIKT_INNHOLD","PLAST_INNHOLD","FIBER_INNHOLD","CORRUGATED_INNHOLD",
