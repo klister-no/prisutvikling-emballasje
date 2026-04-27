@@ -1,12 +1,12 @@
-name: Oppdater prisdata
+name: Oppdater prisanalyse
 
 on:
   schedule:
-    - cron: '0 3 * * 0'
+    - cron: '0 3 * * 0'   # Søndag kl. 03:00 UTC
   workflow_dispatch:
 
 jobs:
-  beskytt-design:
+  generer-analyse:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -15,8 +15,26 @@ jobs:
       - name: Hent repoet
         uses: actions/checkout@v4
 
-      - name: Beskytt index.html
+      - name: Sett opp Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installer avhengigheter
+        run: pip install anthropic
+
+      - name: Generer prisanalyse
+        env:
+          EMBALLASJE_RAPPORT_CLOUDE_KEY: ${{ secrets.EMBALLASJE_RAPPORT_CLOUDE_KEY }}
+        run: python update_report.py
+
+      - name: Commit data/analysis.json
         run: |
           git config --global user.name "Rapport-bot"
           git config --global user.email "rapport-bot@github.com"
-          echo "Automatisk oppdatering deaktivert - index.html endres kun manuelt"
+          # ALDRI endre index.html automatisk
+          git checkout HEAD -- index.html
+          git add data/analysis.json
+          git diff --staged --quiet || git commit -m "AI-analyse oppdatert $(date +'%Y-%m-%d')"
+          git pull --rebase origin main
+          git push
