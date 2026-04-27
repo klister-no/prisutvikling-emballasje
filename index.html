@@ -563,6 +563,61 @@ tbody tr:hover { background: #f8fcfa; }
 .icon-btn:hover { border-color: var(--g400); color: var(--g700); }
 
 /* ── RESPONSIVE ──────────────────────────────────────── */
+/* ── TOAST ───────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--g800); color: white;
+  padding: 12px 18px; border-radius: 10px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,.2);
+  z-index: 9999; max-width: 340px;
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+  display: flex; align-items: center; gap: 10px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: #14532d; border-left: 4px solid var(--g400); }
+.toast.error   { background: #7f1d1d; border-left: 4px solid #f87171; }
+.toast.loading { background: var(--g800); border-left: 4px solid var(--g400); }
+
+/* ── DATA MODAL ──────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 9000; display: flex;
+  align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+}
+.modal-overlay.show { opacity: 1; pointer-events: all; }
+.modal {
+  background: white; border-radius: 16px;
+  padding: 28px 32px; max-width: 480px; width: 90%;
+  box-shadow: 0 8px 40px rgba(0,0,0,.18);
+  transform: scale(.95);
+  transition: transform .2s;
+}
+.modal-overlay.show .modal { transform: scale(1); }
+.modal-icon { font-size: 32px; margin-bottom: 12px; }
+.modal-title { font-size: 17px; font-weight: 700; color: var(--g800); margin-bottom: 6px; }
+.modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.modal-stat { background: var(--g50); border-radius: 8px; padding: 12px 14px; }
+.modal-stat-num { font-size: 22px; font-weight: 700; color: var(--g700); line-height: 1; }
+.modal-stat-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.modal-series { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.8; margin-bottom: 20px; }
+.modal-btn {
+  width: 100%; padding: 11px;
+  background: linear-gradient(135deg, var(--g600), var(--g500));
+  color: white; border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.modal-btn:hover { background: linear-gradient(135deg, var(--g700), var(--g600)); }
+
+/* loading dot pulse */
+#src-dot.loading { background: var(--amber); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
 @media (max-width: 900px) {
   .shell { grid-template-columns: 1fr; grid-template-rows: 56px auto 1fr; }
   .sidebar { grid-row: 2; flex-direction: row; padding: 8px 12px; gap: 4px; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); }
@@ -979,13 +1034,15 @@ let charts = {};
 
 // ── AUTO-FETCH ────────────────────────────────────────
 async function mintecFetch() {
-  setStatus('…', 'Henter Mintec-data fra GitHub…');
+  setStatus('loading', '⟳ Henter Mintec-data fra GitHub…');
   try {
     const res = await fetch('data/Prisrapport_mintec.csv?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    mintecParse(await res.text(), 'Prisrapport_mintec.csv');
+    const text = await res.text();
+    if (!text || text.trim().length < 50) throw new Error('Tom fil');
+    mintecParse(text, 'Prisrapport_mintec.csv');
   } catch(e) {
-    setStatus('err', 'Fant ikke <code>data/Prisrapport_mintec.csv</code> — last opp manuelt');
+    setStatus('err', '⚠ Fant ikke data/Prisrapport_mintec.csv i GitHub — last opp CSV manuelt her →');
   }
 }
 function mintecLoad(file) {
@@ -996,8 +1053,10 @@ function mintecLoad(file) {
 }
 function setStatus(state, html) {
   const dot = document.getElementById('src-dot');
-  dot.className = state === 'live' ? 'live' : '';
+  dot.className = state === 'live' ? 'live' : state === 'loading' ? 'loading' : '';
   document.getElementById('src-text').innerHTML = html;
+  // Also show toast notification
+  showToast(html.replace(/<[^>]+>/g, ''), state);
 }
 
 // ── PARSE ─────────────────────────────────────────────
@@ -1031,8 +1090,12 @@ function mintecParse(raw, name) {
   M.data   = rows.sort((a, b) => a.date.localeCompare(b.date));
   M.series = cols.map(c => c.name);
   const from = M.data[0].date.slice(0,7), to = M.data[M.data.length-1].date.slice(0,7);
-  setStatus('live', `<strong style="color:#2e7a4a">● Mintec</strong> · ${from}–${to} · ${M.data.length} mnd · ${M.series.length} serier`);
-  document.getElementById('upload-lbl').textContent = '✓ ' + name;
+  const lastDate = M.data[M.data.length-1].date;
+  const lastMonth = new Date(lastDate).toLocaleString('no-NO', {month:'long', year:'numeric'});
+  setStatus('live', `<strong style="color:#2e7a4a">● Mintec lastet</strong> · Siste data: <strong>${lastMonth}</strong> · ${M.data.length} måneder · ${M.series.length} serier`);
+  document.getElementById('upload-lbl').textContent = '✓ Oppdatert';
+  // Show detailed confirmation
+  showDataModal(lastDate, M.data.length, M.series);
   document.getElementById('ai-btn').disabled = false;
   updateKPIs(); updateTables(); renderTrends();
   document.getElementById('trends-placeholder').style.display = 'none';
@@ -1251,6 +1314,58 @@ function csvSplit(str,sep){const r=[];let c='',q=false;for(const ch of str){if(c
 function cleanH(h){return h.replace(/^[A-Z0-9]+\s*[-–]\s*/,'').replace(/\b(del|ave)\b\s*/gi,'').replace(/EUR\/MT\s*/gi,'').replace(/\s+/g,' ').trim();}
 function parseD(s){if(!s)return null;if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{2})[.\-\/](\d{2})[.\-\/](\d{4})/);return m?`${m[3]}-${m[2]}-${m[1]}`:null;}
 function md(t){return t.replace(/###\s*(.*)/g,'<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^[-•]\s+(.*)/gm,'<li>$1</li>').replace(/(<li>.*?<\/li>\n?)+/gs,m=>`<ul>${m}</ul>`).split('\n\n').map(p=>p.startsWith('<')?p:`<p>${p}</p>`).join('');}
+</script>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- DATA MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-icon">✅</div>
+    <div class="modal-title" id="modal-title">Mintec-data lastet</div>
+    <div class="modal-sub" id="modal-sub"></div>
+    <div class="modal-grid">
+      <div class="modal-stat">
+        <div class="modal-stat-num" id="modal-months">—</div>
+        <div class="modal-stat-label">Måneder med data</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-num" id="modal-series-count">—</div>
+        <div class="modal-stat-label">Prisserier</div>
+      </div>
+    </div>
+    <div class="modal-series" id="modal-series-list"></div>
+    <button class="modal-btn" onclick="closeModal()">Lukk — vis rapport</button>
+  </div>
+</div>
+
+<script>
+// ── TOAST ─────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  const icon = type === 'live' ? '✓' : type === 'loading' ? '⟳' : '⚠';
+  t.innerHTML = `<span>${icon}</span><span>${msg.slice(0,80)}</span>`;
+  t.className = `toast show ${type === 'live' ? 'success' : type === 'loading' ? 'loading' : 'error'}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), type === 'live' ? 4000 : 6000);
+}
+
+// ── DATA MODAL ────────────────────────────────────────
+function showDataModal(lastDate, months, series) {
+  const d = new Date(lastDate);
+  const lastMonth = d.toLocaleString('no-NO', {month:'long', year:'numeric'});
+  document.getElementById('modal-title').textContent = '✅ Mintec-data lastet inn';
+  document.getElementById('modal-sub').textContent = `Siste datapunkt: ${lastMonth}`;
+  document.getElementById('modal-months').textContent = months;
+  document.getElementById('modal-series-count').textContent = series.length;
+  document.getElementById('modal-series-list').innerHTML =
+    series.map(s => `· ${s}`).join('<br>');
+  document.getElementById('modal-overlay').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
 </script>
 </body>
 </html>
