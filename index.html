@@ -107,21 +107,7 @@ body {
   flex-shrink: 0;
 }
 #src-dot.live { background: var(--g500); box-shadow: 0 0 0 3px rgba(61,153,96,.18); }
-.upload-label {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: 'DM Mono', monospace; font-size: 10px;
-  letter-spacing: .06em; text-transform: uppercase;
-  padding: 5px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--white);
-  color: var(--muted);
-  cursor: pointer;
-  transition: all .15s;
-  position: relative;
-}
-.upload-label:hover { border-color: var(--g400); color: var(--g700); }
-.upload-label input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
 .api-row { display: flex; align-items: center; gap: 8px; }
 .api-input {
   font-family: 'DM Mono', monospace; font-size: 10px;
@@ -649,10 +635,7 @@ tbody tr:hover { background: #f8fcfa; }
       <div id="src-dot"></div>
       <span id="src-text">Henter data…</span>
     </div>
-    <label class="upload-label">
-      <span id="upload-lbl">📂 Oppdater CSV</span>
-      <input type="file" id="mintec-file" accept=".csv" onchange="mintecLoad(this.files[0])">
-    </label>
+
 
   </div>
 </header>
@@ -1037,15 +1020,10 @@ async function mintecFetch() {
     if (!text || text.trim().length < 50) throw new Error('Tom fil');
     mintecParse(text, 'Prisrapport_mintec.csv');
   } catch(e) {
-    setStatus('err', '⚠ Fant ikke data/Prisrapport_mintec.csv i GitHub — last opp CSV manuelt her →');
+    setStatus('err', '⚠ Mintec-data ikke tilgjengelig — kontakt administrator');
   }
 }
-function mintecLoad(file) {
-  if (!file) return;
-  const r = new FileReader();
-  r.onload = e => mintecParse(e.target.result, file.name);
-  r.readAsText(file, 'utf-8');
-}
+
 function setStatus(state, html) {
   const dot = document.getElementById('src-dot');
   dot.className = state === 'live' ? 'live' : state === 'loading' ? 'loading' : '';
@@ -1088,7 +1066,7 @@ function mintecParse(raw, name) {
   const lastDate = M.data[M.data.length-1].date;
   const lastMonth = new Date(lastDate).toLocaleString('no-NO', {month:'long', year:'numeric'});
   setStatus('live', `<strong style="color:#2e7a4a">● Mintec lastet</strong> · Siste data: <strong>${lastMonth}</strong> · ${M.data.length} måneder · ${M.series.length} serier`);
-  document.getElementById('upload-lbl').textContent = '✓ Oppdatert';
+
   // Show detailed confirmation
   showDataModal(lastDate, M.data.length, M.series);
   document.getElementById('ai-btn').disabled = false;
