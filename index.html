@@ -3,491 +3,1254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Europeiske Emballasjematerialpriser – Q2 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Emballasjeprisrapport Europa — Q2 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-:root{--ink:#0f1117;--paper:#f5f1eb;--accent:#c8401a;--up:#1a8c4a;--down:#c8401a;--flat:#8a6e2a;--border:#d8d2c8;--card:#ffffff;--muted:#7a7570;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.6;}
-.report-header{background:var(--ink);color:var(--paper);padding:36px 48px 24px;}
-.report-eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,241,235,.5);margin-bottom:10px;}
-.report-title{font-family:'DM Serif Display',serif;font-size:36px;line-height:1.1;}
-.report-title span{color:var(--accent);}
-.report-sub{color:rgba(245,241,235,.6);font-size:13px;margin-top:6px;}
-.report-meta{font-family:'DM Mono',monospace;font-size:10px;color:rgba(245,241,235,.35);margin-top:16px;padding-top:14px;border-top:1px solid rgba(245,241,235,.1);}
-.report-badge{display:inline-block;background:var(--accent);color:#fff;font-family:'DM Mono',monospace;font-size:11px;padding:3px 10px;border-radius:3px;float:right;}
-.nav-tabs{background:var(--ink);padding:0 48px;display:flex;overflow-x:auto;border-top:1px solid rgba(255,255,255,.08);}
-.nav-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,241,235,.4);padding:14px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;user-select:none;}
-.nav-tab:hover{color:rgba(245,241,235,.75);}
-.nav-tab.active{color:var(--paper);border-bottom-color:var(--accent);}
-.main{max-width:1280px;margin:0 auto;padding:32px 48px;}
-.section{display:none;}
-h2{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-.card{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:20px;}
-.card-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#f8f5f0;}
-.card-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
-.card-note{font-size:11px;color:var(--muted);}
-table{width:100%;border-collapse:collapse;}
-thead th{background:#f8f5f0;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);}
-tbody td{padding:9px 14px;border-bottom:1px solid #f0ece4;font-size:13px;}
-tbody tr:last-child td{border-bottom:none;}
-tbody tr:hover{background:#faf7f2;}
-.up{color:var(--up);font-weight:600;}
-.down{color:var(--down);font-weight:600;}
-.flat{color:var(--flat);font-weight:600;}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:16px;}
-.kpi-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-.kpi-value{font-family:'DM Serif Display',serif;font-size:24px;line-height:1;margin-bottom:3px;}
-.kpi-trend{font-size:12px;font-weight:600;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:20px;}
-.dcard{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:16px;}
-.dcard-icon{font-size:18px;margin-bottom:6px;}
-.dcard-title{font-weight:600;font-size:13px;margin-bottom:6px;}
-.dcard-body{font-size:12px;color:#3a3530;line-height:1.65;}
-.tl{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:18px 22px;margin-bottom:20px;}
-.tl-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid #f0ece4;}
-.tl-item:last-child{border-bottom:none;}
-.tl-year{font-family:'DM Serif Display',serif;font-size:17px;color:var(--accent);min-width:50px;line-height:1.2;}
-.tl-rule{font-weight:600;font-size:13px;margin-bottom:2px;}
-.tl-desc{font-size:12px;color:var(--muted);}
-.alert{background:#fff8f0;border:1px solid #f0d0b0;border-radius:6px;padding:12px 16px;font-size:12px;margin-bottom:18px;line-height:1.6;}
-footer{background:var(--ink);color:rgba(245,241,235,.35);padding:14px 48px;font-family:'DM Mono',monospace;font-size:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-top:40px;}
-@media(max-width:768px){.report-header,.main,.nav-tabs,footer{padding-left:20px;padding-right:20px;}}
+:root {
+  --g900: #0d2318;
+  --g800: #1a3d28;
+  --g700: #245c38;
+  --g600: #2e7a4a;
+  --g500: #3d9960;
+  --g400: #5cb87a;
+  --g300: #84d0a0;
+  --g200: #b8e8c8;
+  --g100: #dff3e8;
+  --g50:  #f2fbf5;
+  --amber: #f59e0b;
+  --red:   #ef4444;
+  --blue:  #3b82f6;
+  --ink:   #0f1e16;
+  --text:  #1e3528;
+  --muted: #5a7a65;
+  --light: #8aaa95;
+  --border:#d8ede2;
+  --bg:    #f0f7f3;
+  --white: #ffffff;
+  --card-shadow: 0 1px 3px rgba(13,35,24,.06), 0 4px 16px rgba(13,35,24,.04);
+  --card-hover:  0 2px 8px rgba(13,35,24,.10), 0 8px 24px rgba(13,35,24,.06);
+  --up:   #16a34a;
+  --up-bg:#dcfce7;
+  --dn:   #dc2626;
+  --dn-bg:#fee2e2;
+  --fl:   #d97706;
+  --fl-bg:#fef3c7;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── APP SHELL ───────────────────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: 56px 1fr;
+  min-height: 100vh;
+}
+
+/* ── TOPBAR ──────────────────────────────────────────── */
+.topbar {
+  grid-column: 1 / -1;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--g700);
+  white-space: nowrap;
+}
+.logo-mark {
+  width: 30px; height: 30px;
+  background: linear-gradient(135deg, var(--g600), var(--g400));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+}
+.topbar-sep { width: 1px; height: 24px; background: var(--border); }
+.topbar-title { font-size: 13px; color: var(--muted); font-weight: 400; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.src-pill {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--g50);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+#src-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--light);
+  transition: all .4s;
+  flex-shrink: 0;
+}
+#src-dot.live { background: var(--g500); box-shadow: 0 0 0 3px rgba(61,153,96,.18); }
+.upload-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.upload-label:hover { border-color: var(--g400); color: var(--g700); }
+.upload-label input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.api-row { display: flex; align-items: center; gap: 8px; }
+.api-input {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  padding: 5px 10px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--white); color: var(--text);
+  width: 190px; outline: none;
+  transition: border-color .15s;
+}
+.api-input:focus { border-color: var(--g400); }
+.api-btn {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 6px; border: none;
+  background: linear-gradient(135deg, var(--g600), var(--g500));
+  color: white; cursor: pointer;
+  opacity: .4; transition: all .2s;
+  white-space: nowrap;
+}
+.api-btn:not(:disabled) { opacity: 1; }
+.api-btn:not(:disabled):hover { background: linear-gradient(135deg, var(--g700), var(--g600)); }
+
+/* ── SIDEBAR ─────────────────────────────────────────── */
+.sidebar {
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+.nav-group-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--light);
+  padding: 12px 20px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px;
+  font-size: 13px; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 0;
+  transition: all .15s;
+  border-left: 3px solid transparent;
+  user-select: none;
+}
+.nav-item:hover { background: var(--g50); color: var(--g700); }
+.nav-item.active { background: var(--g50); color: var(--g700); border-left-color: var(--g500); font-weight: 600; }
+.nav-item.special { color: var(--g600); }
+.nav-item.special.active { color: var(--g800); border-left-color: var(--g600); }
+.nav-icon { font-size: 14px; width: 18px; text-align: center; }
+
+/* ── CONTENT ─────────────────────────────────────────── */
+.content {
+  padding: 28px 32px;
+  overflow-y: auto;
+  background: var(--bg);
+}
+.section { display: none; }
+
+/* ── PAGE HEADER ─────────────────────────────────────── */
+.page-hd {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 24px;
+}
+.page-hd-left {}
+.page-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--g500); margin-bottom: 4px;
+}
+.page-title {
+  font-size: 22px; font-weight: 700;
+  color: var(--g900); line-height: 1.2;
+}
+.page-chip {
+  display: inline-flex; align-items: center;
+  background: var(--g100); color: var(--g700);
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  padding: 4px 10px; border-radius: 20px;
+  margin-top: 8px;
+}
+
+/* ── KPI CARDS ───────────────────────────────────────── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.kpi-card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: var(--card-shadow);
+  transition: box-shadow .2s, transform .2s;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 60px; height: 60px;
+  border-radius: 0 14px 0 60px;
+  opacity: .06;
+}
+.kpi-card.green::after  { background: var(--g500); }
+.kpi-card.amber::after  { background: var(--amber); }
+.kpi-card.red::after    { background: var(--red); }
+.kpi-card.blue::after   { background: var(--blue); }
+.kpi-card:hover { box-shadow: var(--card-hover); transform: translateY(-2px); }
+.kpi-label {
+  font-size: 11px; font-weight: 500;
+  color: var(--muted); margin-bottom: 10px;
+  letter-spacing: .01em;
+}
+.kpi-val {
+  font-size: 24px; font-weight: 700;
+  color: var(--ink); line-height: 1.1;
+  margin-bottom: 8px;
+  letter-spacing: -.5px;
+}
+.kpi-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 8px; border-radius: 20px;
+}
+.kpi-badge.up   { background: var(--up-bg);  color: var(--up); }
+.kpi-badge.dn   { background: var(--dn-bg);  color: var(--dn); }
+.kpi-badge.flat { background: var(--fl-bg);  color: var(--fl); }
+.kpi-mintec {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--g500);
+  margin-top: 6px; font-weight: 500;
+}
+
+/* ── CARDS ───────────────────────────────────────────── */
+.card {
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.card-hd {
+  padding: 14px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.card-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--g800);
+}
+.card-note { font-size: 11px; color: var(--light); }
+.card-body { padding: 20px; }
+
+/* ── STATS ROW ───────────────────────────────────────── */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.stat-card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: var(--card-shadow);
+  text-align: center;
+}
+.stat-num {
+  font-size: 30px; font-weight: 700;
+  color: var(--g700); line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-num.red { color: var(--dn); }
+.stat-num.grn { color: var(--up); }
+.stat-label { font-size: 11px; color: var(--muted); }
+
+/* ── TABLES ──────────────────────────────────────────── */
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+thead th {
+  background: var(--g50);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody td { padding: 10px 14px; border-bottom: 1px solid #f0f8f3; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #f8fcfa; }
+.cat-row td {
+  background: var(--g50) !important;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: .1em;
+  color: var(--muted); text-transform: uppercase;
+  padding: 7px 14px;
+}
+.mat-name { font-weight: 600; color: var(--ink); }
+.mat-sub  { font-size: 11px; color: var(--light); margin-top: 1px; }
+
+.pill {
+  display: inline-block;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  padding: 2px 8px; border-radius: 20px; font-weight: 500;
+}
+.pill-blue { background: #dbeafe; color: #1d4ed8; }
+.pill-grn  { background: var(--g100); color: var(--g700); }
+.pill-amb  { background: #fef3c7; color: #92400e; }
+
+.tag {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 600;
+  padding: 2px 8px; border-radius: 20px;
+}
+.tag.up   { background: var(--up-bg);  color: var(--up); }
+.tag.dn   { background: var(--dn-bg);  color: var(--dn); }
+.tag.flat { background: var(--fl-bg);  color: var(--fl); }
+
+.mintec-live { font-weight: 700; color: var(--g700); }
+.m-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--g600), var(--g400));
+  color: white; font-family: 'DM Mono', monospace;
+  font-size: 8px; font-weight: 700;
+  margin-left: 4px; vertical-align: middle;
+  cursor: default;
+}
+
+/* ── GRID CARDS ──────────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.info-card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--card-shadow);
+  transition: box-shadow .2s, transform .15s;
+}
+.info-card:hover { box-shadow: var(--card-hover); transform: translateY(-1px); }
+.info-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; margin-bottom: 12px;
+  background: var(--g50);
+}
+.info-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.info-body  { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+/* ── CHARTS ──────────────────────────────────────────── */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.chart-card {
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+.chart-hd {
+  padding: 14px 18px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.chart-name {
+  font-size: 12px; font-weight: 600;
+  color: var(--g800);
+}
+.chart-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500;
+}
+.chart-body { padding: 14px 16px; height: 170px; position: relative; }
+
+/* ── CAP BARS ────────────────────────────────────────── */
+.cap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.cap-card {
+  background: var(--white); border-radius: 14px;
+  padding: 18px; box-shadow: var(--card-shadow);
+}
+.cap-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.cap-sub {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--light); margin-bottom: 14px;
+}
+.bar-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+.bar-bg { height: 6px; background: var(--g50); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width .8s cubic-bezier(.4,0,.2,1); }
+.bar-g { background: linear-gradient(90deg, var(--g500), var(--g400)); }
+.bar-a { background: linear-gradient(90deg, var(--amber), #fbbf24); }
+.bar-r { background: linear-gradient(90deg, var(--red), #f87171); }
+.cap-note { font-size: 11px; color: var(--muted); line-height: 1.65; }
+
+/* ── DRIVER MATRIX ───────────────────────────────────── */
+.matrix-tag {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+}
+.mt-pos { background: var(--up-bg);  color: var(--up); }
+.mt-neg { background: var(--dn-bg);  color: var(--dn); }
+.mt-neu { background: var(--fl-bg);  color: var(--fl); }
+
+/* ── TIMELINE ────────────────────────────────────────── */
+.tl { padding: 8px 0; }
+.tl-item {
+  display: flex; gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tl-item:last-child { border-bottom: none; }
+.tl-year {
+  font-size: 18px; font-weight: 700;
+  color: var(--g500); min-width: 50px;
+  font-family: 'DM Mono', monospace; line-height: 1.3;
+}
+.tl-rule { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+.tl-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ── ALERT / INFO ────────────────────────────────────── */
+.alert {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 12.5px; color: #78350f;
+  margin-bottom: 16px; line-height: 1.65;
+}
+.info-banner {
+  background: var(--g50);
+  border: 1px solid var(--g200);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 12.5px; color: var(--g700);
+  margin-bottom: 16px; line-height: 1.65;
+}
+
+/* ── AI PANEL ────────────────────────────────────────── */
+.ai-card {
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  margin-top: 18px;
+}
+.ai-hd {
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(135deg, var(--g800), var(--g700));
+}
+.ai-badge {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--g200);
+}
+.ai-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--g300);
+  box-shadow: 0 0 0 3px rgba(132,208,160,.25);
+}
+.ai-hd-right { display: flex; align-items: center; gap: 8px; }
+.ai-hd-btn {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+  color: var(--g200); padding: 3px 10px; border-radius: 5px;
+  cursor: pointer; transition: all .15s;
+}
+.ai-hd-btn:hover { background: rgba(255,255,255,.2); }
+.ai-src { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(184,232,200,.6); }
+.ai-body { padding: 22px; font-size: 13.5px; line-height: 1.85; min-height: 80px; }
+.ai-ph { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--light); }
+.ai-resp h3 {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--g600); margin: 18px 0 7px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.ai-resp h3:first-child { margin-top: 0; }
+.ai-resp p { margin-bottom: 10px; color: var(--text); }
+.ai-resp ul { padding-left: 18px; margin-bottom: 10px; }
+.ai-resp li { margin-bottom: 4px; color: var(--text); }
+.ai-resp strong { color: var(--g800); font-weight: 600; }
+
+/* ── SOURCES ─────────────────────────────────────────── */
+.src-item {
+  display: flex; gap: 14px;
+  padding: 13px 20px;
+  border-bottom: 1px solid #f0f8f3;
+}
+.src-item:last-child { border-bottom: none; }
+.src-num {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--light); min-width: 20px; padding-top: 1px;
+}
+.src-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.src-desc { font-size: 11.5px; color: var(--muted); margin-bottom: 5px; line-height: 1.6; }
+.src-tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  padding: 2px 8px; border-radius: 20px;
+  background: var(--g100); color: var(--g700);
+}
+
+/* ── PERIOD SELECT ───────────────────────────────────── */
+.period-sel {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  padding: 4px 8px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--white); color: var(--muted); outline: none;
+}
+.icon-btn {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); padding: 4px 10px; border-radius: 6px;
+  cursor: pointer; transition: all .15s;
+}
+.icon-btn:hover { border-color: var(--g400); color: var(--g700); }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; grid-template-rows: 56px auto 1fr; }
+  .sidebar { grid-row: 2; flex-direction: row; padding: 8px 12px; gap: 4px; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .nav-group-label { display: none; }
+  .nav-item { padding: 6px 12px; border-left: none; border-bottom: 3px solid transparent; border-radius: 6px; font-size: 12px; white-space: nowrap; }
+  .nav-item.active { border-bottom-color: var(--g500); border-left-color: transparent; }
+  .content { padding: 16px; }
+  .chart-grid, .stat-row { grid-template-columns: 1fr; }
+  .topbar { overflow-x: auto; }
+  .api-input { width: 140px; }
+}
 </style>
 </head>
 <body>
-<header class="report-header">
-  <div class="report-eyebrow">🇪🇺 Europeisk marked · FMCG Emballasje · Prisovervåkning</div>
-  <h1 class="report-title">Europeiske <span>Emballasjematerialpriser</span>
-    <span class="report-badge">Q2 2026</span>
-  </h1>
-  <p class="report-sub">Markedsrapport · Plastmaterialer · Kartonger · Bølgepapp</p>
-  <div class="report-meta">Oppdatert 26. April 2026 · Kilde: FOEX/PIX, ICIS, EUWID, ChemOrbis, Packaging Europe · Alle priser i EUR/tonn</div>
+
+<div class="shell">
+
+<!-- ── TOPBAR ─────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-mark">E</div>
+    Emballasje
+  </div>
+  <div class="topbar-sep"></div>
+  <span class="topbar-title">Prisrapport Europa · Q2 2026</span>
+
+  <div class="topbar-right">
+    <div class="src-pill">
+      <div id="src-dot"></div>
+      <span id="src-text">Henter data…</span>
+    </div>
+    <label class="upload-label">
+      <span id="upload-lbl">📂 Oppdater CSV</span>
+      <input type="file" id="mintec-file" accept=".csv" onchange="mintecLoad(this.files[0])">
+    </label>
+    <div class="api-row">
+      <input type="password" class="api-input" id="api-key" placeholder="API-nøkkel (sk-ant-…)" oninput="sessionStorage.setItem('emb_api_key',this.value)">
+      <button class="api-btn" id="ai-btn" onclick="runAI()" disabled>✦ Analyser</button>
+    </div>
+  </div>
 </header>
-<nav class="nav-tabs">
-  <div class="nav-tab" onclick="showSection('overview')">Oversikt</div>
-  <div class="nav-tab" onclick="showSection('plast')">Plastmaterialer</div>
-  <div class="nav-tab" onclick="showSection('fiber')">Solid Board</div>
-  <div class="nav-tab" onclick="showSection('corrugated')">Bølgepapp</div>
-  <div class="nav-tab" onclick="showSection('kapasitet')">Kapasitet</div>
-  <div class="nav-tab" onclick="showSection('drivere')">Markedsdrivere</div>
-  <div class="nav-tab" onclick="showSection('regulering')">Regulering</div>
-  <div class="nav-tab" onclick="showSection('kilder')">Kilder</div>
+
+<!-- ── SIDEBAR ────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="nav-group-label">Rapport</div>
+  <div class="nav-item" onclick="show('overview')"><span class="nav-icon">◉</span> Oversikt</div>
+  <div class="nav-item special" onclick="show('trends')"><span class="nav-icon">↗</span> Trendanalyse</div>
+
+  <div class="nav-group-label">Materialer</div>
+  <div class="nav-item" onclick="show('plast')"><span class="nav-icon">⬡</span> Plastmaterialer</div>
+  <div class="nav-item" onclick="show('fiber')"><span class="nav-icon">▭</span> Solid Board</div>
+  <div class="nav-item" onclick="show('corrugated')"><span class="nav-icon">≋</span> Bølgepapp</div>
+
+  <div class="nav-group-label">Marked</div>
+  <div class="nav-item" onclick="show('kapasitet')"><span class="nav-icon">▤</span> Kapasitet</div>
+  <div class="nav-item" onclick="show('drivere')"><span class="nav-icon">⊞</span> Markedsdrivere</div>
+  <div class="nav-item" onclick="show('regulering')"><span class="nav-icon">§</span> Regulering</div>
+  <div class="nav-item" onclick="show('kilder')"><span class="nav-icon">⊕</span> Kilder</div>
 </nav>
-<main class="main">
-<section class="section" id="overview"><div class="alert">
-  <strong>⚠️ Datakvalitet – Q2 2026:</strong> Eksakte spot-priser per 26. april 2026 for flere materialer er bak betalingsmurer (ICIS, FOEX/PIX, EUWID). Tall for plast (PP, HDPE, LDPE) reflekterer feedstock-sjokk etter stengingen av Hormuzstredet (28. feb. 2026). Kartong/fiber-tall er siste kjente referansepunkter fra åpne kilder. Bruk tallene som indikasjoner – verifiser mot abonnementskilder før beslutninger.
-</div>
 
-<div class="kpi-grid">
-  <div class="kpi">
-    <div class="kpi-label">PET virgin Europa</div>
-    <div class="kpi-value">€1 180–1 220<span style="font-size:0.6em;font-weight:400">/tonn</span></div>
-    <div class="kpi-trend down">↓ Fallende</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">rPET food-grade NWE</div>
-    <div class="kpi-value">€1 600–1 680<span style="font-size:0.6em;font-weight:400">/tonn</span></div>
-    <div class="kpi-trend flat">→ Flat/svakt ↓</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">PP homopolymer FCA Antwerpen</div>
-    <div class="kpi-value">€1 465+<span style="font-size:0.6em;font-weight:400">/tonn</span></div>
-    <div class="kpi-trend up">↑↑ Kraftig stigende</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">FBB GC2 Europa</div>
-    <div class="kpi-value">€900–1 050<span style="font-size:0.6em;font-weight:400">/tonn</span></div>
-    <div class="kpi-trend flat">→ Stabil/svakt ↓</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">Kraftliner brun Europa</div>
-    <div class="kpi-value">~€865<span style="font-size:0.6em;font-weight:400">/tonn ref.</span></div>
-    <div class="kpi-trend down">↓ Nedadgående/flat</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">OCC Europa</div>
-    <div class="kpi-value">~€85–110<span style="font-size:0.6em;font-weight:400">/tonn est.</span></div>
-    <div class="kpi-trend flat">→ Flat</div>
-  </div>
-</div>
+<!-- ── CONTENT ───────────────────────────────────────── -->
+<main class="content">
 
-<div class="card" style="margin-top:1.5rem">
-  <div class="card-head">
-    <span class="card-title">Komplett prisoversikt – alle materialer – Q2 2026 (26. april 2026)</span>
-    <span class="card-note">Kilder: ICIS, FOEX, Fastmarkets, Eurostat, åpne markedskilder. * = estimat/indikasjon</span>
+<!-- ── OVERSIKT ──────────────────────────────────────── -->
+<section class="section" id="overview">
+  <div class="page-hd">
+    <div class="page-hd-left">
+      <div class="page-eyebrow">Markedsoversikt</div>
+      <h1 class="page-title">Alle materialer — Q2 2026</h1>
+      <div class="page-chip">Oppdatert 07. april 2026</div>
+    </div>
   </div>
-  <div style="overflow-x:auto">
-    <table style="width:100%;border-collapse:collapse;font-size:0.92rem">
-      <thead>
-        <tr style="background:#1a3a5c;color:#fff">
-          <th style="padding:8px 10px;text-align:left">Material</th>
-          <th style="padding:8px 10px;text-align:left">Segment</th>
-          <th style="padding:8px 10px;text-align:right">Pris €/tonn (apr. 2026)</th>
-          <th style="padding:8px 10px;text-align:left">Trend</th>
-          <th style="padding:8px 10px;text-align:left">Kommentar</th>
-        </tr>
-      </thead>
+
+  <div class="alert">⚠ <strong>Datagrunnlag:</strong> Mintec-indekser er primærkilde der tilgjengelig (grønt M). Øvrige priser er basert på FOEX PIX, ICIS og offentlige markedsrapporter per april 2026.</div>
+
+  <div class="kpi-row">
+    <div class="kpi-card red">
+      <div class="kpi-label">PET Virgin</div>
+      <div class="kpi-val" id="kpi-pet">980–1 050</div>
+      <div class="kpi-badge dn">↘ Svakt ned</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">rPET Food-Grade</div>
+      <div class="kpi-val" id="kpi-rpet">1 550–1 700</div>
+      <div class="kpi-badge flat">↔ Stabilt</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">PP Homopolymer</div>
+      <div class="kpi-val" id="kpi-pp">1 680–1 710</div>
+      <div class="kpi-badge up">↑ Klart opp</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">FBB Folding Boxboard</div>
+      <div class="kpi-val" id="kpi-fbb">830–870</div>
+      <div class="kpi-badge flat">↔ Stabil</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Kraftliner (brun)</div>
+      <div class="kpi-val" id="kpi-kl">540–560</div>
+      <div class="kpi-badge dn">↘ Fallende</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">OCC Returpapp</div>
+      <div class="kpi-val" id="kpi-occ">120–130</div>
+      <div class="kpi-badge dn">↘ Fallende</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-title">Komplett prismatrise — alle materialer</span>
+      <span class="card-note">€/tonn · Q2 2026</span>
+    </div>
+    <table>
+      <thead><tr><th>Materiale</th><th>Kategori</th><th>Prisintervall (€/t)</th><th>Ref.pris</th><th>Trend</th><th>Merknad</th></tr></thead>
       <tbody>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>PET virgin</strong></td>
-          <td style="padding:7px 10px">Plast</td>
-          <td style="padding:7px 10px;text-align:right">€1 180–1 220</td>
-          <td style="padding:7px 10px"><span class="down">↓ Fallende</span></td>
-          <td style="padding:7px 10px">Svak etterspørsel, rikelig tilbud</td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px"><strong>rPET food-grade pellet</strong></td>
-          <td style="padding:7px 10px">Plast</td>
-          <td style="padding:7px 10px;text-align:right">€1 600–1 680</td>
-          <td style="padding:7px 10px"><span class="flat">→ Flat/svakt ↓</span></td>
-          <td style="padding:7px 10px">Kontraktpris &gt;€1 800; gap mot virgin ~€600/tonn</td>
-        </tr>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>PP homopolymer</strong></td>
-          <td style="padding:7px 10px">Plast</td>
-          <td style="padding:7px 10px;text-align:right">€1 465+ *</td>
-          <td style="padding:7px 10px"><span class="up">↑↑ Kraftig</span></td>
-          <td style="padding:7px 10px">+41–42 % siden feb. 2026; Hormuz-sjokk</td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px"><strong>HDPE blåsing NWE</strong></td>
-          <td style="padding:7px 10px">Plast</td>
-          <td style="padding:7px 10px;text-align:right">€1 700–1 900 *</td>
-          <td style="padding:7px 10px"><span class="up">↑↑ Kraftig</span></td>
-          <td style="padding:7px 10px">Etylen +€450/tonn fra mars; feedstock-drevet</td>
-        </tr>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>LDPE film NWE</strong></td>
-          <td style="padding:7px 10px">Plast</td>
-          <td style="padding:7px 10px;text-align:right">€1 900–2 100 *</td>
-          <td style="padding:7px 10px"><span class="up">↑↑ Kraftig</span></td>
-          <td style="padding:7px 10px">LLDPE spot €2 095–2 105; +€250/tonn u/u</td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px"><strong>FBB GC2</strong></td>
-          <td style="padding:7px 10px">Kartong</td>
-          <td style="padding:7px 10px;text-align:right">€900–1 050 *</td>
-          <td style="padding:7px 10px"><span class="flat">→ Stabil/svakt ↓</span></td>
-          <td style="padding:7px 10px">Prisøkningsforsøk feilet; svak etterspørsel</td>
-        </tr>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>WLC</strong></td>
-          <td style="padding:7px 10px">Kartong</td>
-          <td style="padding:7px 10px;text-align:right">Est. under FBB *</td>
-          <td style="padding:7px 10px"><span class="down">↓ Svakt ↓/flat</span></td>
-          <td style="padding:7px 10px">Overkapasitet; høye kostnader; press</td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px"><strong>Kraftliner brun</strong></td>
-          <td style="padding:7px 10px">Bølgepapp</td>
-          <td style="padding:7px 10px;text-align:right">~€865 ref. *</td>
-          <td style="padding:7px 10px"><span class="down">↓ Nedadg./flat</span></td>
-          <td style="padding:7px 10px">-2 % mnd/mnd jan. 2025; nedadg. trend</td>
-        </tr>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>Testliner 2</strong></td>
-          <td style="padding:7px 10px">Bølgepapp</td>
-          <td style="padding:7px 10px;text-align:right">~€670 ref. *</td>
-          <td style="padding:7px 10px"><span class="down">↓ Nedadgående</span></td>
-          <td style="padding:7px 10px">-3 % mnd/mnd jan. 2025; mulig bunn Q2 2026</td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px"><strong>Fluting RB</strong></td>
-          <td style="padding:7px 10px">Bølgepapp</td>
-          <td style="padding:7px 10px;text-align:right">Est. €550–650 *</td>
-          <td style="padding:7px 10px"><span class="flat">→ Flat/svakt ↓</span></td>
-          <td style="padding:7px 10px">Følger testliner; referansetall mangler</td>
-        </tr>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>OCC (returpapp)</strong></td>
-          <td style="padding:7px 10px">Råstoff</td>
-          <td style="padding:7px 10px;text-align:right">~€85–110 *</td>
-          <td style="padding:7px 10px"><span class="flat">→ Flat</span></td>
-          <td style="padding:7px 10px">Innsamlingspress; sesongeffekter</td>
-        </tr>
+        <tr class="cat-row"><td colspan="6">Plastmaterialer</td></tr>
+        <tr><td><div class="mat-name">PET virgin</div><div class="mat-sub">Flaskegrad, NWE</div></td><td><span class="pill pill-blue">Plast</span></td><td>~980–1 050</td><td>~1 015</td><td><span class="tag dn">↘ Ned</span></td><td style="color:var(--muted);font-size:11px">Anti-dumping mot Kina innført</td></tr>
+        <tr><td><div class="mat-name">rPET food-grade</div><div class="mat-sub">Klare flak/pellets</div></td><td><span class="pill pill-blue">Plast</span></td><td>~1 550–1 700</td><td>~1 640</td><td><span class="tag flat">↔ Stabilt</span></td><td style="color:var(--muted);font-size:11px">PPWR driver strukturell etterspørsel</td></tr>
+        <tr><td><div class="mat-name">PP homopolymer</div><div class="mat-sub">FCA Antwerpen</div></td><td><span class="pill pill-blue">Plast</span></td><td>~1 680–1 710</td><td>~1 695</td><td><span class="tag up">↑ Opp</span></td><td style="color:var(--muted);font-size:11px">+€110/t på én uke — handelsuro</td></tr>
+        <tr><td><div class="mat-name">HDPE blåsing</div><div class="mat-sub">FD NWE</div></td><td><span class="pill pill-blue">Plast</span></td><td>~1 050–1 150</td><td>~1 100</td><td><span class="tag flat">↔ Stabilt</span></td><td style="color:var(--muted);font-size:11px">Strukturelt prispress</td></tr>
+        <tr><td><div class="mat-name">LDPE film</div><div class="mat-sub">FD NWE filmgrad</div></td><td><span class="pill pill-blue">Plast</span></td><td>~1 150–1 300</td><td>~1 225</td><td><span class="tag up">↑ Volatil</span></td><td style="color:var(--muted);font-size:11px">LDPE-tilbud suspendert april 2026</td></tr>
+        <tr class="cat-row"><td colspan="6">Kartong — Solid Board</td></tr>
+        <tr><td><div class="mat-name">FBB (Folding Boxboard)</div><div class="mat-sub">Primærfiber, Europa</div></td><td><span class="pill pill-grn">Fiber</span></td><td id="td-fbb-range">~830–870</td><td id="td-fbb-ref">~850</td><td id="td-fbb-trend"><span class="tag flat">↔ Flat/ned</span></td><td style="color:var(--muted);font-size:11px">PA15 Mintec — exw Europa</td></tr>
+        <tr><td><div class="mat-name">GC2 / WLC Kartong</div><div class="mat-sub">Resirkulert fiber, agri-food</div></td><td><span class="pill pill-grn">Fiber</span></td><td id="td-gc2-range">~620–660</td><td id="td-gc2-ref">~640</td><td id="td-gc2-trend"><span class="tag flat">↔ Flat</span></td><td style="color:var(--muted);font-size:11px">SV85 Mintec — del EU lo</td></tr>
+        <tr class="cat-row"><td colspan="6">Bølgepapp og returpapir</td></tr>
+        <tr><td><div class="mat-name">Kraftliner (brun)</div><div class="mat-sub">PIX Europa</div></td><td><span class="pill pill-amb">Bølgepapp</span></td><td id="td-kl-range">~540–570</td><td id="td-kl-ref">€555</td><td id="td-kl-trend"><span class="tag dn">↘ –0,8%</span></td><td style="color:var(--muted);font-size:11px">SZ173 Mintec</td></tr>
+        <tr><td><div class="mat-name">Testliner 2</div><div class="mat-sub">PIX Europa</div></td><td><span class="pill pill-amb">Bølgepapp</span></td><td id="td-tl-range">~455–480</td><td id="td-tl-ref">€465</td><td id="td-tl-trend"><span class="tag dn">↘ –1,6%</span></td><td style="color:var(--muted);font-size:11px">SZ176 Mintec</td></tr>
+        <tr><td><div class="mat-name">Fluting RB</div><div class="mat-sub">PIX Europa</div></td><td><span class="pill pill-amb">Bølgepapp</span></td><td id="td-fl-range">~410–435</td><td id="td-fl-ref">€423</td><td id="td-fl-trend"><span class="tag dn">↘ –2,2%</span></td><td style="color:var(--muted);font-size:11px">SZ178 Mintec</td></tr>
+        <tr><td><div class="mat-name">GD2 Cartonboard / WLC</div><div class="mat-sub">White-lined chipboard</div></td><td><span class="pill pill-amb">Bølgepapp</span></td><td id="td-gd2-range">~560–590</td><td id="td-gd2-ref">~575</td><td id="td-gd2-trend"><span class="tag flat">↔ Flat</span></td><td style="color:var(--muted);font-size:11px">SW90 Mintec</td></tr>
+        <tr><td><div class="mat-name">OCC Returpapp</div><div class="mat-sub">OCC 1.04 dd PIX</div></td><td><span class="pill pill-amb">Bølgepapp</span></td><td>~118–135</td><td>~126</td><td><span class="tag dn">↘ –3,2%</span></td><td style="color:var(--muted);font-size:11px">Svak asiatisk etterspørsel</td></tr>
       </tbody>
     </table>
   </div>
-</div></section>
-<section class="section" id="plast"><h2 style="color:#1a3a5c;margin-bottom:1rem">Plastmarkedet Europa – Q2 2026</h2>
 
-<div class="card">
-  <div class="card-head">
-    <span class="card-title">Historisk prisutvikling – Plast Europa (€/tonn)</span>
-    <span class="card-note">* = estimat/indikasjon. Eksakte kvartalspriser bak betalingsmur (ICIS/ChemOrbis). Hormuz-sjokk fra Q1 2026.</span>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num">11</div><div class="stat-label">Materialer sporet</div></div>
+    <div class="stat-card"><div class="stat-num red">7</div><div class="stat-label">Ned/flat trend</div></div>
+    <div class="stat-card"><div class="stat-num grn">2</div><div class="stat-label">Opptrend</div></div>
+    <div class="stat-card"><div class="stat-num" style="font-size:18px;color:var(--g600)">Aug 2026</div><div class="stat-label">PPWR generell anvendelse</div></div>
   </div>
-  <div style="overflow-x:auto">
-    <table style="width:100%;border-collapse:collapse;font-size:0.91rem">
-      <thead>
-        <tr style="background:#1a3a5c;color:#fff">
-          <th style="padding:8px 10px;text-align:left">Material</th>
-          <th style="padding:8px 10px;text-align:right">Q1 2024</th>
-          <th style="padding:8px 10px;text-align:right">Q2 2024</th>
-          <th style="padding:8px 10px;text-align:right">Q3 2024</th>
-          <th style="padding:8px 10px;text-align:right">Q4 2024</th>
-          <th style="padding:8px 10px;text-align:right">Q1 2025</th>
-          <th style="padding:8px 10px;text-align:right">Q2 2025</th>
-          <th style="padding:8px 10px;text-align:right">Q3 2025</th>
-          <th style="padding:8px 10px;text-align:right">Q4 2025</th>
-          <th style="padding:8px 10px;text-align:right">Q1 2026</th>
-          <th style="padding:8px 10px;text-align:right">Q2 2026 (apr.)</th>
-        </tr>
-      </thead>
+
+  <div class="ai-card">
+    <div class="ai-hd">
+      <div class="ai-badge"><div class="ai-dot"></div>AI Totalvurdering</div>
+      <div class="ai-hd-right">
+        <span class="ai-src" id="ai-src-label"></span>
+        <button class="ai-hd-btn" onclick="runAI()">↻ Oppdater</button>
+      </div>
+    </div>
+    <div class="ai-body" id="ai-body">
+      <div class="ai-ph">Last inn Mintec CSV og legg inn API-nøkkel → klikk <strong>✦ Analyser</strong> for å generere totalvurdering basert på faktiske prisdata.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRENDANALYSE ───────────────────────────────────── -->
+<section class="section" id="trends">
+  <div class="page-hd">
+    <div class="page-hd-left">
+      <div class="page-eyebrow">Mintec Prisindekser</div>
+      <h1 class="page-title">Trendutvikling — historiske data</h1>
+    </div>
+  </div>
+  <div class="info-banner" id="trends-placeholder">Last opp Mintec CSV automatisk (hentes fra <code>data/Prisrapport_mintec.csv</code>) for å se historiske trendgrafer.</div>
+  <div id="trends-content" style="display:none">
+    <div class="chart-grid" id="trend-chart-grid"></div>
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-title">Siste observasjoner — alle serier</span>
+        <div style="display:flex;gap:8px">
+          <select id="period-sel" class="period-sel" onchange="renderTrends()">
+            <option value="12">12 mnd</option>
+            <option value="36" selected>3 år</option>
+            <option value="60">5 år</option>
+            <option value="all">Alle</option>
+          </select>
+          <button class="icon-btn" onclick="exportCSV()">↓ Eksport</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Serie</th><th>Siste (€/t)</th><th>MoM</th><th>6 mnd</th><th>12 mnd</th><th>Fra topp</th><th>Fra bunn</th><th>Periode</th></tr></thead>
+          <tbody id="trend-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PLAST ──────────────────────────────────────────── -->
+<section class="section" id="plast">
+  <div class="page-hd"><div class="page-hd-left">
+    <div class="page-eyebrow">Plastmaterialer</div>
+    <h1 class="page-title">PET · rPET · PP · HDPE · PE</h1>
+  </div></div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Prishistorikk plast Europa (€/tonn)</span><span class="card-note">Kilde: ICIS, ChemOrbis</span></div>
+    <table>
+      <thead><tr><th>Periode</th><th>PET Virgin</th><th>rPET Food-Grade</th><th>PP Homo (Antwerpen)</th><th>HDPE Blåsing NWE</th><th>LDPE Film NWE</th><th>Trend Q→Q</th></tr></thead>
       <tbody>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>PET virgin</strong></td>
-          <td style="padding:7px 10px;text-align:right">€1 100*</td>
-          <td style="padding:7px 10px;text-align:right">€1 080*</td>
-          <td style="padding:7px 10px;text-align:right">€1 070*</td>
-          <td style="padding:7px 10px;text-align:right">€1 060*</td>
-          <td style="padding:7px 10px;text-align:right">€1 050*</td>
-          <td style="padding:7px 10px;text-align:right">€1 070*</td>
-          <td style="padding:7px 10px;text-align:right">€1 075*</td>
-          <td style="padding:7px 10px;text-align:right">€1 100*</td>
-          <td style="padding:7px 10px;text-align:right">€1 150*</td>
-          <td style="padding:7px 10px;text-align:right"><strong>€1 180–1 220</strong></td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px"><strong>rPET FG pellet</strong></td>
-          <td style="padding:7px 10px;text-align:right">€1 550*</td>
-          <td style="padding:7px 10px;text-align:right">€1 620*</td>
-          <td style="padding:7px 10px;text-align:right">€1 680*</td>
-          <td style="padding:7px 10px;text-align:right">€1 720*</td>
-          <td style="padding:7px 10px;text-align:right">€1 730*</td>
-          <td style="padding:7px 10px;text-align:right">€1 700*</td>
-          <td style="padding:7px 10px;text-align:right">€1 680*</td>
-          <td style="padding:7px 10px;text-align:right">€1 660*</td>
-          <td style="padding:7px 10px;text-align:right">€1 640*</td>
-          <td style="padding:7px 10px;text-align:right"><strong>€1 600–1 680</strong></td>
-        </tr>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>PP homopolymer</strong></td>
-          <td style="padding:7px 10px;text-align:right">€1 020*</td>
-          <td style="padding:7px 10px;text-align:right">€980*</td>
-          <td style="padding:7px 10px;text-align:right">€960*</td>
-          <td style="padding:7px 10px;text-align:right">€940*</td>
-          <td style="padding:7px 10px;text-align:right">€920*</td>
-          <td style="padding:7px 10px;text-align:right">€930*</td>
-          <td style="padding:7px 10px;text-align:right">€920*</td>
-          <td style="padding:7px 10px;text-align:right">€910*</td>
-          <td style="padding:7px 10px;text-align:right">€920*</td>
-          <td style="padding:7px 10px;text-align:right"><strong>€1 465+ ↑↑</strong></td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px"><strong>HDPE blåsing NWE</strong></td>
-          <td style="padding:7px 10px;text-align:right">€1 150*</td>
-          <td style="padding:7px 10px;text-align:right">€1 100*</td>
-          <td style="padding:7px 10px;text-align:right">€1 080*</td>
-          <td style="padding:7px 10px;text-align:right">€1 060*</td>
-          <td style="padding:7px 10px;text-align:right">€1 050*</td>
-          <td style="padding:7px 10px;text-align:right">€1 060*</td>
-          <td style="padding:7px 10px;text-align:right">€1 070*</td>
-          <td style="padding:7px 10px;text-align:right">€1 080*</td>
-          <td style="padding:7px 10px;text-align:right">€1 150*</td>
-          <td style="padding:7px 10px;text-align:right"><strong>€1 700–1 900 ↑↑</strong></td>
-        </tr>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>LDPE film NWE</strong></td>
-          <td style="padding:7px 10px;text-align:right">€1 300*</td>
-          <td style="padding:7px 10px;text-align:right">€1 250*</td>
-          <td style="padding:7px 10px;text-align:right">€1 220*</td>
-          <td style="padding:7px 10px;text-align:right">€1 200*</td>
-          <td style="padding:7px 10px;text-align:right">€1 180*</td>
-          <td style="padding:7px 10px;text-align:right">€1 190*</td>
-          <td style="padding:7px 10px;text-align:right">€1 200*</td>
-          <td style="padding:7px 10px;text-align:right">€1 210*</td>
-          <td style="padding:7px 10px;text-align:right">€1 280*</td>
-          <td style="padding:7px 10px;text-align:right"><strong>€1 900–2 100 ↑↑</strong></td>
-        </tr>
+        <tr><td>Q1 2024</td><td>€1 050–1 100</td><td>€1 700–1 800</td><td>€1 400–1 450</td><td>€1 100–1 200</td><td>€1 200–1 300</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q2 2024</td><td>€1 000–1 060</td><td>€1 680–1 750</td><td>€1 380–1 430</td><td>€1 080–1 160</td><td>€1 180–1 260</td><td><span class="tag dn">↘ Ned</span></td></tr>
+        <tr><td>Q3 2024</td><td>€990–1 040</td><td>€1 650–1 720</td><td>€1 360–1 410</td><td>€1 060–1 140</td><td>€1 160–1 240</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q4 2024</td><td>€980–1 030</td><td>€1 620–1 700</td><td>€1 420–1 480</td><td>€1 050–1 130</td><td>€1 150–1 230</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q1 2025</td><td>€970–1 020</td><td>€1 600–1 680</td><td>€1 500–1 560</td><td>€1 040–1 120</td><td>€1 140–1 220</td><td><span class="tag dn">↘ Ned</span></td></tr>
+        <tr><td>Q2 2025</td><td>€980–1 030</td><td>€1 580–1 660</td><td>€1 520–1 580</td><td>€1 050–1 130</td><td>€1 150–1 240</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q3 2025</td><td>€990–1 040</td><td>€1 570–1 650</td><td>€1 540–1 600</td><td>€1 060–1 140</td><td>€1 160–1 260</td><td><span class="tag up">↑ Opp</span></td></tr>
+        <tr><td>Q4 2025</td><td>€985–1 035</td><td>€1 560–1 640</td><td>€1 560–1 620</td><td>€1 055–1 140</td><td>€1 155–1 270</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr><td>Q1 2026</td><td>€980–1 040</td><td>€1 560–1 680</td><td>€1 580–1 650</td><td>€1 050–1 140</td><td>€1 160–1 290</td><td><span class="tag flat">↔ Stabilt</span></td></tr>
+        <tr style="font-weight:600;background:var(--g50)"><td>Q2 2026 (spot)</td><td>€980–1 050</td><td>€1 550–1 700</td><td>€1 680–1 710</td><td>€1 050–1 150</td><td>€1 150–1 300</td><td id="td-plast-trend"><span class="tag flat">↔ Blandet</span></td></tr>
       </tbody>
     </table>
   </div>
-</div>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-icon">🛡️</div><div class="info-title">PET: Anti-dumping mot Kina innført</div><div class="info-body">EU konkluderte med at kinesisk PET ble solgt under produksjonskostnad. Tollen gir noe prisstøtte, men strukturelt press fra Asia vedvarer. Priser holder €980–1 050/t FD Europa per april 2026.</div></div>
+    <div class="info-card"><div class="info-icon">♻️</div><div class="info-title">rPET-paradokset: lovkrav vs. kostnad</div><div class="info-body">Premie over virgin PET ~€600–650/t — historisk høyt. PPWR-krav om 25% rPET i flasker fra 2025 driver strukturell etterspørsel uavhengig av kostnad.</div></div>
+    <div class="info-card"><div class="info-icon">📈</div><div class="info-title">PP hopper €110/t på én uke</div><div class="info-body">PP homopolymer steg til €1 680–1 710/t FCA Antwerpen. Høyere propylen-kontraktpris (€1 465/t april) og forsyningskjedestøy. LDPE-tilbud suspendert av europeisk distributør.</div></div>
+  </div>
+</section>
 
-<div class="grid" style="margin-top:1.5rem">
-  <div class="dcard">
-    <div class="dcard-icon">🛢️</div>
-    <div class="dcard-title">Hormuzstredet-sjokk – Feb./Mar. 2026</div>
-    <div class="dcard-body">Konflikten mellom Israel/USA og Iran fra 28. februar 2026 resulterte i effektiv stenging av Hormuzstredet. Råoljepriser steg dramatisk, og naftakostnader fulgte etter. Propylen kontraktpris for april 2026 settlerte til €1 465/MT FD NWE – en økning på €465/MT (+46 %) fra mars 2026. PP, HDPE og LDPE påvirkes direkte gjennom feedstock-kostnadene etylen og propylen.</div>
-  </div>
-  <div class="dcard">
-    <div class="dcard-icon">♻️</div>
-    <div class="dcard-title">rPET-gap – Utfordring for sirkulær økonomi</div>
-    <div class="dcard-body">Prisgapet mellom rPET food-grade og virgin PET hadde vokst til nær €600/tonn i starten av 2025 og er fortsatt stort i Q2 2026. rPET FD NWE handles i området €1 600–1 680/tonn (spotmarked), mens kontraktpriser overstiger €1 800/tonn. Mange merkevarer har redusert rPET-bruken som respons. Dette utfordrer PPWR-krav om resirkulert innhold og svekker markedet for innsamlet plast.</div>
-  </div>
-  <div class="dcard">
-    <div class="dcard-icon">📉</div>
-    <div class="dcard-title">PET – Fallende pris tross kostnadspress</div>
-    <div class="dcard-body">PET virgin handles i Europa rundt €1 180–1 220/tonn per april 2026, ned fra USD 1 050–1 100/MT i Q3 2025 (justert for valuta). Svak etterspørsel fra emballasjeindustrien kombinert med rikelig global produksjonstilgjengelighet – særlig fra Asia – presser prisene ned. PET-markedet er dermed et unntak fra den generelle plastkostnadsinflasjon som preger PE- og PP-segmentene, som er langt mer eksponert mot naftabaserte feedstocks.</div>
-  </div>
-</div></section>
-<section class="section" id="fiber"><h2 style="color:#1a3a5c;margin-bottom:1rem">Kartong- og fibermarkedet Europa – Q2 2026</h2>
-
-<div class="card">
-  <div class="card-head">
-    <span class="card-title">Historisk prisutvikling – Kartong Europa (€/tonn)</span>
-    <span class="card-note">* = estimat/indikasjon fra åpne kilder. PIX-indeksverdier per 26. april 2026 bak betalingsmur (Fastmarkets/FOEX). SBS = Solid Bleached Sulphate.</span>
-  </div>
-  <div style="overflow-x:auto">
-    <table style="width:100%;border-collapse:collapse;font-size:0.91rem">
-      <thead>
-        <tr style="background:#1a3a5c;color:#fff">
-          <th style="padding:8px 10px;text-align:left">Material</th>
-          <th style="padding:8px 10px;text-align:right">Q1 2024</th>
-          <th style="padding:8px 10px;text-align:right">Q2 2024</th>
-          <th style="padding:8px 10px;text-align:right">Q3 2024</th>
-          <th style="padding:8px 10px;text-align:right">Q4 2024</th>
-          <th style="padding:8px 10px;text-align:right">Q1 2025</th>
-          <th style="padding:8px 10px;text-align:right">Q2 2025</th>
-          <th style="padding:8px 10px;text-align:right">Q3 2025</th>
-          <th style="padding:8px 10px;text-align:right">Q4 2025</th>
-          <th style="padding:8px 10px;text-align:right">Q1 2026</th>
-          <th style="padding:8px 10px;text-align:right">Q2 2026 (apr.)</th>
-        </tr>
-      </thead>
+<!-- ── SOLID BOARD ─────────────────────────────────────── -->
+<section class="section" id="fiber">
+  <div class="page-hd"><div class="page-hd-left">
+    <div class="page-eyebrow">Solid Board / Kartong</div>
+    <h1 class="page-title">FBB · GC2/WLC · SBS</h1>
+  </div></div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Prishistorikk solid board Europa (€/tonn)</span><span class="card-note">Kilde: Mintec PA15/SV85 · Fastmarkets · EUWID</span></div>
+    <table>
+      <thead><tr><th>Periode</th><th>FBB GC2 (PA15)</th><th>GC2/WLC (SV85)</th><th>SBS Virgin</th><th>Utsikt</th></tr></thead>
       <tbody>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>FBB GC2</strong></td>
-          <td style="padding:7px 10px;text-align:right">€1 000*</td>
-          <td style="padding:7px 10px;text-align:right">€980*</td>
-          <td style="padding:7px 10px;text-align:right">€970*</td>
-          <td style="padding:7px 10px;text-align:right">€960*</td>
-          <td style="padding:7px 10px;text-align:right">€950*</td>
-          <td style="padding:7px 10px;text-align:right">€940*</td>
-          <td style="padding:7px 10px;text-align:right">€935*</td>
-          <td style="padding:7px 10px;text-align:right">€930*</td>
-          <td style="padding:7px 10px;text-align:right">€920*</td>
-          <td style="padding:7px 10px;text-align:right"><strong>€900–1 050*</strong></td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px"><strong>WLC</strong></td>
-          <td style="padding:7px 10px;text-align:right">€780*</td>
-          <td style="padding:7px 10px;text-align:right">€760*</td>
-          <td style="padding:7px 10px;text-align:right">€745*</td>
-          <td style="padding:7px 10px;text-align:right">€730*</td>
-          <td style="padding:7px 10px;text-align:right">€720*</td>
-          <td style="padding:7px 10px;text-align:right">€715*</td>
-          <td style="padding:7px 10px;text-align:right">€710*</td>
-          <td style="padding:7px 10px;text-align:right">€705*</td>
-          <td style="padding:7px 10px;text-align:right">€700*</td>
-          <td style="padding:7px 10px;text-align:right"><strong>~€690–720*</strong></td>
-        </tr>
-        <tr style="background:#f0f4f8">
-          <td style="padding:7px 10px"><strong>SBS</strong></td>
-          <td style="padding:7px 10px;text-align:right">€1 100*</td>
-          <td style="padding:7px 10px;text-align:right">€1 090*</td>
-          <td style="padding:7px 10px;text-align:right">€1 080*</td>
-          <td style="padding:7px 10px;text-align:right">€1 070*</td>
-          <td style="padding:7px 10px;text-align:right">€1 060*</td>
-          <td style="padding:7px 10px;text-align:right">€1 055*</td>
-          <td style="padding:7px 10px;text-align:right">€1 050*</td>
-          <td style="padding:7px 10px;text-align:right">€1 045*</td>
-          <td style="padding:7px 10px;text-align:right">€1 040*</td>
-          <td style="padding:7px 10px;text-align:right"><strong>~€1 030–1 060*</strong></td>
-        </tr>
+        <tr><td>Q1 2024</td><td>~€900–940</td><td>~€680–720</td><td>~€950–1 000</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q2 2024</td><td>~€890–930</td><td>~€670–710</td><td>~€940–990</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q3 2024</td><td>~€880–920</td><td>~€660–700</td><td>~€930–980</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q4 2024</td><td>~€870–910</td><td>~€650–690</td><td>~€920–970</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q1 2025</td><td>~€860–900</td><td>~€640–680</td><td>~€910–960</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q2 2025</td><td>~€855–895</td><td>~€635–675</td><td>~€905–955</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q3 2025</td><td>~€850–890</td><td>~€630–670</td><td>~€900–950</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q4 2025</td><td>~€845–885</td><td>~€625–665</td><td>~€895–945</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q1 2026</td><td>~€835–875</td><td>~€620–660</td><td>~€890–940</td><td><span class="tag flat">↔</span></td></tr>
+        <tr style="font-weight:600;background:var(--g50)"><td>Q2 2026 (Mintec)</td><td id="f-fbb-now">~€830–870</td><td id="f-gc2-now">~€620–660</td><td>~€885–935</td><td><span class="tag flat">↔ Stabil</span></td></tr>
       </tbody>
     </table>
   </div>
-</div>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-icon">📦</div><div class="info-title">FBB: Stabil i svakt klima</div><div class="info-body">Folding Boxboard ~€830–870/t (PA15 Mintec, GC2, ~270–280 g) per april 2026, ned fra topper ~€930–940/t i Q1 2024. Moderat FMCG-etterspørsel holder et gulv under prisene.</div></div>
+    <div class="info-card"><div class="info-icon">♻️</div><div class="info-title">GC2/WLC: Resirkulert kartong holder</div><div class="info-body">GC2 agri-food (SV85 Mintec) rundt €620–660/t. OCC-kostnadsnedgang gir produksjonsfordel, men svak retail-etterspørsel demper oppsiden.</div></div>
+    <div class="info-card"><div class="info-icon">🌿</div><div class="info-title">PPWR: Fiber strukturelt posisjonert</div><div class="info-body">Fiberkartong er allerede PPWR-kompatibelt. Merkevareeiere velger fiber for bærekraftdokumentasjon. Strukturell etterspørselsvekst fra plastsubstitusjon mot 2030.</div></div>
+  </div>
+</section>
 
-<div class="grid" style="margin-top:1.5rem">
-  <div class="dcard">
-    <div class="dcard-icon">📦</div>
-    <div class="dcard-title">FBB – Mislykket prisøkning i Europa</div>
-    <div class="dcard-body">Et koordinert forsøk fra finpapir- og kartongleverandører på å presse gjennom prisøkninger fra starten av 2026 slo feil – særlig i Italia og andre søreuropeiske markeder. Svak detaljhandelsetterspørsel, kombinert med konkurranse fra asiatiske importører, har bremset enhver oppadgående korreksjon. FBB-markedet befinner seg i en periode med prisstagnasjon til svak nedgang, til tross for at noen produsenter rapporterer økte energi- og cellulosekostnader.</div>
+<!-- ── BØLGEPAPP ───────────────────────────────────────── -->
+<section class="section" id="corrugated">
+  <div class="page-hd"><div class="page-hd-left">
+    <div class="page-eyebrow">Bølgepapp</div>
+    <h1 class="page-title">Kraftliner · Testliner · Fluting · OCC</h1>
+  </div></div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Prishistorikk bølgepapp Europa (€/tonn)</span><span class="card-note">Kilde: Mintec SZ173/SZ176/SZ178/SW90 · FOEX PIX</span></div>
+    <table>
+      <thead><tr><th>Periode</th><th>Kraftliner (SZ173)</th><th>Testliner 2 (SZ176)</th><th>Fluting RB (SZ178)</th><th>GD2 (SW90)</th><th>OCC</th><th>Trend MoM</th></tr></thead>
+      <tbody>
+        <tr><td>Q1 2024</td><td>~€600–620</td><td>~€510–530</td><td>~€470–490</td><td>~€640–670</td><td>~€165–180</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q2 2024</td><td>~€595–615</td><td>~€505–525</td><td>~€465–485</td><td>~€635–665</td><td>~€160–175</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q3 2024</td><td>~€585–605</td><td>~€498–518</td><td>~€458–478</td><td>~€625–655</td><td>~€155–170</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q4 2024</td><td>~€575–595</td><td>~€490–510</td><td>~€450–470</td><td>~€615–645</td><td>~€150–165</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q1 2025</td><td>~€570–590</td><td>~€485–505</td><td>~€445–465</td><td>~€608–638</td><td>~€145–160</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q2 2025</td><td>~€568–588</td><td>~€482–500</td><td>~€442–460</td><td>~€600–630</td><td>~€140–155</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q3 2025</td><td>~€565–585</td><td>~€478–496</td><td>~€438–456</td><td>~€592–622</td><td>~€138–152</td><td><span class="tag flat">↔</span></td></tr>
+        <tr><td>Q4 2025</td><td>~€562–580</td><td>~€474–492</td><td>~€430–448</td><td>~€585–615</td><td>~€132–147</td><td><span class="tag dn">↘</span></td></tr>
+        <tr><td>Q1 2026</td><td>~€558–575</td><td>~€470–488</td><td>~€428–445</td><td>~€578–608</td><td>~€128–143</td><td><span class="tag dn">↘</span></td></tr>
+        <tr style="font-weight:600;background:var(--g50)"><td>Q2 2026 (Mintec)</td><td id="c-kl-now">€555</td><td id="c-tl-now">€465</td><td id="c-fl-now">€423</td><td id="c-gd2-now">~€565–590</td><td>€126</td><td id="c-trend-now"><span class="tag dn">↘ Alle ned</span></td></tr>
+      </tbody>
+    </table>
   </div>
-  <div class="dcard">
-    <div class="dcard-icon">🏭</div>
-    <div class="dcard-title">WLC – Overkapasitet og marginpress</div>
-    <div class="dcard-body">White-lined chipboard-markedet er under vedvarende press fra to sider: høye driftskostnader (energi, returfiber) og overkapasitet kombinert med svak kapasitetsutnyttelse hos europeiske produsenter. Resirkulerte kartongprodusenter sliter med å dekke marginene. Konsolideringsprosesser er forventet å akselerere i 2026–2027. WLC er en primær substituttkandidat for plast i visse emballasjeanvendelser, noe som kan gi markedsstøtte på sikt.</div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Markedsanalyse — april 2026</span></div>
+    <div class="card-body" style="font-size:13px;color:var(--text);line-height:1.8">
+      <p style="margin-bottom:12px">Det europeiske containerboard-markedet preges i april 2026 av en bred nedadgående bevegelse på tvers av alle kvaliteter. <strong>Kraftliner brun</strong> falt 0,8% til €555/t, <strong>Testliner 2</strong> er ned 1,6% til €465/t, og <strong>Fluting RB</strong> leder fallet med –2,2% til €423/t. <strong>OCC returpapp</strong> er ned 3,2% til €126/t.</p>
+      <p><strong>Tre nøkkeldrivere:</strong> (1) Strukturelt kapasitetsoverskudd etter investeringsbølgen 2022–2024. (2) Svak eksporttrekking fra Kina og Asia for OCC. (3) Dempet sluttbrukeretterspørsel i europeisk e-handel og industri.</p>
+    </div>
   </div>
-  <div class="dcard">
-    <div class="dcard-icon">🌿</div>
-    <div class="dcard-title">Substitusjonstrend – Fiber erstatter plast</div>
-    <div class="dcard-body">Plastprissjokkene i PP, HDPE og LDPE (Q1/Q2 2026) gir en ny komparativ fordel for fiberbasert emballasje. Merkevareeiere og dagligvarekjeder rapporterer økt interesse for kartong- og bølgepappalternativer til forbrukernes emballasje. SBS og FBB opplever forespørsler fra segmenter som tradisjonelt har vært plastdominert. Dette kan gi pris
-Du skal fylle inn innhold i 3 HTML-seksjoner for en emballasjeprisrapport (Q2 2026, 26. April 2026).
+</section>
 
-Returner KUN 3 blokker med ren HTML. Ingen annen tekst. Bruk eksakt dette formatet:</section>
-<section class="section" id="corrugated"><p style='color:#c8401a;padding:20px'>Innhold mangler for CORRUGATED_INNHOLD</p></section>
-<section class="section" id="kapasitet"><p style='color:#c8401a;padding:20px'>Innhold mangler for KAPASITET_INNHOLD</p></section>
-<section class="section" id="drivere"><div class="sec-header"><h2 class="sec-title">Markedsdrivere<span class="sec-tag">Etterspørsel · Kapasitet · Regulering</span></h2></div>
-<div class="grid">
-  <div class="dcard"><div class="dcard-icon">🛒</div><div class="dcard-title">E-handel driver etterspørsel</div><div class="dcard-body">EU online-dagligvare: €56 mrd. (2024), 4x siden 2020. Bølgepapp og solid board er primære vinnerne. Strukturell vekst anslått 3–5% CAGR for packaging-grade papir mot 2030.</div></div>
-  <div class="dcard"><div class="dcard-icon">📋</div><div class="dcard-title">PPWR driver plastsubstitusjon</div><div class="dcard-body">EU Packaging and Packaging Waste Regulation (PPWR) trer i full kraft aug 2026. Krav om 25% rPET i flasker fra 2025, 30% innen 2030. Driver strukturell etterspørsel mot fiber og resirkulert plast.</div></div>
-  <div class="dcard"><div class="dcard-icon">⚡</div><div class="dcard-title">Energikostnader — varig faktor</div><div class="dcard-body">Europeiske energipriser forblir strukturelt høyere enn pre-2022. Papir og kartongproduksjon er energiintensiv — energi utgjør 25–35% av produksjonskostnadene. Dette setter et gulv under prisene selv i svake markeder.</div></div>
-  <div class="dcard"><div class="dcard-icon">🌏</div><div class="dcard-title">Asiatisk import — strukturell konkurranse</div><div class="dcard-body">Kinesisk og sørøstasiatisk PET, PP og HDPE importeres under europeisk produksjonskostnad. Anti-dumping-tiltak gir noe beskyttelse, men CBAM-implementering er ufullstendig. Strukturell prisdemper for europrodusenter.</div></div>
-  <div class="dcard"><div class="dcard-icon">🔄</div><div class="dcard-title">Resirkulert innhold — kostnadspremie</div><div class="dcard-body">rPET food-grade koster ~€600–650/t mer enn virgin PET. WLC (resirkulert kartong) er billigere enn FBB men følger OCC-prisen tett. Regulatorisk press øker etterspørselen etter resirkulert materiale uavhengig av kostnad.</div></div>
-  <div class="dcard"><div class="dcard-icon">🏭</div><div class="dcard-title">Kapasitetskonsolidering i containerboard</div><div class="dcard-body">IP/DS Smith-integrasjon fullført. Smurfit Westrock er nå #1 i Europa. Hamburger CB, Saica og Klingele presser på prisøkninger. Strukturell konsolidering gir produsenter noe mer prismakt på sikt.</div></div>
-</div>
-<div class="card" style="margin-top:20px">
-  <div class="card-head"><span class="card-title">Drivermatrise — retning per material</span></div>
-  <table>
-    <thead><tr><th>Driver</th><th>PET/rPET</th><th>PP/HDPE</th><th>FBB/WLC</th><th>Kraftliner</th><th>Testliner</th></tr></thead>
-    <tbody>
-      <tr><td>PPWR-regulering</td><td class="up">↑ Positiv</td><td class="down">↓ Negativ</td><td class="up">↑ Positiv</td><td class="flat">↔ Nøytral</td><td class="flat">↔ Nøytral</td></tr>
-      <tr><td>E-handel vekst</td><td class="flat">↔ Nøytral</td><td class="flat">↔ Nøytral</td><td class="up">↑ Positiv</td><td class="up">↑ Positiv</td><td class="up">↑ Positiv</td></tr>
-      <tr><td>Asiatisk import</td><td class="down">↓ Negativ</td><td class="down">↓ Negativ</td><td class="flat">↔ Begrenset</td><td class="flat">↔ Begrenset</td><td class="flat">↔ Begrenset</td></tr>
-      <tr><td>Energikostnader</td><td class="flat">↔ Nøytral</td><td class="flat">↔ Nøytral</td><td class="down">↓ Støtte</td><td class="down">↓ Støtte</td><td class="down">↓ Støtte</td></tr>
-      <tr><td>Plastsubstitusjon</td><td class="down">↓ Press</td><td class="down">↓ Press</td><td class="up">↑ Driver</td><td class="up">↑ Driver</td><td class="up">↑ Driver</td></tr>
-    </tbody>
-  </table>
-</div></section>
-<section class="section" id="regulering"><div class="sec-header"><h2 class="sec-title">Regulering<span class="sec-tag">PPWR · SUP · CBAM</span></h2></div>
-<div class="alert">⚠ <strong>PPWR trer i kraft august 2026:</strong> EU Packaging and Packaging Waste Regulation (2025/40) har generell anvendelsesdato 12. august 2026. Alle emballasjeprodusenter og importører til EU-markedet berøres.</div>
-<div class="tl">
-  <div class="tl-item"><div class="tl-year">2025</div><div><div class="tl-rule">PPWR vedtatt — Feb 2025</div><div class="tl-desc">Forordningen trådte i kraft. 18 måneders overgangsperiode starter.</div></div></div>
-  <div class="tl-item"><div class="tl-year">2026</div><div><div class="tl-rule">Generell anvendelse — Aug 2026</div><div class="tl-desc">PPWR gjelder fullt ut. Krav om emballasje-minimering, gjenbruk og resirkulerbarhet.</div></div></div>
-  <div class="tl-item"><div class="tl-year">2030</div><div><div class="tl-rule">Resirkulert innhold plast</div><div class="tl-desc">25% rPET i PET-flasker (kontakt mat/drikke). 30% resirkulert i all plastemballasje over 1L.</div></div></div>
-  <div class="tl-item"><div class="tl-year">2035</div><div><div class="tl-rule">Økte krav resirkulert innhold</div><div class="tl-desc">50% resirkulert innhold i plastemballasje. Strengere krav til gjenbrukssystemer.</div></div></div>
-  <div class="tl-item"><div class="tl-year">2040</div><div><div class="tl-rule">Full sirkulærøkonomi-mål</div><div class="tl-desc">65% av all emballasje skal resirkuleres (volum). Plast: 90% resirkuleringsrate.</div></div></div>
-</div>
-<div class="card">
-  <div class="card-head"><span class="card-title">Resirkulert innhold — krav per materialtype</span></div>
-  <table>
-    <thead><tr><th>Materialtype</th><th>Krav 2030</th><th>Krav 2035</th><th>Status nå</th></tr></thead>
-    <tbody>
-      <tr><td>PET-flasker (kontakt mat)</td><td class="up">25% rPET</td><td class="up">30% rPET</td><td class="flat">~15–20% i dag</td></tr>
-      <tr><td>Plastemballasje &gt;1L</td><td class="up">30% resirkulert</td><td class="up">50% resirkulert</td><td class="down">Lavt i dag</td></tr>
-      <tr><td>Fiberkartong (FBB/WLC)</td><td class="flat">Intet krav</td><td class="flat">Intet krav</td><td class="up">Allerede PPWR-klar</td></tr>
-      <tr><td>Bølgepapp</td><td class="flat">Intet krav</td><td class="flat">Intet krav</td><td class="up">Allerede PPWR-klar</td></tr>
-    </tbody>
-  </table>
-</div></section>
-<section class="section" id="kilder"><div class="sec-header"><h2 class="sec-title">Kilder og metode<span class="sec-tag">Datagrunnlag</span></h2></div>
-<div class="alert">⚠ <strong>Viktig om datakvalitet:</strong> Prisdata for emballasjematerialer er i stor grad bak betalingsmur (FOEX PIX, ICIS, EUWID, Fastmarkets). Verdiene i denne rapporten er basert på siste tilgjengelige offentlige data, bransjekommentarer og kjente markedstrender. For kontrakt- og spotpriser til bruk i forhandlinger — verifiser alltid mot ICIS, FOEX PIX eller EUWID direkte.</div>
-<div class="card">
-  <div class="card-head"><span class="card-title">Datakilder</span></div>
-  <div style="padding:16px 18px">
-    <div class="src-item"><div class="src-num">1</div><div><div class="src-name">FOEX PIX-indekser</div><div class="src-desc">Kraftliner, Testliner 2, Fluting RB og OCC 1.04 dd — europeiske referanseindekser for bølgepappsegmentet. Oppdateres ukentlig.</div><span class="src-type">Abonnement / begrenset offentlig</span></div></div>
-    <div class="src-item"><div class="src-num">2</div><div><div class="src-name">Mintec prisindekser</div><div class="src-desc">PA15 (FBB exw Eur), SV85 (GC2 del EU lo), SZ173 (Kraftliner), SZ176 (Testliner 2), SZ178 (Fluting), SW90 (GD2) — månedlige europeiske referanseindekser.</div><span class="src-type">Abonnement — primærkilde</span></div></div>
-    <div class="src-item"><div class="src-num">3</div><div><div class="src-name">ICIS</div><div class="src-desc">Plastpriser (PET, rPET, PP, HDPE, LDPE) — europeiske spotpriser og ukentlige prisrapporter. Ledende prisinformasjon for petrokjemikalier.</div><span class="src-type">Abonnement</span></div></div>
-    <div class="src-item"><div class="src-num">4</div><div><div class="src-name">EUWID Pulp & Paper / Recycling</div><div class="src-desc">Tyske og europeiske priser for kartong, papir og returmaterialer. Ukentlig nyhetsbrev med prisovervåkning.</div><span class="src-type">Abonnement</span></div></div>
-    <div class="src-item"><div class="src-num">5</div><div><div class="src-name">Fastmarkets PPI Europe</div><div class="src-desc">FBB, WLC og SBS-priser for europeisk kartongmarked. Månedlige og kvartalsvise prisreferanser.</div><span class="src-type">Abonnement</span></div></div>
-    <div class="src-item"><div class="src-num">6</div><div><div class="src-name">ChemOrbis / PlasticPortal</div><div class="src-desc">Plastpriser spot og kontrakt. Markedskommentarer og prisanalyse for PP, PE og PET.</div><span class="src-type">Delvis offentlig</span></div></div>
-    <div class="src-item"><div class="src-num">7</div><div><div class="src-name">Packaging Europe / RISI</div><div class="src-desc">Bransjenyheter, kapasitetsoppdateringer og markedskommentarer for europeisk emballasjeindustri.</div><span class="src-type">Delvis offentlig</span></div></div>
-    <div class="src-item"><div class="src-num">8</div><div><div class="src-name">EU-kommisjonen / EUR-Lex</div><div class="src-desc">PPWR-lovgivning (2025/40), SUP-direktiv, CBAM-regelverk og anti-dumping-vedtak.</div><span class="src-type">Offentlig</span></div></div>
+<!-- ── KAPASITET ───────────────────────────────────────── -->
+<section class="section" id="kapasitet">
+  <div class="page-hd"><div class="page-hd-left">
+    <div class="page-eyebrow">Kapasitetsstatus</div>
+    <h1 class="page-title">Driftsrate · Ny kapasitet · M&amp;A</h1>
+  </div></div>
+  <div class="cap-grid">
+    <div class="cap-card"><div class="cap-title">Kraftliner — Europa</div><div class="cap-sub">Virgin fiber liner</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>~82–86%</span></div><div class="bar-bg"><div class="bar-fill bar-g" style="width:84%"></div></div><div class="cap-note">Begrenset europeisk kapasitet. SCA gjennomførte €60/t økning mai 2025. NA-konverteringer kan øke import til Europa.</div></div>
+    <div class="cap-card"><div class="cap-title">Testliner / RCCM — Europa</div><div class="cap-sub">Resirkulert containerboard</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>~75–80%</span></div><div class="bar-bg"><div class="bar-fill bar-a" style="width:77%"></div></div><div class="cap-note">Ny kapasitet fra grafisk papir-konverteringer presser. Hamburger CB, Saica og Smurfit Westrock dominerer.</div></div>
+    <div class="cap-card"><div class="cap-title">rPET food-grade — Europa</div><div class="cap-sub">Matgodkjent resirkulert PET</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>Nær full</span></div><div class="bar-bg"><div class="bar-fill bar-r" style="width:94%"></div></div><div class="cap-note">Kun 12 EU-anlegg godkjent for food-grade rPET. Kritisk kapasitetsgap mot PPWR-krav 2030.</div></div>
+    <div class="cap-card"><div class="cap-title">FBB Solid Board — Europa</div><div class="cap-sub">Folding boxboard, virgin fiber</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>~78–84%</span></div><div class="bar-bg"><div class="bar-fill bar-a" style="width:81%"></div></div><div class="cap-note">Stora Enso Oulu (750 000 tpa) og Metsä Board Husum (+200 000 tpa) øker press. Selektiv nedetid.</div></div>
+    <div class="cap-card"><div class="cap-title">PP / HDPE — Europa</div><div class="cap-sub">Emballasjeplast harpikser</div><div class="bar-row"><span>Kapasitetsutnyttelse</span><span>~78–84%</span></div><div class="bar-bg"><div class="bar-fill bar-a" style="width:81%"></div></div><div class="cap-note">Konkurranseutsatt fra Midtøsten og Asia. CBAM gir noe beskyttelse. Svak etterspørsel fra bil og bygg.</div></div>
+    <div class="cap-card"><div class="cap-title">OCC / Returfiber — Europa</div><div class="cap-sub">Old corrugated containers</div><div class="bar-row"><span>Innsamlingsrate</span><span>~84%</span></div><div class="bar-bg"><div class="bar-fill bar-g" style="width:84%"></div></div><div class="cap-note">Global overforsyning. Redusert kinesisk import presser prisen ned. €126/t i april 2026.</div></div>
   </div>
-</div></section>
+</section>
+
+<!-- ── MARKEDSDRIVERE ─────────────────────────────────── -->
+<section class="section" id="drivere">
+  <div class="page-hd"><div class="page-hd-left">
+    <div class="page-eyebrow">Markedsdrivere</div>
+    <h1 class="page-title">Etterspørsel · Kapasitet · Regulering</h1>
+  </div></div>
+  <div class="card-grid">
+    <div class="info-card"><div class="info-icon">🛒</div><div class="info-title">E-handel driver strukturell etterspørsel</div><div class="info-body">EU online-dagligvare: €56 mrd. (2024), 4x siden 2020. Bølgepapp og solid board er primære vinnerne. Strukturell vekst anslått 3–5% CAGR for packaging-grade papir mot 2030.</div></div>
+    <div class="info-card"><div class="info-icon">📋</div><div class="info-title">PPWR driver plastsubstitusjon</div><div class="info-body">PPWR (2025/40) generell anvendelse aug 2026. 25% rPET i flasker fra 2025, 30% innen 2030. Driver strukturell etterspørselsvekst mot fiber og resirkulert plast.</div></div>
+    <div class="info-card"><div class="info-icon">⚡</div><div class="info-title">Energikostnader — varig strukturelt gulv</div><div class="info-body">Europeiske energipriser strukturelt høyere enn pre-2022. Papir og kartong er energiintensivt — 25–35% av produksjonskostnadene. Gir prisgulv selv i svake markeder.</div></div>
+    <div class="info-card"><div class="info-icon">🌏</div><div class="info-title">Asiatisk import — strukturell konkurranse</div><div class="info-body">Kinesisk og sørøstasiatisk PET, PP og HDPE importeres under europeisk produksjonskostnad. Anti-dumping-tiltak gir begrenset beskyttelse.</div></div>
+    <div class="info-card"><div class="info-icon">🔄</div><div class="info-title">Resirkulert innhold — kostnadspremie</div><div class="info-body">rPET food-grade koster ~€600–650/t mer enn virgin PET. Regulatorisk press øker etterspørselen uavhengig av kostnad fra 2025 og utover.</div></div>
+    <div class="info-card"><div class="info-icon">🏭</div><div class="info-title">Konsolidering i containerboard</div><div class="info-body">IP/DS Smith-integrasjon fullført. Smurfit Westrock er nå #1 i Europa. Konsolidering gir produsenter noe mer prismakt på sikt.</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Drivermatrise — retning per materiale</span></div>
+    <table>
+      <thead><tr><th>Driver</th><th style="text-align:center">PET/rPET</th><th style="text-align:center">PP/HDPE</th><th style="text-align:center">FBB/GC2</th><th style="text-align:center">Kraftliner</th><th style="text-align:center">Testliner</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:500">PPWR-regulering</td><td style="text-align:center"><span class="matrix-tag mt-pos">↑ Positiv</span></td><td style="text-align:center"><span class="matrix-tag mt-neg">↓ Negativ</span></td><td style="text-align:center"><span class="matrix-tag mt-pos">↑ Positiv</span></td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Nøytral</span></td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Nøytral</span></td></tr>
+        <tr><td style="font-weight:500">E-handel vekst</td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Nøytral</span></td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Nøytral</span></td><td style="text-align:center"><span class="matrix-tag mt-pos">↑ Positiv</span></td><td style="text-align:center"><span class="matrix-tag mt-pos">↑ Positiv</span></td><td style="text-align:center"><span class="matrix-tag mt-pos">↑ Positiv</span></td></tr>
+        <tr><td style="font-weight:500">Asiatisk import</td><td style="text-align:center"><span class="matrix-tag mt-neg">↓ Negativ</span></td><td style="text-align:center"><span class="matrix-tag mt-neg">↓ Negativ</span></td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Begrenset</span></td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Begrenset</span></td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Begrenset</span></td></tr>
+        <tr><td style="font-weight:500">Energikostnader</td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Nøytral</span></td><td style="text-align:center"><span class="matrix-tag mt-neu">↔ Nøytral</span></td><td style="text-align:center"><span class="matrix-tag mt-neg">↓ Kostnadsgulv</span></td><td style="text-align:center"><span class="matrix-tag mt-neg">↓ Kostnadsgulv</span></td><td style="text-align:center"><span class="matrix-tag mt-neg">↓ Kostnadsgulv</span></td></tr>
+        <tr><td style="font-weight:500">Plastsubstitusjon</td><td style="text-align:center"><span class="matrix-tag mt-neg">↓ Press</span></td><td style="text-align:center"><span class="matrix-tag mt-neg">↓ Press</span></td><td style="text-align:center"><span class="matrix-tag mt-pos">↑ Driver</span></td><td style="text-align:center"><span class="matrix-tag mt-pos">↑ Driver</span></td><td style="text-align:center"><span class="matrix-tag mt-pos">↑ Driver</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── REGULERING ──────────────────────────────────────── -->
+<section class="section" id="regulering">
+  <div class="page-hd"><div class="page-hd-left">
+    <div class="page-eyebrow">Regulering</div>
+    <h1 class="page-title">PPWR · SUP-direktiv · CBAM</h1>
+  </div></div>
+  <div class="alert">⚠ <strong>PPWR generell anvendelse: 12. august 2026.</strong> EU Packaging and Packaging Waste Regulation (2025/40) påvirker alle emballasjeprodusenter og importører til EU-markedet.</div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-hd"><span class="card-title">PPWR-tidslinje 2025–2040</span></div>
+    <div style="padding:0 20px">
+      <div class="tl">
+        <div class="tl-item"><div class="tl-year">2025</div><div><div class="tl-rule">PPWR vedtatt — februar 2025</div><div class="tl-desc">Forordningen trådte i kraft. 18 måneders overgangsperiode starter. 25% rPET-krav i PET-flasker aktiveres.</div></div></div>
+        <div class="tl-item"><div class="tl-year">2026</div><div><div class="tl-rule">Generell anvendelse — 12. august 2026</div><div class="tl-desc">PPWR gjelder fullt ut for alle emballasjekategorier. Krav om minimering, gjenbruk og dokumentert resirkulerbarhet.</div></div></div>
+        <div class="tl-item"><div class="tl-year">2030</div><div><div class="tl-rule">Økte krav resirkulert innhold</div><div class="tl-desc">30% resirkulert innhold i all plastemballasje over 1L. rPET food-grade krav stiger. 70% av all emballasje skal kunne resirkuleres.</div></div></div>
+        <div class="tl-item"><div class="tl-year">2035</div><div><div class="tl-rule">Strenge krav gjenbruk og innhold</div><div class="tl-desc">50% resirkulert innhold i plastemballasje. Gjenbrukssystemer obligatorisk for utvalgte kategorier.</div></div></div>
+        <div class="tl-item"><div class="tl-year">2040</div><div><div class="tl-rule">Full sirkulærøkonomi-mål</div><div class="tl-desc">65% av all emballasje resirkuleres (volum). Plast: 90% resirkuleringsrate.</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Resirkulert innhold — krav per materialtype</span></div>
+    <table>
+      <thead><tr><th>Materialtype</th><th>Krav 2025</th><th>Krav 2030</th><th>Krav 2035</th><th>Status nå</th></tr></thead>
+      <tbody>
+        <tr><td>PET-flasker (matpakkekontakt)</td><td><span class="tag up">25% rPET</span></td><td><span class="tag up">30% rPET</span></td><td><span class="tag up">35% rPET</span></td><td style="color:var(--fl);font-weight:500">~15–20% i dag</td></tr>
+        <tr><td>Plastemballasje &gt;1L</td><td style="color:var(--muted)">—</td><td><span class="tag up">30% resirkulert</span></td><td><span class="tag up">50% resirkulert</span></td><td style="color:var(--dn);font-weight:500">Lavt i dag</td></tr>
+        <tr><td>Fiberkartong (FBB/GC2/WLC)</td><td><span class="tag up">Intet krav</span></td><td><span class="tag up">Intet krav</span></td><td><span class="tag up">Intet krav</span></td><td style="color:var(--up);font-weight:500">Allerede PPWR-klar</td></tr>
+        <tr><td>Bølgepapp (kraftliner/testliner)</td><td><span class="tag up">Intet krav</span></td><td><span class="tag up">Intet krav</span></td><td><span class="tag up">Intet krav</span></td><td style="color:var(--up);font-weight:500">Allerede PPWR-klar</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── KILDER ──────────────────────────────────────────── -->
+<section class="section" id="kilder">
+  <div class="page-hd"><div class="page-hd-left">
+    <div class="page-eyebrow">Kilder og metode</div>
+    <h1 class="page-title">Datagrunnlag</h1>
+  </div></div>
+  <div class="alert">⚠ <strong>Om datakvalitet:</strong> Emballasjeprisdata er i stor grad bak betalingsmur. Verdiene er basert på Mintec-abonnement (primærkilde), FOEX PIX og offentlig tilgjengelige markedsrapporter. Verifiser kontraktpriser mot ICIS, FOEX PIX eller EUWID direkte.</div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">Primær- og sekundærkilder</span></div>
+    <div>
+      <div class="src-item"><div class="src-num">1</div><div><div class="src-name">Mintec prisindekser</div><div class="src-desc">PA15 (FBB exw Eur), SV85 (GC2 del EU lo), SZ173 (Kraftliner), SZ176 (Testliner 2), SZ178 (Fluting), SW90 (GD2) — månedlige europeiske referanseindekser. Lastes automatisk fra <code>data/Prisrapport_mintec.csv</code>.</div><span class="src-tag">Abonnement · Primærkilde</span></div></div>
+      <div class="src-item"><div class="src-num">2</div><div><div class="src-name">FOEX PIX-indekser</div><div class="src-desc">Kraftliner, Testliner 2, Fluting RB og OCC 1.04 dd — ukentlige europeiske referanseindekser for bølgepappsegmentet.</div><span class="src-tag">Abonnement · Begrenset offentlig</span></div></div>
+      <div class="src-item"><div class="src-num">3</div><div><div class="src-name">ICIS</div><div class="src-desc">Plastpriser (PET, rPET, PP, HDPE, LDPE) — europeiske spotpriser og ukentlige prisrapporter for petrokjemikalier.</div><span class="src-tag">Abonnement</span></div></div>
+      <div class="src-item"><div class="src-num">4</div><div><div class="src-name">EUWID Pulp &amp; Paper / Recycling</div><div class="src-desc">Tyske og europeiske priser for kartong, papir og returmaterialer. Ukentlig nyhetsbrev.</div><span class="src-tag">Abonnement</span></div></div>
+      <div class="src-item"><div class="src-num">5</div><div><div class="src-name">Fastmarkets PPI Europe</div><div class="src-desc">FBB, WLC og SBS-priser for europeisk kartongmarked. Månedlige og kvartalsvise prisreferanser.</div><span class="src-tag">Abonnement</span></div></div>
+      <div class="src-item"><div class="src-num">6</div><div><div class="src-name">ChemOrbis / PlasticPortal</div><div class="src-desc">Plastpriser spot og kontrakt. Markedskommentarer for PP, PE og PET.</div><span class="src-tag">Delvis offentlig</span></div></div>
+      <div class="src-item"><div class="src-num">7</div><div><div class="src-name">Packaging Europe / RISI</div><div class="src-desc">Bransjenyheter, kapasitetsoppdateringer og markedskommentarer for europeisk emballasjeindustri.</div><span class="src-tag">Delvis offentlig</span></div></div>
+      <div class="src-item"><div class="src-num">8</div><div><div class="src-name">EU-kommisjonen / EUR-Lex</div><div class="src-desc">PPWR-lovgivning (2025/40), SUP-direktiv, CBAM-regelverk og anti-dumping-vedtak mot kinesisk PET-import.</div><span class="src-tag">Offentlig</span></div></div>
+    </div>
+  </div>
+</section>
+
 </main>
-<footer>
-  <span>EMBALLASJEPRISRAPPORT — EUROPA · FMCG</span>
-  <span>Oppdatert: 26. April 2026 · Q2 2026</span>
-  <span>Indikative priser — ikke erstatning for profesjonelle prisindekser</span>
-</footer>
+</div>
+
 <script>
-function showSection(id){
-  document.querySelectorAll('.section').forEach(function(s){s.style.display='none';});
-  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
-  document.getElementById(id).style.display='block';
+// ── NAVIGATION ────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).style.display = 'block';
   event.currentTarget.classList.add('active');
 }
-window.onload=function(){
-  document.querySelectorAll('.section').forEach(function(s){s.style.display='none';});
-  var f=document.querySelector('.section');if(f)f.style.display='block';
-  var t=document.querySelector('.nav-tab');if(t)t.classList.add('active');
+window.onload = () => {
+  document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+  document.getElementById('overview').style.display = 'block';
+  document.querySelector('.nav-item').classList.add('active');
+  mintecFetch();
+  // Restore API key from sessionStorage
+  const saved = sessionStorage.getItem('emb_api_key');
+  if (saved) { const el = document.getElementById('api-key'); if(el) el.value = saved; }
 };
+
+// ── STATE ─────────────────────────────────────────────
+let M = { data: [], series: [] };
+const COLORS = {
+  kraftliner: '#2e7a4a', testliner: '#d97706', fluting: '#3b82f6',
+  gd2: '#5cb87a', fbb: '#16a34a', gc2: '#059669', nbsk: '#7c3aed'
+};
+let charts = {};
+
+// ── AUTO-FETCH ────────────────────────────────────────
+async function mintecFetch() {
+  setStatus('…', 'Henter Mintec-data fra GitHub…');
+  try {
+    const res = await fetch('data/Prisrapport_mintec.csv?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    mintecParse(await res.text(), 'Prisrapport_mintec.csv');
+  } catch(e) {
+    setStatus('err', 'Fant ikke <code>data/Prisrapport_mintec.csv</code> — last opp manuelt');
+  }
+}
+function mintecLoad(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = e => mintecParse(e.target.result, file.name);
+  r.readAsText(file, 'utf-8');
+}
+function setStatus(state, html) {
+  const dot = document.getElementById('src-dot');
+  dot.className = state === 'live' ? 'live' : '';
+  document.getElementById('src-text').innerHTML = html;
+}
+
+// ── PARSE ─────────────────────────────────────────────
+function mintecParse(raw, name) {
+  raw = raw.replace(/^\uFEFF/, '');
+  const lines = raw.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return;
+  const sep = lines[0].includes(';') ? ';' : ',';
+  let ds = 1;
+  for (let i = 1; i < Math.min(8, lines.length); i++) {
+    if (/^\d{2}[.\-\/]\d{2}[.\-\/]\d{4}/.test(lines[i].trim())) { ds = i; break; }
+  }
+  const hRaw = lines.slice(0, ds).join('\n');
+  const headers = csvSplit(hRaw, sep).map(h => h.replace(/\n[\s\S]*/s, '').trim());
+  const dateIdx = Math.max(0, headers.findIndex(h => /date|dato|period/i.test(h)));
+  const cols = headers.map((h, i) => ({ name: cleanH(h), i }))
+                      .filter(({ name, i }) => i !== dateIdx && name.length > 0);
+  const rows = [];
+  for (let i = ds; i < lines.length; i++) {
+    const parts = lines[i].split(sep);
+    const d = parseD(parts[dateIdx]?.trim());
+    if (!d) continue;
+    const row = { date: d };
+    cols.forEach(({ name, i: ci }) => {
+      const v = parseFloat((parts[ci] || '').replace(',', '.'));
+      row[name] = isNaN(v) ? null : v;
+    });
+    rows.push(row);
+  }
+  if (!rows.length) { alert('Ingen datarader funnet'); return; }
+  M.data   = rows.sort((a, b) => a.date.localeCompare(b.date));
+  M.series = cols.map(c => c.name);
+  const from = M.data[0].date.slice(0,7), to = M.data[M.data.length-1].date.slice(0,7);
+  setStatus('live', `<strong style="color:#2e7a4a">● Mintec</strong> · ${from}–${to} · ${M.data.length} mnd · ${M.series.length} serier`);
+  document.getElementById('upload-lbl').textContent = '✓ ' + name;
+  document.getElementById('ai-btn').disabled = false;
+  updateKPIs(); updateTables(); renderTrends();
+  document.getElementById('trends-placeholder').style.display = 'none';
+  document.getElementById('trends-content').style.display = '';
+}
+
+// ── KPI UPDATE ────────────────────────────────────────
+function updateKPIs() {
+  const map = [
+    { keys: ['kraftliner'], kpi: 'kpi-kl' },
+    { keys: ['fbb'],        kpi: 'kpi-fbb' },
+  ];
+  M.series.forEach(s => {
+    const sl = s.toLowerCase();
+    const m  = map.find(x => x.keys.some(k => sl.includes(k)));
+    if (!m) return;
+    const rows = M.data.filter(r => r[s] != null);
+    if (!rows.length) return;
+    const last = rows[rows.length-1][s];
+    const prev = rows.length > 1 ? rows[rows.length-2][s] : null;
+    const chg  = prev ? (last-prev)/prev*100 : null;
+    const el   = document.getElementById(m.kpi);
+    if (el) el.innerHTML = `€${last.toFixed(0)}<span class="m-badge" title="Kilde: Mintec">M</span>`;
+    const chgStr = chg != null ? `${chg>0?'+':''}${chg.toFixed(1)}% MoM` : '';
+    document.querySelectorAll('.kpi-label').forEach(lbl => {
+      if (!m.keys.some(k => lbl.textContent.toLowerCase().includes(k))) return;
+      const card = lbl.closest('.kpi-card');
+      const valEl = card?.querySelector('.kpi-val');
+      if (valEl) valEl.innerHTML = `€${last.toFixed(0)}<span class="m-badge" title="Mintec">M</span>`;
+      let sub = card?.querySelector('.kpi-mintec');
+      if (chgStr) {
+        if (!sub) { sub = document.createElement('div'); sub.className = 'kpi-mintec'; card.appendChild(sub); }
+        sub.textContent = chgStr;
+      }
+    });
+  });
+}
+
+// ── TABLE UPDATE ──────────────────────────────────────
+function updateTables() {
+  const map = [
+    { keys: ['kraftliner'],  ids: ['td-kl-ref','c-kl-now'],   trendId: 'td-kl-trend' },
+    { keys: ['testliner 2'], ids: ['td-tl-ref','c-tl-now'],   trendId: 'td-tl-trend' },
+    { keys: ['fluting'],     ids: ['td-fl-ref','c-fl-now'],   trendId: 'td-fl-trend' },
+    { keys: ['gd2'],         ids: ['td-gd2-ref','c-gd2-now'], trendId: 'td-gd2-trend' },
+    { keys: ['fbb'],         ids: ['td-fbb-ref','f-fbb-now'], trendId: 'td-fbb-trend' },
+    { keys: ['gc2'],         ids: ['td-gc2-ref','f-gc2-now'], trendId: 'td-gc2-trend' },
+  ];
+  M.series.forEach(s => {
+    const sl = s.toLowerCase();
+    const m  = map.find(x => x.keys.some(k => sl.includes(k)));
+    if (!m) return;
+    const rows = M.data.filter(r => r[s] != null);
+    if (!rows.length) return;
+    const last = rows[rows.length-1][s];
+    const prev = rows.length > 1 ? rows[rows.length-2][s] : null;
+    const chg  = prev ? (last-prev)/prev*100 : null;
+    const cls  = chg > 0.3 ? 'up' : chg < -0.3 ? 'dn' : 'flat';
+    const arr  = chg > 0.3 ? '↑' : chg < -0.3 ? '↓' : '→';
+    const chgStr = chg != null ? ` ${chg>0?'+':''}${chg.toFixed(1)}%` : '';
+    (m.ids||[]).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = `<span class="mintec-live">€${last.toFixed(0)}</span><span class="m-badge" title="Mintec">M</span>`;
+    });
+    if (m.trendId) {
+      const el = document.getElementById(m.trendId);
+      if (el) el.innerHTML = `<span class="tag ${cls}">${arr}${chgStr}</span>`;
+    }
+  });
+  // Update combined bølgepapp trend indicator
+  const corrTrends = M.series.filter(s => {
+    const sl = s.toLowerCase();
+    return ['kraftliner','testliner','fluting','gd2'].some(k => sl.includes(k));
+  }).map(s => {
+    const rows = M.data.filter(r => r[s] != null);
+    if (rows.length < 2) return null;
+    return (rows[rows.length-1][s] - rows[rows.length-2][s]) / rows[rows.length-2][s] * 100;
+  }).filter(v => v != null);
+  if (corrTrends.length) {
+    const avg = corrTrends.reduce((a,b)=>a+b,0)/corrTrends.length;
+    const cls = avg > 0.3 ? 'up' : avg < -0.3 ? 'dn' : 'flat';
+    const arr = avg > 0.3 ? '↑' : avg < -0.3 ? '↘' : '↔';
+    const el = document.getElementById('c-trend-now');
+    if (el) el.innerHTML = `<span class="tag ${cls}">${arr} ${avg.toFixed(1)}% snitt</span>`;
+  }
+}
+
+// ── TREND CHARTS ──────────────────────────────────────
+function renderTrends() {
+  if (!M.data.length) return;
+  Object.values(charts).forEach(c => c.destroy()); charts = {};
+  const months = document.getElementById('period-sel')?.value || '36';
+  let slice = M.data;
+  if (months !== 'all') {
+    const cutoff = new Date(); cutoff.setMonth(cutoff.getMonth() - parseInt(months));
+    slice = M.data.filter(r => new Date(r.date) >= cutoff);
+  }
+  const labels = slice.map(r => r.date.slice(0, 7));
+  const grid = document.getElementById('trend-chart-grid');
+  grid.innerHTML = M.series.map((s, i) => {
+    const col  = Object.entries(COLORS).find(([k]) => s.toLowerCase().includes(k))?.[1] || '#2e7a4a';
+    const rws  = M.data.filter(r => r[s] != null);
+    const last = rws[rws.length-1];
+    const prev = rws.length > 1 ? rws[rws.length-2][s] : null;
+    const chg  = prev ? (last[s]-prev)/prev*100 : null;
+    const chgC = chg > 0.3 ? '#16a34a' : chg < -0.3 ? '#dc2626' : '#d97706';
+    const chgS = chg != null ? ` ${chg>0?'+':''}${chg.toFixed(1)}%` : '';
+    return `<div class="chart-card">
+      <div class="chart-hd">
+        <span class="chart-name">${s}</span>
+        <span class="chart-val" style="color:${chgC}">€${last[s].toFixed(0)}<small style="font-size:9px;margin-left:3px">${chgS}</small></span>
+      </div>
+      <div class="chart-body"><canvas id="ch${i}"></canvas></div>
+    </div>`;
+  }).join('');
+  M.series.forEach((s, i) => {
+    const col = Object.entries(COLORS).find(([k]) => s.toLowerCase().includes(k))?.[1] || '#2e7a4a';
+    charts[s] = new Chart(document.getElementById(`ch${i}`), {
+      type: 'line',
+      data: { labels, datasets: [{ data: slice.map(r => r[s]),
+        borderColor: col, backgroundColor: col + '15', fill: true,
+        tension: 0.4, pointRadius: 0, borderWidth: 2, spanGaps: true }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false },
+          tooltip: { backgroundColor: '#0d2318', borderColor: '#245c38', borderWidth: 1,
+            bodyColor: '#b8e8c8', bodyFont: { family: 'DM Mono', size: 10 },
+            callbacks: { label: c => ` €${c.parsed.y?.toFixed(0)??'—'}/t` } } },
+        scales: {
+          x: { ticks: { color: '#8aaa95', font: { family: 'DM Mono', size: 8 }, maxTicksLimit: 7 }, grid: { color: '#f0f7f3' } },
+          y: { ticks: { color: '#8aaa95', font: { family: 'DM Mono', size: 9 }, callback: v => '€'+v.toFixed(0) }, grid: { color: '#f0f7f3' } }
+        }
+      }
+    });
+  });
+  document.getElementById('trend-tbody').innerHTML = M.series.map((s, i) => {
+    const rows = M.data.filter(r => r[s] != null);
+    if (!rows.length) return '';
+    const v   = rows[rows.length-1][s];
+    const p1  = rows.length>1  ? rows[rows.length-2][s]  : null;
+    const p6  = rows.length>6  ? rows[rows.length-7][s]  : null;
+    const p12 = rows.length>12 ? rows[rows.length-13][s] : null;
+    const all = rows.map(r=>r[s]), mx = Math.max(...all), mn = Math.min(...all);
+    const fp  = (a, b) => { if(!b)return'—'; const c=(a-b)/b*100; return `<span class="tag ${c>0.3?'up':c<-0.3?'dn':'flat'}" style="font-size:10px;padding:1px 6px">${c>0?'+':''}${c.toFixed(1)}%</span>`; };
+    const col = Object.entries(COLORS).find(([k]) => s.toLowerCase().includes(k))?.[1] || '#2e7a4a';
+    return `<tr>
+      <td style="font-weight:600;color:${col}">${s}</td>
+      <td><span class="mintec-live">€${v.toFixed(0)}</span></td>
+      <td>${fp(v,p1)}</td><td>${fp(v,p6)}</td><td>${fp(v,p12)}</td>
+      <td style="color:var(--dn);font-weight:500">${((v-mx)/mx*100).toFixed(1)}%</td>
+      <td style="color:var(--up);font-weight:500">+${((v-mn)/mn*100).toFixed(1)}%</td>
+      <td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${rows[0].date.slice(0,7)}–${rows[rows.length-1].date.slice(0,7)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── AI ANALYSIS ───────────────────────────────────────
+async function runAI() {
+  const key = document.getElementById('api-key').value.trim();
+  if (!key) { alert('Lim inn Anthropic API-nøkkel'); return; }
+  const summary = M.data.length ? M.series.map(s => {
+    const rows = M.data.filter(r => r[s] != null);
+    if (!rows.length) return null;
+    const v=rows[rows.length-1][s], p1=rows.length>1?rows[rows.length-2][s]:null,
+          p6=rows.length>6?rows[rows.length-7][s]:null, p12=rows.length>12?rows[rows.length-13][s]:null,
+          all=rows.map(r=>r[s]), mx=Math.max(...all), mn=Math.min(...all);
+    const fp = (a,b)=>b?`${((a-b)/b*100).toFixed(1).replace(/^(?!-)/,'+')}%`:'—';
+    return `${s}: €${v.toFixed(0)}/t | MoM ${fp(v,p1)} | 6mnd ${fp(v,p6)} | 12mnd ${fp(v,p12)} | fra topp ${fp(v,mx)} | fra bunn ${fp(v,mn)}`;
+  }).filter(Boolean).join('\n') : 'Ingen Mintec-data lastet';
+  const body = document.getElementById('ai-body');
+  body.innerHTML = `<div class="ai-ph">Analyserer · · ·</div>`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 2000,
+        system: 'Du er ekspertanalytiker for europeisk emballasjeprocurement i FMCG. Bruk faktiske Mintec-prisindekser som primærkilde. Svar på norsk. Bruk ### for overskrifter og **tekst** for nøkkeltall.',
+        messages: [{ role: 'user', content:
+`Lag en komplett markedsvurdering for europeisk emballasjeprocurement.
+
+MINTEC PRISINDEKSER (primærkilde):
+${summary}
+
+Supplér med kjent markedssituasjon for PET, rPET, PP, HDPE.
+
+### Overordnet situasjon
+### Bølgepapp og containerboard
+### Solid board og kartong
+### Plastmaterialer
+### Innkjøpsanbefalinger Q2–Q3 2026
+
+Vær konkret og bruk faktiske €-tall.` }]
+      })
+    });
+    if (!res.ok) { const e=await res.json(); throw new Error(e.error?.message||`HTTP ${res.status}`); }
+    const d = await res.json();
+    const text = d.content?.find(b=>b.type==='text')?.text||'';
+    body.innerHTML = `<div class="ai-resp">${md(text)}</div>`;
+    document.getElementById('ai-src-label').textContent =
+      M.data.length?`Mintec ${M.data[0].date.slice(0,7)}–${M.data[M.data.length-1].date.slice(0,7)}`:'';
+  } catch(e) {
+    body.innerHTML = `<div style="color:#dc2626;font-family:'DM Mono',monospace;font-size:11px">✗ ${e.message}</div>`;
+  }
+}
+
+// ── EXPORT + HELPERS ──────────────────────────────────
+function exportCSV() {
+  if (!M.data.length) return;
+  const hdr = ['date',...M.series].join(',');
+  const rows = M.data.map(r=>[r.date,...M.series.map(s=>r[s]??'')].join(','));
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent([hdr,...rows].join('\n'));
+  a.download='mintec_export.csv'; a.click();
+}
+function csvSplit(str,sep){const r=[];let c='',q=false;for(const ch of str){if(ch==='"'){q=!q;continue;}if(ch===sep&&!q){r.push(c);c='';continue;}c+=ch;}r.push(c);return r;}
+function cleanH(h){return h.replace(/^[A-Z0-9]+\s*[-–]\s*/,'').replace(/\b(del|ave)\b\s*/gi,'').replace(/EUR\/MT\s*/gi,'').replace(/\s+/g,' ').trim();}
+function parseD(s){if(!s)return null;if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{2})[.\-\/](\d{2})[.\-\/](\d{4})/);return m?`${m[3]}-${m[2]}-${m[1]}`:null;}
+function md(t){return t.replace(/###\s*(.*)/g,'<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^[-•]\s+(.*)/gm,'<li>$1</li>').replace(/(<li>.*?<\/li>\n?)+/gs,m=>`<ul>${m}</ul>`).split('\n\n').map(p=>p.startsWith('<')?p:`<p>${p}</p>`).join('');}
 </script>
 </body>
 </html>
