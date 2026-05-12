@@ -5,6 +5,9 @@ on:
     - cron: '0 3 * * 0'   # Søndag kl. 03:00 UTC
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   generer-analyse:
     runs-on: ubuntu-latest
@@ -32,7 +35,6 @@ jobs:
         run: |
           git config --global user.name "Rapport-bot"
           git config --global user.email "rapport-bot@github.com"
-          # ALDRI endre index.html automatisk
           git checkout HEAD -- index.html
           git add data/analysis.json
           git diff --staged --quiet || git commit -m "AI-analyse oppdatert $(date +'%Y-%m-%d')"
