@@ -762,7 +762,7 @@ tbody tr:hover { background: #f8fcfa; }
       <h1 class="page-title">Trendutvikling — historiske data</h1>
     </div>
   </div>
-  <div class="info-banner" id="trends-placeholder">Last opp Mintec CSV automatisk (hentes fra <code>data/Prisrapport_mintec.csv</code>) for å se historiske trendgrafer.</div>
+  <div class="info-banner" id="trends-placeholder">Mintec CSV hentes automatisk fra GitHub. Trendgrafer vises her når <code>data/Prisrapport_mintec.csv</code> er lastet opp i repoet.</div>
   <div id="trends-content" style="display:none">
     <div class="chart-grid" id="trend-chart-grid"></div>
     <div class="card">
@@ -1020,7 +1020,7 @@ async function mintecFetch() {
     if (!text || text.trim().length < 50) throw new Error('Tom fil');
     mintecParse(text, 'Prisrapport_mintec.csv');
   } catch(e) {
-    setStatus('err', '⚠ Mintec-data ikke tilgjengelig — kontakt administrator');
+    console.log('CSV ikke tilgjengelig - bruker data fra analysis.json');
   }
 }
 
@@ -1225,37 +1225,125 @@ function renderTrends() {
   }).join('');
 }
 
-// ── AI ANALYSE — hentes fra data/analysis.json ────────
+// ── AI ANALYSE + MINTEC — hentes fra data/analysis.json ──
 async function loadAnalysis() {
-  const body = document.getElementById('ai-body');
+  const body    = document.getElementById('ai-body');
+  const srcLbl  = document.getElementById('ai-src-label');
+  const ageEl   = document.getElementById('analysis-age');
+  const srcDot  = document.getElementById('src-dot');
+  const srcTxt  = document.getElementById('src-text');
+
   try {
     const res = await fetch('data/analysis.json?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
     if (!d.analysis) throw new Error('Tom analysefil');
 
-    // Vis analyse
+    // ── Vis AI-analyse ──
     body.innerHTML = `<div class="ai-resp">${md(d.analysis)}</div>`;
 
-    // Oppdater metadata
-    const genDate = new Date(d.generated);
-    const genStr  = genDate.toLocaleString('no-NO', {day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    document.getElementById('ai-src-label').textContent =
-      `Generert ${genStr} · Mintec t.o.m. ${d.mintec_last || '—'}`;
+    // ── Datoinfo ──
+    const genDate  = new Date(d.generated);
+    const genStr   = genDate.toLocaleString('no-NO', {day:'numeric', month:'long', year:'numeric'});
+    const days     = Math.floor((Date.now() - genDate) / 86400000);
+    const ageStr   = days === 0 ? 'oppdatert i dag' : `${days} dag${days>1?'er':''} siden`;
 
-    // Vis alder i topbar
-    const ageEl = document.getElementById('analysis-age');
+    if (srcLbl) srcLbl.textContent =
+      `Generert ${genStr} (${ageStr}) · Mintec t.o.m. ${d.mintec_last || '—'}`;
+
     if (ageEl) {
-      const days = Math.floor((Date.now() - genDate) / 86400000);
-      ageEl.textContent = days === 0 ? 'Analyse: i dag' : `Analyse: ${days} dag${days>1?'er':''} gammel`;
+      ageEl.innerHTML = days > 14
+        ? `<span style="color:var(--amber)">⚠ Analyse ${days} dager gammel</span>`
+        : `<span style="color:var(--muted)">Analyse: ${genStr}</span>`;
     }
+
+    // ── Oppdater Mintec-status fra analysis.json ──
+    if (d.mintec_last && d.mintec_series && d.mintec_series.length > 0) {
+      const mintecDate = new Date(d.mintec_last);
+      const mintecStr  = mintecDate.toLocaleString('no-NO', {month:'long', year:'numeric'});
+
+      if (srcDot) { srcDot.className = 'live'; }
+      if (srcTxt) srcTxt.innerHTML =
+        `<strong style="color:var(--g600)">● Mintec</strong> · ` +
+        `Siste data: <strong>${mintecStr}</strong> · ` +
+        `${d.mintec_months} måneder · ${d.mintec_series.length} serier`;
+
+      // Oppdater KPI-bokser og tabeller fra mintec_latest
+      if (d.mintec_latest) {
+        updateFromJSON(d.mintec_latest);
+      }
+    }
+
   } catch(e) {
-    body.innerHTML = `<div class="ai-ph">Ingen AI-analyse tilgjengelig ennå.<br>
-      <span style="font-size:11px;margin-top:6px;display:block">
-        Kjør GitHub Actions manuelt: Actions → Oppdater prisanalyse → Run workflow
-      </span></div>`;
-    console.log('analysis.json ikke funnet:', e.message);
+    body.innerHTML = `<div class="ai-ph">
+      <strong>Ingen AI-analyse tilgjengelig ennå</strong><br>
+      <span style="font-size:12px;color:var(--muted);margin-top:8px;display:block;line-height:1.7">
+        Kjør GitHub Actions for å generere analyse:<br>
+        Actions → <em>Oppdater prisanalyse</em> → Run workflow<br><br>
+        Kontroller at <code>EMBALLASJE_RAPPORT_CLOUDE_KEY</code> er satt som GitHub Secret.
+      </span>
+    </div>`;
+    if (srcTxt) srcTxt.innerHTML =
+      `<span style="color:var(--amber)">⚠ Ingen analysedata — se Mintec-data manuelt under Trendanalyse</span>`;
+    console.log('analysis.json:', e.message);
   }
+}
+
+// ── Oppdater KPI og tabeller fra analysis.json mintec_latest ──
+function updateFromJSON(latest) {
+  const map = [
+    { keys: ['kraftliner'],  kpiLabel: 'Kraftliner', ids: ['td-kl-ref','c-kl-now'],   trendId: 'td-kl-trend'  },
+    { keys: ['testliner 2'], kpiLabel: null,          ids: ['td-tl-ref','c-tl-now'],   trendId: 'td-tl-trend'  },
+    { keys: ['fluting'],     kpiLabel: null,          ids: ['td-fl-ref','c-fl-now'],   trendId: 'td-fl-trend'  },
+    { keys: ['gd2'],         kpiLabel: null,          ids: ['td-gd2-ref','c-gd2-now'], trendId: 'td-gd2-trend' },
+    { keys: ['fbb'],         kpiLabel: 'FBB Folding', ids: ['td-fbb-ref','f-fbb-now'], trendId: 'td-fbb-trend' },
+    { keys: ['gc2'],         kpiLabel: null,          ids: ['td-gc2-ref','f-gc2-now'], trendId: 'td-gc2-trend' },
+  ];
+
+  Object.entries(latest).forEach(([series, data]) => {
+    const sl  = series.toLowerCase();
+    const m   = map.find(x => x.keys.some(k => sl.includes(k)));
+    if (!m || !data || data.value == null) return;
+
+    const v    = data.value;
+    const prev = data.prev;
+    const chg  = prev ? (v - prev) / prev * 100 : null;
+    const cls  = chg > 0.3 ? 'up' : chg < -0.3 ? 'dn' : 'flat';
+    const arr  = chg > 0.3 ? '↑' : chg < -0.3 ? '↓' : '→';
+    const chgS = chg != null ? ` ${chg > 0 ? '+' : ''}${chg.toFixed(1)}%` : '';
+
+    // Oppdater tabell-celler
+    (m.ids || []).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML =
+        `<span class="mintec-live">€${v.toFixed(0)}</span>` +
+        `<span class="m-badge" title="Mintec ${data.date}">M</span>`;
+    });
+
+    // Oppdater trend-celle
+    if (m.trendId) {
+      const el = document.getElementById(m.trendId);
+      if (el) el.innerHTML = `<span class="tag ${cls}">${arr}${chgS} MoM</span>`;
+    }
+
+    // Oppdater KPI-kort
+    if (m.kpiLabel) {
+      document.querySelectorAll('.kpi-label').forEach(lbl => {
+        if (!lbl.textContent.toLowerCase().includes(m.kpiLabel.toLowerCase())) return;
+        const card  = lbl.closest('.kpi-card');
+        const valEl = card?.querySelector('.kpi-val');
+        if (valEl) valEl.innerHTML =
+          `€${v.toFixed(0)}<span class="m-badge" title="Mintec ${data.date}">M</span>`;
+        let sub = card?.querySelector('.kpi-mintec');
+        if (!sub && chgS) {
+          sub = document.createElement('div');
+          sub.className = 'kpi-mintec';
+          card.appendChild(sub);
+        }
+        if (sub) sub.textContent = chgS + ' MoM';
+      });
+    }
+  });
 }
 
 // ── EXPORT + HELPERS ──────────────────────────────────
