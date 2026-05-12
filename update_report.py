@@ -16,7 +16,7 @@ def call_api(client, **kwargs):
                 time.sleep(wait)
             else:
                 raise
-    raise Exception("Maks antall forsøk nådd")
+    raise Exception("Maks antall forsok naadd")
 
 def parse_mintec_csv(filepath):
     with open(filepath, encoding="utf-8-sig") as f:
@@ -81,7 +81,7 @@ def parse_mintec_csv(filepath):
     records.sort(key=lambda r: r["date"])
     return records, [col["name"] for col in cols]
 
-def build_summary(records, series):
+def build_mintec_summary(records, series):
     lines = []
     for s in series:
         rows = [r for r in records if r.get(s) is not None]
@@ -94,59 +94,71 @@ def build_summary(records, series):
         all_v = [r[s] for r in rows]
         mx, mn = max(all_v), min(all_v)
         def pct(a, b):
-            if b is None or b == 0: return "—"
+            if b is None or b == 0: return "---"
             return f"{(a-b)/b*100:+.1f}%"
         lines.append(
-            f"{s}: \u20ac{v:.0f}/t | MoM {pct(v,p1)} | 6mnd {pct(v,p6)} | "
-            f"12mnd {pct(v,p12)} | fra topp \u20ac{mx:.0f} {pct(v,mx)} | "
-            f"fra bunn \u20ac{mn:.0f} {pct(v,mn)} | "
-            f"{rows[0]['date'][:7]}\u2013{rows[-1]['date'][:7]}"
+            f"{s}: EUR{v:.0f}/t | MoM {pct(v,p1)} | 6mnd {pct(v,p6)} | "
+            f"12mnd {pct(v,p12)} | fra topp EUR{mx:.0f} {pct(v,mx)} | "
+            f"fra bunn EUR{mn:.0f} {pct(v,mn)} | "
+            f"{rows[0]['date'][:7]}-{rows[-1]['date'][:7]}"
         )
     return "\n".join(lines)
 
-def generate_analysis():
+def run():
     client  = anthropic.Anthropic(api_key=os.environ["EMBALLASJE_RAPPORT_CLOUDE_KEY"])
     today   = datetime.date.today().strftime("%d. %B %Y")
     quarter = f"Q{(datetime.date.today().month - 1) // 3 + 1} {datetime.date.today().year}"
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
     # ── STEG 1: Les Mintec CSV ────────────────────────────
     mintec_summary = ""
-    last_date = ""
-    num_months = 0
-    series_names = []
+    mintec_last = ""
+    mintec_months = 0
+    mintec_series = []
+    mintec_latest = {}
+
     mintec_path = "data/Prisrapport_mintec.csv"
-
     if os.path.exists(mintec_path):
-        print(f"Leser Mintec CSV...")
-        records, series_names = parse_mintec_csv(mintec_path)
+        print("Leser Mintec CSV...")
+        records, mintec_series = parse_mintec_csv(mintec_path)
         if records:
-            mintec_summary = build_summary(records, series_names)
-            last_date  = records[-1]["date"]
-            num_months = len(records)
-            print(f"  {num_months} mnd | {len(series_names)} serier | siste: {last_date}")
+            mintec_summary  = build_mintec_summary(records, mintec_series)
+            mintec_last     = records[-1]["date"]
+            mintec_months   = len(records)
+            # Hent siste verdi per serie
+            for s in mintec_series:
+                rows = [r for r in records if r.get(s) is not None]
+                if rows:
+                    mintec_latest[s] = {
+                        "value": rows[-1][s],
+                        "prev":  rows[-2][s] if len(rows) > 1 else None,
+                        "date":  rows[-1]["date"]
+                    }
+            print(f"  {mintec_months} mnd | {len(mintec_series)} serier | siste: {mintec_last}")
     else:
-        print(f"Advarsel: {mintec_path} ikke funnet")
+        print("Advarsel: data/Prisrapport_mintec.csv ikke funnet")
 
-    # ── STEG 2: Web-sok plastpriser ───────────────────────
-    print(f"\nSteg 1: Soker plastpriser {today}...")
+    # ── STEG 2: Sok plastpriser + nyheter ─────────────────
+    print(f"\nSteg 1: Soker plastpriser og markedsnyheter {today}...")
     r_plast = call_api(
         client,
         model="claude-sonnet-4-6",
-        max_tokens=1000,
+        max_tokens=1200,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
         messages=[{"role": "user", "content":
-            f"Sok og finn europeiske plastpriser {today}. "
-            f"Returner KUN tallene (maks 400 ord, ingen innledning): "
-            f"PET virgin NWE euro/tonn og trend, "
-            f"rPET food-grade NWE euro/tonn og trend, "
-            f"PP homopolymer FCA Antwerpen euro/tonn og trend, "
-            f"HDPE blazing NWE euro/tonn og trend, "
-            f"LDPE film NWE euro/tonn og trend, "
-            f"maks 2 viktige markedsnyheter plast Europa."
+            f"Sok etter europeiske emballasjeplastpriser og markedsnyheter per {today}. "
+            f"Finn konkrete tall fra ICIS, ChemOrbis, PlasticsToday eller Packaging Europe. "
+            f"Returner (maks 500 ord, ingen innledning): "
+            f"1) PET virgin NWE euro/tonn aktuell pris og trend, "
+            f"2) rPET food-grade NWE euro/tonn og trend, "
+            f"3) PP homopolymer FCA Antwerpen euro/tonn og trend, "
+            f"4) HDPE blasing NWE euro/tonn og trend, "
+            f"5) LDPE film NWE euro/tonn og trend, "
+            f"6) Opptil 3 viktige markedshendelser emballasje Europa siste 4 uker med kilde."
         }]
     )
     plast_data = "".join(b.text for b in r_plast.content if hasattr(b, "text"))[:1500]
-    print(f"  Plast: {len(plast_data)} tegn")
+    print(f"  Plast/nyheter: {len(plast_data)} tegn")
 
     print("Venter 30 sekunder...")
     time.sleep(30)
@@ -155,53 +167,48 @@ def generate_analysis():
     print("\nSteg 2: Genererer AI-analyse...")
 
     mintec_block = (
-        f"MINTEC PRISINDEKSER (verifiserte abonnementsdata - primaeerkilde):\n"
-        f"{mintec_summary}\n\n"
-        f"Siste datapunkt: {last_date} ({num_months} maaneder historikk)\n"
-    ) if mintec_summary else "Mintec-data ikke tilgjengelig.\n"
+        f"MINTEC PRISINDEKSER (verifiserte abonnementsdata - primaerkilde, siste maned: {mintec_last}):\n"
+        f"{mintec_summary}\n"
+    ) if mintec_summary else "Mintec-data ikke tilgjengelig denne kjoeringen.\n"
 
-    prompt = (
-        f"Du er ekspertanalytiker for europeisk emballasjeprocurement i FMCG. "
-        f"Lag en strukturert markedsvurdering for {quarter} ({today}).\n\n"
-        f"{mintec_block}\n"
-        f"PLASTPRISER (web-sok {today}):\n{plast_data}\n\n"
-        f"Skriv analysen paa norsk. Bruk ### for seksjonsoverskrifter og **tekst** for noekkeltall. "
-        f"Vaer konkret - bruk faktiske euro-tall der tilgjengelig.\n\n"
-        f"### Overordnet markedssituasjon\n"
-        f"### Boelgepapp og containerboard\n"
-        f"### Solid board og kartong\n"
-        f"### Plastmaterialer\n"
-        f"### Innkjoepsanbefalinger {quarter}"
-    )
-
-    r_analyse = call_api(
+    analyse_resp = call_api(
         client,
         model="claude-sonnet-4-6",
         max_tokens=2500,
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"role": "user", "content":
+            f"Du er ekspertanalytiker for europeisk emballasjeprocurement i FMCG. "
+            f"Lag en strukturert markedsvurdering for {quarter} ({today}).\n\n"
+            f"{mintec_block}\n"
+            f"PLASTPRISER OG MARKEDSNYHETER (web-sok {today}):\n{plast_data}\n\n"
+            f"Skriv analysen paa norsk. Bruk ### for seksjonsoverskrifter og **tekst** for "
+            f"noekkeltall. Bruk faktiske euro-tall der tilgjengelig. Henvis til kilde der relevant.\n\n"
+            f"### Overordnet markedssituasjon {quarter}\n"
+            f"### Boelgepapp og containerboard\n"
+            f"### Solid board og kartong\n"
+            f"### Plastmaterialer\n"
+            f"### Innkjoepsanbefalinger og utsikt\n"
+        }]
     )
-    analyse_text = "".join(b.text for b in r_analyse.content if hasattr(b, "text"))
+    analyse_text = "".join(b.text for b in analyse_resp.content if hasattr(b, "text"))
     print(f"  Analyse: {len(analyse_text)} tegn")
 
     # ── STEG 4: Skriv analysis.json ───────────────────────
     os.makedirs("data", exist_ok=True)
-    output = {
-        "generated":     datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "quarter":       quarter,
-        "date":          today,
-        "mintec_last":   last_date,
-        "mintec_months": num_months,
-        "mintec_series": series_names,
-        "analysis":      analyse_text,
+    analysis_out = {
+        "generated":      now_iso,
+        "quarter":        quarter,
+        "date":           today,
+        "mintec_last":    mintec_last,
+        "mintec_months":  mintec_months,
+        "mintec_series":  mintec_series,
+        "mintec_latest":  mintec_latest,
+        "analysis":       analyse_text,
+        "plast_context":  plast_data,
     }
     with open("data/analysis.json", "w", encoding="utf-8") as f:
-        json.dump(output, f, ensure_ascii=False, indent=2)
-
-    print(f"\nOK: data/analysis.json skrevet")
-    print(f"   Kvartal:   {quarter}")
-    print(f"   Mintec:    {last_date} ({num_months} mnd)")
-    print(f"   Analyse:   {len(analyse_text)} tegn")
-    print(f"   index.html er IKKE endret")
+        json.dump(analysis_out, f, ensure_ascii=False, indent=2)
+    print(f"\nOK: data/analysis.json skrevet ({len(analyse_text)} tegn analyse)")
+    print(f"    index.html er IKKE endret")
 
 if __name__ == "__main__":
-    generate_analysis()
+    run()
